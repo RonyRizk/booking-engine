@@ -1,0 +1,40 @@
+:root {
+  --background: white;
+  --radius: 30px;
+  /* Brand colors */
+  --brand-25: 210, 100%, 98%;
+  --brand-50: 206, 100%, 97%;
+  --brand-100: 209, 100%, 91%;
+  --brand-200: 206, 100%, 85%;
+  --brand-300: 206, 100%, 76%;
+  --brand-400: 207, 98%, 66%;
+  --brand-500: 211, 95%, 58%;
+  --brand-600: 215, 87%, 51%;
+  --brand-700: 218, 80%, 46%;
+  --brand-800: 220, 75%, 38%;
+  --brand-900: 218, 68%, 31%;
+  /* gray colors */
+  --gray-25: #fcfcfd;
+  --gray-50: #f9fafb;
+  --gray-100: #f2f4f7;
+  --gray-200: #eaecf0;
+  --gray-300: #d0d5dd;
+  --gray-400: #98a2b3;
+  --gray-500: #667085;
+  --gray-600: #475467;
+  --gray-700: #344054;
+  --gray-800: #1d2939;
+  --gray-900: #101828;
+  /* errors */
+  --error-25: #fffbfa;
+  --error-50: #fef3f2;
+  --error-100: #fee4e2;
+  --error-200: #fecdca;
+  --error-300: #fda29b;
+  --error-400: #f97066;
+  --error-500: #f04438;
+  --error-600: #d92d20;
+  --error-700: #b42318;
+  --error-800: #912018;
+  --error-900: #7a271a;
+}
