@@ -16,7 +16,7 @@ export async function generateMetadata({ params, searchParams }, parent) {
     {}
   );
   const token = tokenData.My_Result;
-  const domain = decodeURIComponent(params.domain);
+  const domain = decodeURIComponent(params.domain).split('.')[0];
   const { data } = await axios.post(
     `https://gateway.igloorooms.com/IR/Get_Exposed_Property?Ticket=${token}`,
     {

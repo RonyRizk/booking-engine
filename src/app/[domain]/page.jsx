@@ -17,7 +17,7 @@ import BookingEngine from "@/components/BookingEngine";
 //     return allPaths;
 //   }
 export default function SiteHomePage({ params, searchParams }) {
-  const domain = decodeURIComponent(params.domain);
+  const domain = decodeURIComponent(params.domain).split('.')[0];
   const { checkin, checkout, adults, children, rtid, stag, aff, cur, nights } =
     searchParams;
   return (
