@@ -32,11 +32,12 @@ export default async function middleware(req) {
     const searchParams = req.nextUrl.searchParams.toString();
     const path = `${url.pathname}${searchParams.length > 0 ? `?${searchParams}` : ""
         }`;
+    console.log("hostname", hostname)
     if (
         hostname === "localhost:7742"
     ) {
         return NextResponse.rewrite(
-            new URL(`/igloorooms-demo-hotel${path === "/" ? "" : path}`, req.url),
+            new URL(`/igloorooms-demo-hotel.bookingstay.com${path === "/" ? "" : path}`, req.url),
         );
     }
 

@@ -4,6 +4,7 @@ import "../globals.css";
 const inter = Inter({ subsets: ["latin"] });
 import axios from "axios";
 import Script from 'next/script'
+import { v4 } from "uuid";
 
 
 // export const metadata = {
@@ -56,7 +57,7 @@ export default function layout({ children }) {
     <html lang="en" suppressHydrationWarning>
       <body>
         {children}
-        <Script type="module" src="https://wb-cmp.igloorooms.com/be/dist/iglooroom/iglooroom.esm.js" strategy="beforeInteractive" />
+        <Script type="module" src={`https://wb-cmp.igloorooms.com/be/dist/iglooroom/iglooroom.esm.js?v=${v4()}`} strategy="beforeInteractive" />
       </body>
     </html>
   );
