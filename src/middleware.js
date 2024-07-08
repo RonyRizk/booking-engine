@@ -19,8 +19,7 @@ export default async function middleware(req) {
     // Get hostname of request (e.g. demo.vercel.pub, demo.localhost:3000)
     let hostname = req.headers
         .get("host")
-        .replace(".localhost:3000", `.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`);
-
+        .replace(".localhost:7742", `.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`);
     // special case for Vercel preview deployment URLs
     if (
         hostname.includes("---") &&
@@ -37,10 +36,11 @@ export default async function middleware(req) {
         hostname === "localhost:7742"
     ) {
         return NextResponse.rewrite(
-            new URL(`/igloorooms-demo-hotel.bookingstay.com${path === "/" ? "" : path}`, req.url),
+            new URL(`/iglooroomsdemohotel.bookingstay.com${path === "/" ? "" : path}`, req.url),
         );
     }
-
-    // rewrite everything else to `/[domain]/[slug] dynamic route
+    if (hostname.split('.').length <= 2) {
+        return NextResponse.redirect("https://info.igloorooms.com")
+    }
     return NextResponse.rewrite(new URL(`/${hostname}${path}`, req.url));
 }
