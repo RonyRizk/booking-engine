@@ -6,7 +6,7 @@ const logger = winston.createLogger({
     format: combine(timestamp(), json()),
     transports: [
         new winston.transports.File({
-            filename: "C:\Logs\next",
+            filename: "C:\Logs\next\app.log",
         }),
     ],
 });

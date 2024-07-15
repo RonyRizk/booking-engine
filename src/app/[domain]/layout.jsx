@@ -38,7 +38,7 @@ export default function layout({ children }) {
       <body>
         {children}
         {/* <Script type="module" src={`https://david1chowaifaty.github.io/igloo-calendar-main-web/be-dist/iglooroom/iglooroom.esm.js?v=${v4()}`} strategy="beforeInteractive" /> */}
-        <Script type="module" src={`${process.env.BE_COMPONENT_URL}?v=${v4()}`} strategy="beforeInteractive" />
+        <Script type="module" src={`https://wb-cmp.igloorooms.com/be/dist/iglooroom/iglooroom.esm.js?v=${v4()}`} strategy="beforeInteractive" />
       </body>
     </html>
   );
