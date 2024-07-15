@@ -1,10 +1,7 @@
 import axios from "axios";
 
-export async function getExposedProperty(domain) {
+export async function getExposedProperty({ aName, perma_link }) {
 
-    if (!domain) {
-        return null;
-    }
     const { data: tokenData } = await axios.post(
         `https://gateway.igloorooms.com/IRBE/Get_BE_Token`,
         {}
@@ -16,9 +13,9 @@ export async function getExposedProperty(domain) {
         {
             id: 1,
             language: "EN",
-            perma_link: domain,
+            perma_link,
+            aname: aName
         }
     );
-
     return data.My_Result;
 }

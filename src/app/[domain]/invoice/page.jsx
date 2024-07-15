@@ -1,5 +1,6 @@
 import InvoicePage from "@/components/InvoicePage";
 import { logger } from "@/logger";
+import { getExposedProperty } from "@/utils/actions";
 import { redirect } from "next/navigation";
 import React from "react";
 
@@ -14,10 +15,10 @@ export default async function page({ params, searchParams }) {
     redirect("https://info.igloorooms.com")
   }
   try {
-    property = await getExposedProperty(domain[0])
+    property = await getExposedProperty({ perma_link: domain[0], aName: "" })
   } catch (error) {
     console.log(error)
-    logger.error(error)
+    logger.info(error)
   }
   if (!property) {
     logger.info("Invoice:property was not found");

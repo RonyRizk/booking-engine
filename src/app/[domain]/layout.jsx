@@ -6,7 +6,7 @@ import { getExposedProperty } from "../../utils/actions"
 
 export async function generateMetadata({ params }, parent) {
   const domain = decodeURIComponent(params.domain).split('.');
-  const result = await getExposedProperty(domain[0]);
+  const result = await getExposedProperty({ perma_link: domain[0], aName: "" });
   const previousImages = (await parent).openGraph?.images || [];
   return {
     title: `${result?.name}, ${result?.country?.name} - Book direct`,

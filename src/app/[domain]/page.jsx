@@ -1,4 +1,4 @@
-import React, { Suspense } from "react";
+import React from "react";
 import BeTest from "../../components/BookingEngine"
 import { getExposedProperty } from "@/utils/actions";
 import { redirect } from "next/navigation";
@@ -7,7 +7,7 @@ import { logger } from "@/logger";
 
 export default async function SiteHomePage({ params, searchParams }) {
   const domain = decodeURIComponent(params.domain).split('.');
-  const { checkin, checkout, adults, children, rtid, stag, aff, cur, nights } =
+  const { checkin, checkout, adults, children, rtid, stag, aff, cur, nights, lang } =
     searchParams;
   logger.info(`domain: ${domain}`)
   logger.info("Main:Home Page called");
@@ -17,10 +17,10 @@ export default async function SiteHomePage({ params, searchParams }) {
     redirect("https://info.igloorooms.com")
   }
   try {
-    property = await getExposedProperty(domain[0])
+    property = await getExposedProperty({ perma_link: domain[0], aName: "" })
   } catch (error) {
     console.log(error)
-    logger.error(error)
+    logger.info(error)
   }
 
   if (!property) {
@@ -44,6 +44,9 @@ export default async function SiteHomePage({ params, searchParams }) {
       toDate={checkout}
       adultCount={adults}
       childrenCount={children}
+      language={lang}
+      rateplan_id={undefined}
+      source={undefined}
     />
   );
 }
