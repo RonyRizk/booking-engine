@@ -1,4 +1,4 @@
-import InvoicePage from "../../../components/InvoicePage";
+import InvoicePage from "@/components/InvoicePage";
 import React from "react";
 
 export async function generateMetadata({ params, searchParams }, parent) {
@@ -24,7 +24,7 @@ export default function page({ params: { id }, searchParams }) {
   const { e, s, lang, b } = searchParams;
   return (
     <InvoicePage
-      perma_link={domain.split('.')[0]}
+      perma_link={domain}
       language={lang}
       email={e}
       bookingNbr={b}

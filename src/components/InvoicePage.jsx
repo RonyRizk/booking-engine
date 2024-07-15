@@ -11,7 +11,7 @@ export default function InvoicePage({
     <ir-invoice
       perma_link={perma_link}
       language={language}
-      base-url={process.env.IGLOO_BASE_URL}
+      base-url="https://gateway.igloorooms.com/IRBE"
       status={status}
       email={email}
       property-id={propertyId}
