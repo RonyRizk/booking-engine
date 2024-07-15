@@ -1,8 +1,6 @@
 "use client";
-import React from "react";
-// import _ from "iglooroom/dist/iglooroom/iglooroom.esm";
 import { addDays } from "date-fns";
-import Script from "next/script";
+
 export default function BeTest({
   propertyId,
   perma_link,
@@ -15,10 +13,12 @@ export default function BeTest({
   stag,
   roomtype_id,
   nights,
+  property
 }) {
   if (nights) {
     toDate = addDays(new Date(fromDate), nights);
   }
+  console.log("v:1.0")
   return (
     <>
       <ir-booking-engine
@@ -28,7 +28,7 @@ export default function BeTest({
         stag={stag}
         roomtype_id={roomtype_id}
         perma_link={perma_link}
-        base-url="https://gateway.igloorooms.com/IRBE"
+        base-url={"https://gateway.igloorooms.com/IRBE"}
         from-date={fromDate}
         to-date={toDate}
         adult-count={adultCount}
