@@ -2,7 +2,7 @@
 import { addDays } from "date-fns";
 import { useEffect, useRef } from "react";
 
-export default function BeTest({
+export default function IrBookingEngine({
   propertyId,
   perma_link,
   fromDate,
@@ -22,18 +22,17 @@ export default function BeTest({
   if (nights) {
     toDate = addDays(new Date(fromDate), nights);
   }
-  const ref = useRef(null);
+  const bookingEngineRef = useRef(null);
   useEffect(() => {
-    console.log(source)
-    if (ref) {
-      ref.current.source = { code: source }
+    if (bookingEngineRef.current && source) {
+      bookingEngineRef.current.source = { code: source, description: "" };
     }
-  }, [source])
-  console.log("v:1.1")
+  }, [source]);
+
   return (
     <>
       <ir-booking-engine
-        ref={ref}
+        ref={bookingEngineRef}
         language={language}
         property-id={propertyId || 42}
         cur={cur}

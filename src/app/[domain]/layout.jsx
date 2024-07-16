@@ -1,7 +1,7 @@
 import "../globals.css";
 import Script from 'next/script';
 import { v4 } from "uuid";
-import { getExposedProperty } from "../../utils/actions"
+import { getExposedProperty } from "../../lib/actions"
 
 
 export async function generateMetadata({ params }, parent) {

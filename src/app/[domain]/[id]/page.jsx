@@ -1,40 +1,41 @@
-import React from "react";
-import BeTest from "../../../components/BookingEngine";
+import { logger } from "@/logger";
+import { getExposedProperty } from "@/lib/actions";
+import { redirect } from "next/navigation";
+import { constructURL } from "@/lib/utils";
 
-export default function Page({ searchParams, params }) {
 
-  const {
-    checkin,
-    checkout,
-    adults,
-    children,
-    stag,
-    aff,
-    cur,
-    nights,
-    lang,
-    roomtype_id,
-    rateplan_id,
-    source
-  } = searchParams;
-
-  return (
-    <BeTest
-      nights={nights}
-      propertyId={42}
-      cur={cur}
-      aff={aff}
-      stag={stag}
-      roomtype_id={roomtype_id}
-      fromDate={checkin}
-      toDate={checkout}
-      adultCount={adults}
-      childrenCount={children}
-      language={lang}
-      perma_link={undefined}
-      aname={params.id}
-      rateplan_id={rateplan_id}
-      source={source}
-    />
-  );
+export default async function Page({ searchParams, params }) {
+  let perma_link = null
+  try {
+    const property = await getExposedProperty({ perma_link: "", aName: params.id });
+    if (property) {
+      perma_link = property.perma_link;
+    }
+  } catch (error) {
+    console.log(error)
+    logger.info(error)
+  }
+  if (perma_link) {
+    redirect(constructURL(`https://${perma_link}.bookingmystay.com`, searchParams))
+  }
+  return <div></div>
+  // return (
+  //   <BeTest
+  //     nights={nights}
+  //     propertyId={42}
+  //     cur={cur}
+  //     aff={aff}
+  //     stag={stag}
+  //     roomtype_id={roomtype_id}
+  //     fromDate={checkin}
+  //     toDate={checkout}
+  //     adultCount={adults}
+  //     childrenCount={children}
+  //     language={lang}
+  //     perma_link={undefined}
+  //     aname={params.id}
+  //     rateplan_id={rateplan_id}
+  //     source={source}
+  //   />
+  // );
 }

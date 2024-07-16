@@ -1,6 +1,6 @@
 import InvoicePage from "@/components/InvoicePage";
 import { logger } from "@/logger";
-import { getExposedProperty } from "@/utils/actions";
+import { getExposedProperty } from "@/lib/actions";
 import { redirect } from "next/navigation";
 import React from "react";
 

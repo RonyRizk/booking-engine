@@ -1,13 +1,13 @@
 import React from "react";
-import BeTest from "../../components/BookingEngine"
-import { getExposedProperty } from "@/utils/actions";
+import IrBookingEngine from "../../components/BookingEngine"
+import { getExposedProperty } from "@/lib/actions";
 import { redirect } from "next/navigation";
 import { logger } from "@/logger";
 
 
 export default async function SiteHomePage({ params, searchParams }) {
   const domain = decodeURIComponent(params.domain).split('.');
-  const { checkin, checkout, adults, children, rtid, stag, aff, cur, nights, lang } =
+  const { checkin, checkout, adults, source, children, rtid, stag, aff, cur, nights, lang } =
     searchParams;
   logger.info(`domain: ${domain}`)
   logger.info("Main:Home Page called");
@@ -19,8 +19,8 @@ export default async function SiteHomePage({ params, searchParams }) {
   try {
     property = await getExposedProperty({ perma_link: domain[0], aName: "" })
   } catch (error) {
-    console.log(error)
-    logger.info(error)
+    console.error(JSON.stringify(error))
+    // logger.info(error)
   }
 
   if (!property) {
@@ -32,7 +32,7 @@ export default async function SiteHomePage({ params, searchParams }) {
     redirect("/iglooroom?status=notactive")
   }
   return (
-    <BeTest
+    <IrBookingEngine
       nights={nights}
       propertyId={42}
       perma_link={domain[0]}
@@ -46,7 +46,7 @@ export default async function SiteHomePage({ params, searchParams }) {
       childrenCount={children}
       language={lang}
       rateplan_id={undefined}
-      source={undefined}
+      source={source}
     />
   );
 }
