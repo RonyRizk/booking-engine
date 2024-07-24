@@ -47,6 +47,7 @@ export default function IrBookingEngine({
         adult-count={adultCount}
         children-count={childrenCount}
         rateplan_id={rateplan_id}
+        version={"2.5"}
       ></ir-booking-engine>
     </>
   );

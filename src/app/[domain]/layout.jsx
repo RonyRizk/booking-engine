@@ -8,27 +8,28 @@ export async function generateMetadata({ params }, parent) {
   const domain = decodeURIComponent(params.domain).split('.');
   const result = await getExposedProperty({ perma_link: domain[0], aName: "" });
   const previousImages = (await parent).openGraph?.images || [];
+  const logo = result?.space_theme?.favicon
   return {
     title: `${result?.name}, ${result?.country?.name} - Book direct`,
     images: [
       {
-        url: result?.space_theme?.logo,
+        url: logo,
         width: 800,
         height: 600,
       },
       {
-        url: result?.space_theme?.logo,
+        url: logo,
         width: 1800,
         height: 1600,
-        alt: "My custom alt",
+        alt: result?.name,
       },
     ],
     icons: {
-      icon: result?.space_theme?.logo,
+      icon: logo,
     },
     description: `${result?.name}, ${result?.country?.name} prices and availability`,
     openGraph: {
-      images: [result?.space_theme?.logo, ...previousImages],
+      images: [logo, ...previousImages],
     },
   };
 }
