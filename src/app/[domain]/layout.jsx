@@ -11,19 +11,21 @@ export async function generateMetadata({ params }, parent) {
   const logo = result?.space_theme?.favicon
   return {
     title: `${result?.name}, ${result?.country?.name} - Book direct`,
-    images: [
+    images: result?.images?.map((img) => (
       {
-        url: logo,
-        width: 800,
-        height: 600,
-      },
-      {
-        url: logo,
+        url: img.url,
         width: 1800,
         height: 1600,
-        alt: result?.name,
+        alt: img.tooltip ? `${result?.name} - ${img.tooltip}` : result?.name,
+
       },
-    ],
+
+      {
+        url: img.url,
+        width: 800,
+        height: 600,
+      }
+    )),
     icons: {
       icon: logo,
     },

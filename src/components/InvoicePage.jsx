@@ -5,10 +5,12 @@ export default function InvoicePage({
   bookingNbr,
   email,
   status,
-  perma_link
+  perma_link,
+  locationShown
 }) {
   return (
     <ir-invoice
+      location-shown={locationShown}
       perma_link={perma_link}
       language={language}
       base-url={"https://gateway.igloorooms.com/IRBE"}

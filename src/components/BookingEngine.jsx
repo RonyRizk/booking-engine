@@ -17,7 +17,10 @@ export default function IrBookingEngine({
   language,
   aname,
   rateplan_id,
-  source
+  source,
+  coupon,
+  loyalty,
+  agent_code
 }) {
   if (nights) {
     toDate = addDays(new Date(fromDate), nights);
@@ -31,24 +34,26 @@ export default function IrBookingEngine({
 
   return (
     <>
-      <ir-booking-engine
+      <ir-be
         ref={bookingEngineRef}
         language={language}
         property-id={propertyId || 42}
         cur={cur}
         aff={aff}
         stag={stag}
-        a-name={aname}
-        roomtype_id={roomtype_id}
+        p={aname}
+        rt_id={roomtype_id}
         perma_link={perma_link}
-        base-url={"https://gateway.igloorooms.com/IRBE"}
-        from-date={fromDate}
-        to-date={toDate}
-        adult-count={adultCount}
-        children-count={childrenCount}
-        rateplan_id={rateplan_id}
-        version={"2.5"}
-      ></ir-booking-engine>
+        checkin={fromDate}
+        checkout={toDate}
+        adults={adultCount}
+        child={childrenCount}
+        rp_id={rateplan_id}
+        version={"2.6"}
+        coupon={coupon}
+        loyalty={loyalty}
+        agent_code={agent_code}
+      ></ir-be>
     </>
   );
 }

@@ -7,7 +7,7 @@ import { logger } from "@/logger";
 
 export default async function SiteHomePage({ params, searchParams }) {
   const domain = decodeURIComponent(params.domain).split('.');
-  const { checkin, checkout, adults, source, children, rtid, stag, aff, cur, nights, lang } =
+  const { checkin, checkout, adults, source, children, rtid, stag, aff, cur, nights, lang, loyalty, promo, agent } =
     searchParams;
   logger.info(`domain: ${domain}`)
   logger.info("Main:Home Page called");
@@ -47,6 +47,9 @@ export default async function SiteHomePage({ params, searchParams }) {
       language={lang}
       rateplan_id={undefined}
       source={source}
+      coupon={promo}
+      loyalty={loyalty}
+      agent_code={agent}
     />
   );
 }
