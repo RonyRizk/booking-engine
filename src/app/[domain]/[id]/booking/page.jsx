@@ -5,17 +5,12 @@ import { redirect } from "next/navigation";
 import React from "react";
 
 export default async function page({ params, searchParams }) {
-    const domain = decodeURIComponent(params.domain).split('.');
     const { E, s, lang, BN } = searchParams;
-    logger.info(`domain: ${domain}`)
+    logger.info(`property: ${params.id}`)
     logger.info("Invoice Page called");
     let property;
-    if (domain.length <= 2) {
-        logger.info("Invoice:domain was less then 3 navigated to https://info.igloorooms.com");
-        redirect("https://info.igloorooms.com")
-    }
     try {
-        property = await getExposedProperty({ perma_link: domain[0], aName: "" })
+        property = await getExposedProperty({ perma_link: "", aName: params.id })
     } catch (error) {
         console.log(error)
         logger.info(error)
@@ -30,8 +25,8 @@ export default async function page({ params, searchParams }) {
     }
     return (
         <InvoicePage
+            aName={params.id}
             locationShown={false}
-            perma_link={domain[0]}
             language={lang}
             email={E}
             bookingNbr={BN}
