@@ -32,7 +32,7 @@ export default async function page({ params, searchParams }) {
             bookingNbr={BN}
             propertyId={42}
             status={s}
-
+            headerMessageShown={false}
         />
     );
 }

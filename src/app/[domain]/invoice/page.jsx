@@ -36,6 +36,7 @@ export default async function page({ params, searchParams }) {
       bookingNbr={b}
       propertyId={42}
       status={s}
+      headerMessageShown={true}
     />
   );
 }

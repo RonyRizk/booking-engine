@@ -7,10 +7,12 @@ export default function InvoicePage({
   status,
   perma_link,
   aName,
-  locationShown
+  locationShown,
+  headerMessageShown,
 }) {
   return (
     <ir-invoice
+      header-message-shown={headerMessageShown}
       a-name={aName}
       location-shown={locationShown}
       perma_link={perma_link}
