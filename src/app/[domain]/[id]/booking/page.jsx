@@ -1,11 +1,10 @@
-import InvoicePage from "@/components/InvoicePage";
 import { logger } from "@/logger";
 import { getExposedProperty } from "@/lib/actions";
 import { redirect } from "next/navigation";
-import React from "react";
+
 
 export default async function page({ params, searchParams }) {
-    const { E, s, lang, BN } = searchParams;
+    const { BN } = searchParams;
     logger.info(`property: ${params.id}`)
     logger.info("Invoice Page called");
     let property;
@@ -23,16 +22,5 @@ export default async function page({ params, searchParams }) {
         logger.info("Invoice:property not active");
         redirect("/iglooroom?status=notactive")
     }
-    return (
-        <InvoicePage
-            aName={params.id}
-            locationShown={false}
-            language={lang}
-            email={E}
-            bookingNbr={BN}
-            propertyId={42}
-            status={s}
-            headerMessageShown={false}
-        />
-    );
+    redirect(`https://www.igloorooms.com/booking-details.html?BN=${BN}&pid=${property.id}`)
 }
