@@ -1,3 +1,5 @@
+import { differenceInDays, format, parse } from "date-fns";
+
 /**
  * Constructs a URL by appending query parameters to a given base URL.
  *
@@ -23,4 +25,18 @@ export function constructURL(baseUrl, paramsObj) {
         }
     }
     return url.length > baseUrl.length ? url.slice(0, -1) : baseUrl;
+}
+export function formatTime(hour, minute) {
+    const timeString = `${hour}:${minute}`;
+    const parsedTime = parse(timeString, 'HH:mm', new Date());
+    return format(parsedTime, 'hh:mm a');
+}
+export function formatAmount(amount, currency = 'USD') {
+    return new Intl.NumberFormat('en-US', { style: 'currency', currency: currency }).format(amount);
+}
+export function calculateDaysBetweenDates(from_date, to_date) {
+    const startDate = parse(from_date, 'yyyy-MM-dd', new Date());
+    const endDate = parse(to_date, 'yyyy-MM-dd', new Date());
+    const daysDiff = differenceInDays(endDate, startDate);
+    return daysDiff || 1;
 }
