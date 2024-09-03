@@ -4,9 +4,13 @@ import React from 'react'
 export async function generateMetadata({ params }, parent) {
     const result = await getExposedProperty({ perma_link: "", aName: params.id });
     const previousImages = (await parent).openGraph?.images || [];
-    const logo = result?.space_theme?.favicon
+    const logo = result?.space_theme?.favicon;
+    let title = "igloorooms"
+    if (result?.name) {
+        title = `${result?.name}, ${(result?.country?.name) ?? ""} - Book direct`
+    }
     return {
-        title: `${result?.name}, ${result?.country?.name} - Book direct`,
+        title,
         images: result?.images?.map((img) => (
             {
                 url: img.url,

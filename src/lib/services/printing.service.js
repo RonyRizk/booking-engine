@@ -22,7 +22,8 @@ export class PrintingService extends Token {
                     aname: aName
                 }
             );
-            const token = data.My_Result
+            const token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE3MjU2MTk5OTMsIkNMQUlNLTAxIjoicktLMi9DY1dQQnM9IiwiQ0xBSU0tMDIiOiI5UStMQm93VTl6az0iLCJDTEFJTS0wMyI6Ilp3Tys5azJoTzUwPSIsIkNMQUlNLTA0IjoiQUVxVnRCMm1kWTg9IiwiQ0xBSU0tMDUiOiJFQTEzejA3ejBUcWRkM2gwNElyYThKTGVjQkN2Wm1LaCIsIkNMQUlNLTA2IjoiQUVxVnRCMm1kWTg9In0.SBZuwJ7iwQyF5qSkbz8i2LT4JKQXY_DT0etccqIu8AE"
+            // const token = data.My_Result
             this.setToken(token);
             this.commonService.setToken(token)
             this.bookingService.setToken(token)

@@ -9,8 +9,12 @@ export async function generateMetadata({ params }, parent) {
   const result = await getExposedProperty({ perma_link: domain[0], aName: "" });
   const previousImages = (await parent).openGraph?.images || [];
   const logo = result?.space_theme?.favicon
+  let title = "igloorooms"
+  if (result?.name) {
+    title = `${result?.name}, ${(result?.country?.name) ?? ""} - Book direct`
+  }
   return {
-    title: `${result?.name}, ${result?.country?.name} - Book direct`,
+    title,
     images: result?.images?.map((img) => (
       {
         url: img.url,
