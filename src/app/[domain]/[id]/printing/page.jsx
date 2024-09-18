@@ -182,34 +182,34 @@ export default async function Printing({ searchParams, params }) {
         </div>}
       </section>
       <section>
-        <section className="py-4 border-y border-gray-300">
-          <div className="flex items-center justify-between gap-4">
+        <section className="py-4 border-y border-gray-300 justify-start flex">
+          <div className="flex-1">
             <InfoDisplay
               label={"Booked by:"}
               value={`${printingService.formatGuestName(
                 booking?.guest
               )} - ${totalPersons} ${totalPersons > 1 ? "persons" : "person"}`}
             />
-            <p className="text-gray-900 text-lg font-semibold">
-              {booking.status.description}
-            </p>
-          </div>
-          <InfoDisplay
-            label={"Phone:"}
-            value={printingService.formatPhoneNumber(
-              booking?.guest,
-              booking?.is_direct
+            <InfoDisplay
+              label={"Phone:"}
+              value={printingService.formatPhoneNumber(
+                booking?.guest,
+                booking?.is_direct
+              )}
+            />
+            <InfoDisplay label={"Email:"} value={booking?.guest?.email} />
+            {guestCountryName && (
+              <InfoDisplay label={"Country:"} value={guestCountryName} />
             )}
-          />
-          <InfoDisplay label={"Email:"} value={booking?.guest?.email} />
-          {guestCountryName && (
-            <InfoDisplay label={"Country:"} value={guestCountryName} />
-          )}
-          <InfoDisplay
-            label={"Arrival Time:"}
-            value={booking?.arrival?.description}
-          />
-          {privateNote && <InfoDisplay label={"Private note:"} value={privateNote.value} />}
+            <InfoDisplay
+              label={"Arrival Time:"}
+              value={booking?.arrival?.description}
+            />
+            {privateNote && <InfoDisplay label={"Private note:"} value={privateNote.value} />}
+          </div>
+          <p className="text-gray-900 text-lg font-semibold">
+            {booking.status.description}
+          </p>
         </section>
         <section className="pt-4">
           <div className="flex items-center justify-between flex-wrap mb-4">
