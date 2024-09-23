@@ -5,9 +5,14 @@ import { constructURL } from "@/lib/utils";
 
 
 export default async function Page({ searchParams, params }) {
-  let perma_link = null
+  let perma_link = null;
+  let property = null;
+  const isBookingMyStayDomain = (url) => {
+    const regex = /^([a-zA-Z0-9-]+)\.bookingmystay\.com$/;
+    return regex.test(url);
+  }
   try {
-    const property = await getExposedProperty({ perma_link: "", aName: params.id });
+    property = await getExposedProperty({ perma_link: "", aName: params.id });
     if (property) {
       perma_link = property.perma_link;
     }
@@ -18,7 +23,17 @@ export default async function Page({ searchParams, params }) {
   if (perma_link) {
     redirect(constructURL(`https://${perma_link}.bookingmystay.com`, searchParams))
   }
-  return <div></div>
+  if (!property) {
+    logger.info("[id]:property was not found");
+    if (isBookingMyStayDomain(params.domain)) {
+      return redirect(constructURL(`https://${params.domain}`, searchParams))
+    } else {
+      redirect("https://info.igloorooms.com/")
+    }
+  }
+  return <div>
+
+  </div>
   // return (
   //   <BeTest
   //     nights={nights}

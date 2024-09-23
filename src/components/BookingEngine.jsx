@@ -35,6 +35,7 @@ export default function IrBookingEngine({
   return (
     <>
       <ir-be
+        origin="be"
         ref={bookingEngineRef}
         language={language}
         property-id={propertyId || 42}

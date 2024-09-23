@@ -21,7 +21,7 @@ export default async function Printing({ searchParams, params }) {
   const { mode = "printing", id, lang = "en" } = searchParams;
   const printingService = new PrintingService();
   await printingService.getPrintingToken(params.id);
-  const { booking, property, countries } =
+  const { booking, property, countries, locales: { entries: locales } } =
     await printingService.getPrintingData({
       bookingNumber: id,
       aName: params.id,
@@ -30,7 +30,7 @@ export default async function Printing({ searchParams, params }) {
   const BookingDetails = () => {
     return (
       <div>
-        <p className="text-xl  text-gray-900">Booking#{booking?.booking_nbr}</p>
+        <p className="text-xl text-gray-900">{locales?.Lcz_Booking}#{booking?.booking_nbr}</p>
         <div className={"flex items-center md:justify-end"}>
           <p className="booked_on_date">
             {format(
@@ -50,7 +50,7 @@ export default async function Printing({ searchParams, params }) {
         </div>
         {mode === "invoice" && (
           <div className="flex md:justify-end">
-            <InfoDisplay label={"Tax ID:"} value={property?.tax_nbr} />
+            <InfoDisplay label={`${locales?.Lcz_TaxID}:`} value={property?.tax_nbr} />
           </div>
         )}
       </div>
@@ -67,7 +67,7 @@ export default async function Printing({ searchParams, params }) {
               className="aspect-[16/4] h-14 hidden md:block"
             />
             <InfoDisplay
-              label={"Address:"}
+              label={`${locales?.Lcz_Address}:`}
               value={[
                 property?.address ?? null,
                 property?.city.name ?? null,
@@ -77,7 +77,7 @@ export default async function Printing({ searchParams, params }) {
                 .join(", ")}
             />
             <InfoDisplay
-              label={"Phone:"}
+              label={`${locales?.Lcz_Phone}:`}
               value={`+${property?.country?.phone_prefix.replace("+", "") + " -" || ""
                 } ${property?.phone}`}
             />
@@ -97,7 +97,7 @@ export default async function Printing({ searchParams, params }) {
             className="aspect-[16/4] h-14 hidden md:block"
           />
           <InfoDisplay
-            label={"Address:"}
+            label={`${locales?.Lcz_Address}:`}
             value={[
               property?.address ?? null,
               property?.city.name ?? null,
@@ -119,7 +119,7 @@ export default async function Printing({ searchParams, params }) {
         return (
           <React.Fragment key={`room_${d.name}_${index}`}>
             <p className="label-title">
-              {d.is_exlusive ? "Excluding" : "Including"} {d.name}
+              {d.is_exlusive ? locales?.Lcz_Excluding : locales?.Lcz_Including} {d.name}
             </p>
             <p>
               {d.currency.symbol}
@@ -136,7 +136,7 @@ export default async function Printing({ searchParams, params }) {
       return (
         <React.Fragment key={`direct_room_${d.name}_${index}`}>
           <p className="label-title">
-            {d.is_exlusive ? "Excluding" : "Including"} {d.name}
+            {d.is_exlusive ? locales?.Lcz_Excluding : locales?.Lcz_Including} {d.name}
           </p>
           <p>
             {d.pct}%: {formatAmount(amount, currency)}
@@ -154,7 +154,6 @@ export default async function Printing({ searchParams, params }) {
     return null;
   }
   //48157715406
-  console.log(booking.rooms)
   const totalPersons =
     booking?.occupancy.adult_nbr + booking?.occupancy.children_nbr;
   const currency = booking?.currency.code;
@@ -176,36 +175,36 @@ export default async function Printing({ searchParams, params }) {
         {mode === "invoice" && <div className="flex items-center w-full justify-between">
           <p className="property_name">{property?.name}</p>
           <InfoDisplay
-            label={"Invoice Reference:"}
+            label={`${locales?.Lcz_InvoiceReference}:`}
             value={booking?.financial.invoice_nbr}
           />
         </div>}
       </section>
       <section>
         <section className="py-4 border-y border-gray-300 justify-start flex">
-          <div className="flex-1">
+          <div className="flex-1 lowercase">
             <InfoDisplay
-              label={"Booked by:"}
+              label={`${locales?.Lcz_BookedBy}:`}
               value={`${printingService.formatGuestName(
                 booking?.guest
-              )} - ${totalPersons} ${totalPersons > 1 ? "persons" : "person"}`}
+              )} - ${totalPersons} ${totalPersons > 1 ? locales?.Lcz_Persons : locales?.Lcz_Person}`}
             />
             <InfoDisplay
-              label={"Phone:"}
+              label={`${locales?.Lcz_Phone}:`}
               value={printingService.formatPhoneNumber(
                 booking?.guest,
                 booking?.is_direct
               )}
             />
-            <InfoDisplay label={"Email:"} value={booking?.guest?.email} />
+            <InfoDisplay label={`${locales?.Lcz_Email}:`} value={booking?.guest?.email} />
             {guestCountryName && (
-              <InfoDisplay label={"Country:"} value={guestCountryName} />
+              <InfoDisplay label={`${locales?.Lcz_Country}:`} value={guestCountryName} />
             )}
             <InfoDisplay
-              label={"Arrival Time:"}
+              label={`${locales?.Lcz_ArrivalTime}:`}
               value={booking?.arrival?.description}
             />
-            {privateNote && <InfoDisplay label={"Private note:"} value={privateNote.value} />}
+            {privateNote && <InfoDisplay label={`${locales?.Lcz_PrivateNote}:`} value={privateNote.value} />}
           </div>
           <p className="text-gray-900 text-lg font-semibold">
             {booking.status.description}
@@ -213,7 +212,7 @@ export default async function Printing({ searchParams, params }) {
         </section>
         <section className="pt-4">
           <div className="flex items-center justify-between flex-wrap mb-4">
-            <p className="accommodation-title">ACCOMMODATION</p>
+            <p className="accommodation-title">{locales?.Lcz_ACCOMMODATION}</p>
             <p className="booking-dates">
               {printingService.formatBookingDates(booking?.from_date)}
             </p>
@@ -221,7 +220,7 @@ export default async function Printing({ searchParams, params }) {
               {printingService.formatBookingDates(booking?.to_date)}
             </p>
             <p className="number-of-nights">
-              {totalNights} {totalNights === 1 ? "night" : "nights"}
+              {totalNights} {totalNights === 1 ? locales?.Lcz_night : locales?.Lcz_nights}
             </p>
             <p className="vat-exclusion">
               <i>{property?.tax_statement}</i>
@@ -236,7 +235,7 @@ export default async function Printing({ searchParams, params }) {
                 </div>
                 <div className="">
                   <InfoDisplay
-                    label={"Guest name:"}
+                    label={`${locales?.Lcz_GuestName}:`}
                     value={printingService.formatGuestName(room?.guest)}
                   />
                   <p
@@ -255,7 +254,7 @@ export default async function Printing({ searchParams, params }) {
                 <div className="pricing-summary">
                   <div className={"pricing-breakdown"}>
                     <InfoDisplay
-                      label={"Total:"}
+                      label={`${locales?.Lcz_Total}:`}
                       value={formatAmount(room.total, currency)}
                     />
                     <span>-</span>
@@ -263,11 +262,11 @@ export default async function Printing({ searchParams, params }) {
                   </div>
                   <div className="flex flex-col items-end">
                     <InfoDisplay
-                      label={"Grand total:"}
+                      label={`${locales?.Lcz_GrandTotal}:`}
                       value={formatAmount(room.gross_total, currency)}
                     />
                     <InfoDisplay
-                      label={"Due upon booking:"}
+                      label={`${locales?.Lcz_DueUponBooking}:`}
                       value={formatAmount(room.gross_guarantee, currency)}
                     />
                   </div>
@@ -298,27 +297,26 @@ export default async function Printing({ searchParams, params }) {
       {booking.pickup_info && (
         <section className="py-4 border-gray-300 border-y">
           <p className="text-lg font-semibold text-gray-900 mb-2.5">
-            PICKUP Yes, from{" "}
-            {booking.pickup_info.selected_option.location.description}
+            {locales?.Lcz_PickupYes.replace("%1", booking.pickup_info.selected_option.location.description)}
           </p>
           <div>
             <div className="flex items-center gap-1.5 md:gap-4 flex-wrap ">
               <InfoDisplay
-                label={"Arrival date:"}
+                label={`${locales?.Lcz_ArrivalDate}:`}
                 value={format(
                   new Date(booking?.pickup_info.date),
                   "eeee, dd MMM yyyy"
                 )}
               />
               <InfoDisplay
-                label={"Time:"}
+                label={`${locales?.Lcz_ArrivalTime}:`}
                 value={formatTime(
                   booking.pickup_info.hour.toString(),
                   booking.pickup_info.minute.toString()
                 )}
               />
               <InfoDisplay
-                label={"Fight details:"}
+                label={`${locales?.Lcz_FlightDetails}:`}
                 value={booking?.pickup_info.details}
               />
             </div>
@@ -332,11 +330,11 @@ export default async function Printing({ searchParams, params }) {
                 )}
               </p>
               <InfoDisplay
-                label={"No. of Vehicles:"}
+                label={`${locales?.Lcz_NbrOfVehicles}:`}
                 value={booking?.pickup_info.nbr_of_units}
               />
               <InfoDisplay
-                label={"Due upon booking:"}
+                label={`${locales?.Lcz_DueUponBooking}:`}
                 value={formatAmount(
                   booking?.pickup_info.total,
                   booking.pickup_info.currency.code
@@ -348,7 +346,7 @@ export default async function Printing({ searchParams, params }) {
       )}
       {booking.financial?.payments && (
         <section className="space-y-4 py-4">
-          <h1 className="text-xl font-medium uppercase">Billing</h1>
+          <h1 className="text-xl font-medium uppercase">{locales?.Lcz_Payments}</h1>
           {/* <div className="space-y-2.5 md:hidden">
             {booking.financial?.payments?.map((p) => (
               <div key={p.id} className="bg-gray-100 rounded-md p-4">
@@ -380,16 +378,16 @@ export default async function Printing({ searchParams, params }) {
               <thead className="ltr:text-left rtl:text-right">
                 <tr>
                   <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
-                    Date
+                    {locales?.Lcz_Date}
                   </th>
                   <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
-                    Amount
+                    {locales?.Lcz_Amount}
                   </th>
                   <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
-                    Designation
+                    {locales?.Lcz_Designation}
                   </th>
                   <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
-                    Ref
+                    {locales?.Lcz_Ref}
                   </th>
                 </tr>
               </thead>

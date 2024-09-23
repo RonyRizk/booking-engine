@@ -38,7 +38,7 @@ export class PrintingService extends Token {
             this.bookingService.getExposedBooking({ booking_nbr: bookingNumber, language }),
             this.commonService.getExposedProperty(aName, language),
             this.commonService.getCountries(language),
-            this.commonService.fetchLanguage(language)
+            this.commonService.fetchLanguage(language, ["_PRINT_FRONT"])
         ])
         return { booking, property, countries, locales }
     }

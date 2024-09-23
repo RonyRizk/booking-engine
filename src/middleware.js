@@ -37,7 +37,7 @@ export default async function middleware(req) {
         hostname === "localhost:7742"
     ) {
         return NextResponse.rewrite(
-            new URL(`/iglooroomsdemohotel.bookingstay.com${path === "/" ? "" : path}`, req.url),
+            new URL(`/iglooroomsdemohotel.bookingmystay.com${path === "/" ? "" : path}`, req.url),
         );
     }
 
