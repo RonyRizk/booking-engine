@@ -226,13 +226,13 @@ export default async function Printing({ searchParams, params }) {
                         <p
                           className=""
                           dangerouslySetInnerHTML={{
-                            __html: room.rateplan.cancelation.replace("<u>", "").replace("</u>", ""),
+                            __html: room.rateplan.cancelation.replace("<u>", "").replace("</u>", "").replace('<b>', '<b style="font-weight:bold">'),
                           }}
                         ></p>
                         <p
                           className=""
                           dangerouslySetInnerHTML={{
-                            __html: room.rateplan.guarantee.replace("<u>", "").replace("</u>", ""),
+                            __html: room.rateplan.guarantee.replace("<u>", "").replace("</u>", "").replace('<b>', '<b style="font-weight:bold">'),
                           }}
                         ></p>
                       </>}
