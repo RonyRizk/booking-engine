@@ -4,43 +4,30 @@ import { CommonServices } from "./common.service";
 import { Token } from "../token";
 import { BookingService } from "./booking.service";
 
+
 export class PrintingService extends Token {
-    constructor() {
+    constructor(token) {
         super();
-        this.baseUrl = "https://gateway.igloorooms.com/IR"
+        this.token = token
+        this.baseUrl = "https://gateway.igloorooms.com/IR";
         this.commonService = new CommonServices(this.baseUrl);
         this.bookingService = new BookingService(this.baseUrl);
+        this.commonService.setToken(token)
+        this.bookingService.setToken(token)
     }
 
-    async getPrintingToken(aName) {
-        if (this.token) {
-            return;
-        }
+    async getPrintingData({ bookingNumber, aName, language = "en", }) {
         try {
-            const { data } = await axios.post(`${this.baseUrl}/Get_IP_Restricted_Token`,
-                {
-                    aname: aName
-                }
-            );
-            // const token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE3Mjc4NjgwMzgsIkNMQUlNLTAxIjoicktLMi9DY1dQQnM9IiwiQ0xBSU0tMDIiOiI5UStMQm93VTl6az0iLCJDTEFJTS0wMyI6Ilp3Tys5azJoTzUwPSIsIkNMQUlNLTA0IjoiQUVxVnRCMm1kWTg9IiwiQ0xBSU0tMDUiOiJFQTEzejA3ejBUcWRkM2gwNElyYThKYXhDR25xUkxrcSIsIkNMQUlNLTA2IjoiQUVxVnRCMm1kWTg9In0.y9DUmfc96PM9mPloCk5pQVrxFhLB0KG-3C0sVqLSZCc"
-            const token = data.My_Result
-            this.setToken(token);
-            this.commonService.setToken(token)
-            this.bookingService.setToken(token)
-
+            const [booking, property, countries, locales] = await Promise.all([
+                this.bookingService.getExposedBooking({ booking_nbr: bookingNumber, language }),
+                this.commonService.getExposedProperty(aName, language),
+                this.commonService.getCountries(language),
+                this.commonService.fetchLanguage(language, ["_PRINT_FRONT"])
+            ])
+            return { booking, property, countries, locales, isError: false }
         } catch (error) {
-            console.error("Failed to get printing token:", error)
-            throw error;
+            return { booking: null, property: null, countries: null, locales: null, isError: true }
         }
-    }
-    async getPrintingData({ bookingNumber, aName, language = "en" }) {
-        const [booking, property, countries, locales] = await Promise.all([
-            this.bookingService.getExposedBooking({ booking_nbr: bookingNumber, language }),
-            this.commonService.getExposedProperty(aName, language),
-            this.commonService.getCountries(language),
-            this.commonService.fetchLanguage(language, ["_PRINT_FRONT"])
-        ])
-        return { booking, property, countries, locales }
     }
 
     //Helpers

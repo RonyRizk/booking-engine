@@ -8,63 +8,53 @@ import {
   formatAmount,
   formatTime,
 } from "@/lib/utils";
+import Link from "next/link";
+import { redirect } from "next/navigation";
 
-const InfoDisplay = ({ label, value }) => {
+
+
+
+
+
+const InfoDisplay = ({ label, value, className }) => {
   return (
-    <div className="flex items-center gap-1">
-      <p className="font-medium text-gray-900">{label}</p>
-      <p className="text-gray-600">{value}</p>
+    <div className={`flex items-start gap-1 ${className}`}>
+      <p className="font-bold text-gray-900">{label}</p>
+      <p className="">{value}</p>
     </div>
   );
 };
 export default async function Printing({ searchParams, params }) {
-  const { mode = "printing", id, lang = "en" } = searchParams;
-  const printingService = new PrintingService();
-  await printingService.getPrintingToken(params.id);
-  const { booking, property, countries, locales: { entries: locales } } =
+  const { mode = "printing", id, lang = "en", token } = searchParams;
+  const printingService = new PrintingService(token);
+  const { booking, isError, property, countries, locales: defaultLocales } =
     await printingService.getPrintingData({
       bookingNumber: id,
       aName: params.id,
       language: lang,
     });
-  const BookingDetails = () => {
-    return (
-      <div>
-        <p className="text-xl text-gray-900">{locales?.Lcz_Booking}#{booking?.booking_nbr}</p>
-        <div className={"flex items-center md:justify-end"}>
-          <p className="booked_on_date">
-            {format(
-              parse(booking?.booked_on.date, "yyyy-MM-dd", new Date()),
-              "dd-MMM-yyyy"
-            )}{" "}
-            {formatTime(
-              booking?.booked_on.hour.toString(),
-              booking?.booked_on.minute.toString()
-            )}
-          </p>
-          <img
-            src={booking?.origin.Icon}
-            alt={booking?.origin.Label}
-            className="size-8 ml-2"
-          />
-        </div>
-        {mode === "invoice" && (
-          <div className="flex md:justify-end">
-            <InfoDisplay label={`${locales?.Lcz_TaxID}:`} value={property?.tax_nbr} />
-          </div>
-        )}
-      </div>
-    );
-  };
+
+  if (isError) {
+    return redirect("https://x.igloorooms.com/manage/acbookinglist.aspx")
+    // return <div className="h-screen flex flex-col items-center justify-center">
+    //   <h3 className="text-lg font-medium mb-4">Your session has expired. Please return to the booking details and generate a new printing page.</h3>
+    //   <Link href={"https://x.igloorooms.com/manage/acbookinglist.aspx"} className="text-blue-500 underline hover:text-blue-600" replace>Go back</Link>
+    // </div>
+
+  }
+  const { entries: locales } = defaultLocales
+  if (!booking) {
+    return null;
+  }
   const PrintingHeader = () => {
-    if (mode === "invoice") {
-      return (
-        <>
+    return (
+      <header className=" px-4 pt-4 sm:px-6 lg:px-8 text-gray-800  py-0 text-sm max-w-4xl mx-auto">
+        <nav className="flex flex-col-reverse md:flex-row md:justify-between md:w-full">
           <div>
             <img
               src={property.space_theme.logo}
               alt="logo"
-              className="aspect-[16/4] h-14 hidden md:block"
+              className="aspect-1 h-14 hidden mb-2.5 md:block"
             />
             <InfoDisplay
               label={`${locales?.Lcz_Address}:`}
@@ -83,38 +73,49 @@ export default async function Printing({ searchParams, params }) {
             />
           </div>
           <div>
-            <BookingDetails />
+            <p className="text-xl text-gray-900">{locales?.Lcz_Booking}#{booking?.is_direct ? booking?.booking_nbr : booking?.booking_nbr}</p>
+            {!booking.is_direct && <p className="md:text-end text-xl">{booking.channel_booking_nbr}</p>}
+            <div className={"flex items-center md:justify-end"}>
+              <p className="booked_on_date">
+                {format(
+                  parse(booking?.booked_on.date, "yyyy-MM-dd", new Date()),
+                  "dd-MMM-yyyy"
+                )}{" "}
+                {formatTime(
+                  booking?.booked_on.hour.toString(),
+                  booking?.booked_on.minute.toString()
+                )}
+              </p>
+              <img
+                src={booking?.origin.Icon}
+                alt={booking?.origin.Label}
+                className="size-6 aspect-1 ml-2"
+              />
+            </div>
+            {mode === "invoice" && property?.tax_nbr && (
+              <div className="flex md:justify-end">
+                <InfoDisplay label={`${locales?.Lcz_TaxID}:`} value={property?.tax_nbr} />
+              </div>
+            )}
           </div>
-        </>
-      );
-    }
-    return (
-      <>
-        <div>
-          <img
-            src={property.space_theme.logo}
-            alt="logo"
-            className="aspect-[16/4] h-14 hidden md:block"
-          />
-          <InfoDisplay
-            label={`${locales?.Lcz_Address}:`}
-            value={[
-              property?.address ?? null,
-              property?.city.name ?? null,
-              property?.country.name ?? null,
-            ]
-              .filter((f) => f !== null)
-              .join(", ")}
-          />
-        </div>
-        <BookingDetails />
-      </>
+        </nav>
+        <section className="pb-4">
+          {<div className="flex items-center  w-full justify-between flex-wrap">
+            <p className="property_name">{property?.name}</p>
+            {mode === "invoice" && <div>
+              <InfoDisplay
+                label={`${locales?.Lcz_InvoiceReference}:`}
+                value={booking?.financial.invoice_nbr}
+              />
+            </div>}
+          </div>}
+        </section>
+      </header>
     );
   };
   const TaxAmount = ({ room }) => {
     if (!booking?.is_direct) {
       const filtered_data = room.ota_taxes.filter((tx) => tx.amount > 0);
-      console.log(filtered_data);
       return filtered_data.map((d, index) => {
         return (
           <React.Fragment key={`room_${d.name}_${index}`}>
@@ -134,25 +135,21 @@ export default async function Printing({ searchParams, params }) {
     return filtered_data?.map((d, index) => {
       const amount = (room.total * d.pct) / 100;
       return (
-        <React.Fragment key={`direct_room_${d.name}_${index}`}>
+        <div key={`direct_room_${d.name}_${index}`} className="flex items-center gap-1">
           <p className="label-title">
             {d.is_exlusive ? locales?.Lcz_Excluding : locales?.Lcz_Including} {d.name}
           </p>
           <p>
             {d.pct}%: {formatAmount(amount, currency)}
           </p>
-          {room.gross_cost > 0 && room.gross_cost !== null && (
+          {/* {room.gross_cost > 0 && room.gross_cost !== null && (
             <span>{formatAmount((room.cost * d.pct) / 100, currency)}</span>
-          )}
+          )} */}
           {index < filtered_data.length - 1 && <span>-</span>}
-        </React.Fragment>
+        </div>
       );
     });
   };
-
-  if (!booking) {
-    return null;
-  }
   //48157715406
   const totalPersons =
     booking?.occupancy.adult_nbr + booking?.occupancy.children_nbr;
@@ -167,255 +164,240 @@ export default async function Printing({ searchParams, params }) {
   );
   const privateNote = booking.extras?.find((k) => k.key === "private_note");
   return (
-    <main className="main-container text-gray-800 p-4 py-0" dir="ltr">
-      <section className="py-4">
-        <div className="flex flex-col-reverse md:flex-row md:justify-between md:w-full">
-          <PrintingHeader />
-        </div>
-        {mode === "invoice" && <div className="flex items-center w-full justify-between">
-          <p className="property_name">{property?.name}</p>
-          <InfoDisplay
-            label={`${locales?.Lcz_InvoiceReference}:`}
-            value={booking?.financial.invoice_nbr}
-          />
-        </div>}
-      </section>
-      <section>
-        <section className="py-4 border-y border-gray-300 justify-start flex">
-          <div className="flex-1 lowercase">
-            <InfoDisplay
-              label={`${locales?.Lcz_BookedBy}:`}
-              value={`${printingService.formatGuestName(
-                booking?.guest
-              )} - ${totalPersons} ${totalPersons > 1 ? locales?.Lcz_Persons : locales?.Lcz_Person}`}
-            />
-            <InfoDisplay
-              label={`${locales?.Lcz_Phone}:`}
-              value={printingService.formatPhoneNumber(
-                booking?.guest,
-                booking?.is_direct
-              )}
-            />
-            <InfoDisplay label={`${locales?.Lcz_Email}:`} value={booking?.guest?.email} />
-            {guestCountryName && (
-              <InfoDisplay label={`${locales?.Lcz_Country}:`} value={guestCountryName} />
-            )}
-            <InfoDisplay
-              label={`${locales?.Lcz_ArrivalTime}:`}
-              value={booking?.arrival?.description}
-            />
-            {privateNote && <InfoDisplay label={`${locales?.Lcz_PrivateNote}:`} value={privateNote.value} />}
-          </div>
-          <p className="text-gray-900 text-lg font-semibold">
-            {booking.status.description}
-          </p>
-        </section>
-        <section className="pt-4">
-          <div className="flex items-center justify-between flex-wrap mb-4">
-            <p className="accommodation-title">{locales?.Lcz_ACCOMMODATION}</p>
-            <p className="booking-dates">
-              {printingService.formatBookingDates(booking?.from_date)}
-            </p>
-            <p className="booking-dates">
-              {printingService.formatBookingDates(booking?.to_date)}
-            </p>
-            <p className="number-of-nights">
-              {totalNights} {totalNights === 1 ? locales?.Lcz_night : locales?.Lcz_nights}
-            </p>
-            <p className="vat-exclusion">
-              <i>{property?.tax_statement}</i>
-            </p>
-          </div>
-          <div>
-            {booking?.rooms?.map((room, idx) => (
-              <section key={room.id} className="space-y-2.5">
-                <div className="flex items-center gap-2.5 text-xl mb-2.5">
-                  <p>{room.roomtype.name}</p>
-                  <p>{room.rateplan.short_name || room.rateplan.name}</p>
-                </div>
-                <div className="">
-                  <InfoDisplay
-                    label={`${locales?.Lcz_GuestName}:`}
-                    value={printingService.formatGuestName(room?.guest)}
-                  />
-                  <p
-                    className=""
-                    dangerouslySetInnerHTML={{
-                      __html: room.rateplan.cancelation,
-                    }}
-                  ></p>
-                  <p
-                    className=""
-                    dangerouslySetInnerHTML={{
-                      __html: room.rateplan.guarantee,
-                    }}
-                  ></p>
-                </div>
-                <div className="pricing-summary">
-                  <div className={"pricing-breakdown"}>
-                    <InfoDisplay
-                      label={`${locales?.Lcz_Total}:`}
-                      value={formatAmount(room.total, currency)}
-                    />
-                    <span>-</span>
-                    <TaxAmount room={room} />
-                  </div>
-                  <div className="flex flex-col items-end">
-                    <InfoDisplay
-                      label={`${locales?.Lcz_GrandTotal}:`}
-                      value={formatAmount(room.gross_total, currency)}
-                    />
-                    <InfoDisplay
-                      label={`${locales?.Lcz_DueUponBooking}:`}
-                      value={formatAmount(room.gross_guarantee, currency)}
-                    />
-                  </div>
-                </div>
-
-                {/* Rendering room dates */}
-                <div
-                  className={`flex flex-wrap ${idx < booking?.rooms.length - 1 ? "pb-4 " : ""
-                    }`}
-                >
-                  {room.days?.map((d) => (
-                    <div className={"room_amount_container"} key={d.date}>
-                      <p className="room_amount date">
-                        {printingService.formatDate(d.date, "YYYY-MM-DD")}
-                      </p>
-                      <div className="room_amount amount">
-                        <p> {formatAmount(d.amount, currency)}</p>
-                        {/* {<p className="text-center"> -15%</p>} */}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </section>
-            ))}
-          </div>
-        </section>
-      </section>
-      {booking.pickup_info && (
-        <section className="py-4 border-gray-300 border-y">
-          <p className="text-lg font-semibold text-gray-900 mb-2.5">
-            {locales?.Lcz_PickupYes.replace("%1", booking.pickup_info.selected_option.location.description)}
-          </p>
-          <div>
-            <div className="flex items-center gap-1.5 md:gap-4 flex-wrap ">
+    <>
+      <PrintingHeader />
+      <main className="p-4 sm:px-6 lg:px-8 text-gray-800  py-0 text-sm max-w-4xl mx-auto" dir="ltr">
+        <section>
+          <section className="py-4 border-y border-gray-300 justify-start flex">
+            <div className="flex-1">
               <InfoDisplay
-                label={`${locales?.Lcz_ArrivalDate}:`}
-                value={format(
-                  new Date(booking?.pickup_info.date),
-                  "eeee, dd MMM yyyy"
+                label={`${locales?.Lcz_BookedBy}:`}
+                value={`${printingService.formatGuestName(
+                  booking?.guest
+                )} - ${totalPersons} ${totalPersons > 1 ? locales?.Lcz_Persons : locales?.Lcz_Person}`}
+              />
+              <InfoDisplay
+                label={`${locales?.Lcz_Phone}:`}
+                value={printingService.formatPhoneNumber(
+                  booking?.guest,
+                  booking?.is_direct
                 )}
               />
+              <InfoDisplay label={`${locales?.Lcz_Email}:`} value={booking?.guest?.email} />
+              {guestCountryName && (
+                <InfoDisplay label={`${locales?.Lcz_Country}:`} value={guestCountryName} />
+              )}
               <InfoDisplay
                 label={`${locales?.Lcz_ArrivalTime}:`}
-                value={formatTime(
-                  booking.pickup_info.hour.toString(),
-                  booking.pickup_info.minute.toString()
-                )}
+                value={booking?.arrival?.description}
               />
-              <InfoDisplay
-                label={`${locales?.Lcz_FlightDetails}:`}
-                value={booking?.pickup_info.details}
-              />
+              {booking.remark && booking.is_direct && <InfoDisplay label={`${locales?.Lcz_Notes ?? "Notes"}:`} value={booking.remark} />}
+              {booking.ota_notes && !booking.is_direct && <div className="flex items-start gap-1 flex-grow">
+                <p className="font-medium text-gray-900">{locales?.Lcz_Notes ?? "Notes"}:</p>
+                <div>
+                  {booking.ota_notes?.map((notes) => (<p key={`ota_note_${notes.statement}`} className="text-gray-600">
+                    {notes.statement}
+                  </p>))}
+                </div>
+              </div>}
+              {privateNote && <InfoDisplay label={`${locales?.Lcz_PrivateNote}:`} value={privateNote.value} />}
             </div>
-            <div className="flex items-center mt-1.5 md:mt-0 gap-1.5 md:gap-4 flex-wrap">
-              <p className="car_name">
-                {booking.pickup_info.selected_option.vehicle.description}
-                <span> - </span>
-                {formatAmount(
-                  booking.pickup_info.selected_option.amount,
-                  booking.pickup_info.selected_option.currency.code
-                )}
+            <p className="text-gray-900 text-lg font-semibold">
+              {booking.status.description}
+            </p>
+          </section>
+          <section className="pt-4">
+            <div className="flex items-center justify-between flex-wrap mb-4">
+              <p className="text-lg font-semibold text-gray-900">{locales?.Lcz_ACCOMMODATION}</p>
+              <p className="booking-dates">
+                {printingService.formatBookingDates(booking?.from_date)}
               </p>
-              <InfoDisplay
-                label={`${locales?.Lcz_NbrOfVehicles}:`}
-                value={booking?.pickup_info.nbr_of_units}
-              />
-              <InfoDisplay
-                label={`${locales?.Lcz_DueUponBooking}:`}
-                value={formatAmount(
-                  booking?.pickup_info.total,
-                  booking.pickup_info.currency.code
-                )}
-              />
+              <p className="booking-dates">
+                {printingService.formatBookingDates(booking?.to_date)}
+              </p>
+              <p className="number-of-nights">
+                {totalNights} {totalNights === 1 ? locales?.Lcz_night : locales?.Lcz_nights}
+              </p>
+              <p className="vat-exclusion">
+                <i>{property?.tax_statement}</i>
+              </p>
             </div>
-          </div>
-        </section>
-      )}
-      {booking.financial?.payments && (
-        <section className="space-y-4 py-4">
-          <h1 className="text-xl font-medium uppercase">{locales?.Lcz_Payments}</h1>
-          {/* <div className="space-y-2.5 md:hidden">
-            {booking.financial?.payments?.map((p) => (
-              <div key={p.id} className="bg-gray-100 rounded-md p-4">
-                <p className="flex items-center gap-1 text-gray-800">
-                  <span className="font-medium ">Date:</span>
-                  <span>{format(new Date(p.date), "dd-MMM-yyyy")}</span>
-                </p>
-                <p className="flex items-center gap-1 text-gray-800">
-                  <span>Amount:</span>
-                  <span>{formatAmount(p.amount, p.currency.code)}</span>
-                </p>
-                {p.designation && (
-                  <p className="flex items-center gap-1 text-gray-800">
-                    <span>Designation:</span>
-                    <span>{p.designation || "_"}</span>
-                  </p>
-                )}
-                {p.reference && (
-                  <p className="flex items-center gap-1 text-gray-800">
-                    <span>Ref:</span>
-                    <span>{p.reference}</span>
-                  </p>
-                )}
-              </div>
-            ))}
-          </div> */}
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y-2 divide-gray-200 bg-white text-sm">
-              <thead className="ltr:text-left rtl:text-right">
-                <tr>
-                  <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
-                    {locales?.Lcz_Date}
-                  </th>
-                  <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
-                    {locales?.Lcz_Amount}
-                  </th>
-                  <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
-                    {locales?.Lcz_Designation}
-                  </th>
-                  <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
-                    {locales?.Lcz_Ref}
-                  </th>
-                </tr>
-              </thead>
+            <div>
+              {booking?.rooms?.map((room, idx) => (
+                <section key={room.id} >
+                  <div className="flex items-center gap-2.5 font-bold text-base mb-1.5">
+                    <p>{room.roomtype.name}</p>
+                    <p>{room.rateplan.short_name || room.rateplan.name}</p>
+                  </div>
+                  <div className="flex gap-2.5 flex-col md:flex-row md:justify-between mb-2.5 md:gap-10 md:flex-wrap">
 
-              <tbody className="divide-y divide-gray-200">
-                {booking.financial?.payments?.map((p) => (
-                  <tr key={p.id}>
-                    <td className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
-                      {format(new Date(p.date), "dd-MMM-yyyy")}
-                    </td>
-                    <td className="whitespace-nowrap px-4 py-2 text-gray-700">
-                      {formatAmount(p.amount, p.currency.code)}
-                    </td>
-                    <td className="whitespace-nowrap px-4 py-2 text-gray-700">
-                      {p.designation || "_"}
-                    </td>
-                    {p.reference && (
-                      <td className="whitespace-nowrap px-4 py-2 text-gray-700">
-                        {p.reference}
-                      </td>
-                    )}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                    <div className="flex-1">
+                      <InfoDisplay
+                        label={`${locales?.Lcz_GuestName}:`}
+                        value={printingService.formatGuestName(room?.guest)}
+                      />
+                      {booking.is_direct && <>
+                        <p
+                          className=""
+                          dangerouslySetInnerHTML={{
+                            __html: room.rateplan.cancelation.replace("<u>", "").replace("</u>", ""),
+                          }}
+                        ></p>
+                        <p
+                          className=""
+                          dangerouslySetInnerHTML={{
+                            __html: room.rateplan.guarantee.replace("<u>", "").replace("</u>", ""),
+                          }}
+                        ></p>
+                      </>}
+                    </div>
+                    <div className="flex-1  ">
+                      <div className={"flex items-center flex-wrap justify-end text-end"}>
+                        <InfoDisplay
+                          label={`${locales?.Lcz_Total}:`}
+                          value={formatAmount(room.total, currency)}
+                        />
+                        {<>
+                          <span>-</span>
+                          <TaxAmount room={room} />
+                        </>}
+                      </div>
+
+                      <div className="flex flex-col items-end">
+                        <div>
+                          <InfoDisplay
+                            label={`${locales?.Lcz_GrandTotal}:`}
+                            value={formatAmount(room.gross_total, currency)}
+                          />
+                        </div>
+                        {booking.is_direct && <InfoDisplay
+                          label={`${locales?.Lcz_DueUponBooking}:`}
+                          value={formatAmount(room.gross_guarantee, currency)}
+                        />}
+                      </div>
+                    </div>
+                  </div>
+
+
+                  {/* Rendering room dates */}
+                  <div
+                    className={`flex flex-wrap ${idx < booking?.rooms.length - 1 ? "pb-4 " : ""
+                      }`}
+                  >
+                    {room.days?.map((d) => (
+                      <div className={"room_amount_container"} key={d.date}>
+                        <p className="room_amount date">
+                          {printingService.formatDate(d.date, "YYYY-MM-DD")}
+                        </p>
+                        <div className="room_amount amount">
+                          <p> {formatAmount(d.amount, currency)}</p>
+                          {/* {<p className="text-center"> -15%</p>} */}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </section>
+              ))}
+            </div>
+          </section>
         </section>
-      )}
-    </main>
+        {booking.pickup_info && (
+          <section className="py-4 border-gray-300 border-y">
+            <p className="text-lg font-semibold text-gray-900 mb-2.5">
+              {locales?.Lcz_PickupYes.replace("%1", booking.pickup_info.selected_option.location.description)}
+            </p>
+            <div>
+              <div className="flex items-center gap-1.5 md:gap-4 flex-wrap ">
+                <InfoDisplay
+                  label={`${locales?.Lcz_ArrivalDate}:`}
+                  value={format(
+                    new Date(booking?.pickup_info.date),
+                    "eeee, dd MMM yyyy"
+                  )}
+                />
+                <InfoDisplay
+                  label={`${locales?.Lcz_ArrivalTime}:`}
+                  value={formatTime(
+                    booking.pickup_info.hour.toString(),
+                    booking.pickup_info.minute.toString()
+                  )}
+                />
+                <InfoDisplay
+                  label={`${locales?.Lcz_FlightDetails}:`}
+                  value={booking?.pickup_info.details}
+                />
+              </div>
+              <div className="flex items-center mt-1.5 md:mt-0 gap-1.5 md:gap-4 flex-wrap">
+                <p className="car_name">
+                  {booking.pickup_info.selected_option.vehicle.description}
+                  <span> - </span>
+                  {formatAmount(
+                    booking.pickup_info.selected_option.amount,
+                    booking.pickup_info.selected_option.currency.code
+                  )}
+                </p>
+                <InfoDisplay
+                  label={`${locales?.Lcz_NbrOfVehicles}:`}
+                  value={booking?.pickup_info.nbr_of_units}
+                />
+                <InfoDisplay
+                  label={`${locales?.Lcz_DueUponBooking}:`}
+                  value={formatAmount(
+                    booking?.pickup_info.total,
+                    booking.pickup_info.currency.code
+                  )}
+                />
+              </div>
+            </div>
+          </section>
+        )}
+        {booking.financial?.payments && (
+          <section className="space-y-2.5 py-4">
+            <h1 className="text-xl font-medium uppercase">{locales?.Lcz_Payments}</h1>
+            <div className="overflow-x-auto">
+              <table className="min-w-full divide-y-2 divide-gray-200 bg-white text-sm">
+                <thead className="ltr:text-left rtl:text-right">
+                  <tr>
+                    <th className=" w-fit text-center px-2 py-2 font-medium text-gray-900">
+                      {locales?.Lcz_Date}
+                    </th>
+                    <th className="whitespace-nowrap px-4 py-2 text-right font-medium text-gray-900">
+                      {locales?.Lcz_Amount}
+                    </th>
+                    <th className="whitespace-nowrap px-2 py-2 font-medium text-gray-900">
+                      {locales?.Lcz_Designation}
+                    </th>
+                    <th className="whitespace-nowrap px-2 py-2 font-medium text-gray-900">
+                      {locales?.Lcz_Ref}
+                    </th>
+                  </tr>
+                </thead>
+
+                <tbody className="divide-y divide-gray-200">
+                  {booking.financial?.payments?.map((p) => (
+                    <tr key={p.id}>
+                      <td className=" text-center w-fit px-2 py-1 font-medium text-gray-900">
+                        {format(new Date(p.date), "dd-MMM-yyyy")}
+                      </td>
+                      <td className="whitespace-nowrap px-4 py-1 text-right text-gray-700">
+                        {formatAmount(p.amount, p.currency.code)}
+                      </td>
+                      <td className="whitespace-nowrap px-2 py-1 text-gray-700">
+                        {p.designation || "_"}
+                      </td>
+                      {p.reference && (
+                        <td className=" px-2 py-1 text-gray-700">
+                          {p.reference}
+                        </td>
+                      )}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </section>
+        )}
+      </main>
+    </>
   );
 }

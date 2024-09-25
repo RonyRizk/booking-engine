@@ -76,7 +76,8 @@ body {
   color: rgb(51, 51, 51);
 }
 .pricing-summary {
-  width: 100%;
+  /* width: 100%; */
+  /* min-width: fit-content; */
   text-align: end;
   padding-left: 0.62rem;
   padding-bottom: 0.94rem;
@@ -87,7 +88,7 @@ body {
   background: #f3f4f6;
 }
 .room_amount.amount {
-  margin-bottom: 0.62rem;
+  margin-bottom: 0.5rem;
 }
 .pricing-breakdown {
   display: flex;
@@ -171,7 +172,6 @@ body {
   flex-direction: column;
 }
 .room_amount {
-  padding: 0.12rem;
   min-width: 4.38rem;
 }
 .room_amount_empty {
