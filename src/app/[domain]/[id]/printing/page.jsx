@@ -8,11 +8,7 @@ import {
   formatAmount,
   formatTime,
 } from "@/lib/utils";
-import Link from "next/link";
 import { redirect } from "next/navigation";
-
-
-
 
 
 
@@ -36,11 +32,6 @@ export default async function Printing({ searchParams, params }) {
 
   if (isError) {
     return redirect("https://x.igloorooms.com/manage/acbookinglist.aspx")
-    // return <div className="h-screen flex flex-col items-center justify-center">
-    //   <h3 className="text-lg font-medium mb-4">Your session has expired. Please return to the booking details and generate a new printing page.</h3>
-    //   <Link href={"https://x.igloorooms.com/manage/acbookinglist.aspx"} className="text-blue-500 underline hover:text-blue-600" replace>Go back</Link>
-    // </div>
-
   }
   const { entries: locales } = defaultLocales
   if (!booking) {
@@ -118,7 +109,7 @@ export default async function Printing({ searchParams, params }) {
       const filtered_data = room.ota_taxes.filter((tx) => tx.amount > 0);
       return filtered_data.map((d, index) => {
         return (
-          <React.Fragment key={`room_${d.name}_${index}`}>
+          <div key={`room_${d.name}_${index}`} className="flex items-center gap-1 text-xs">
             <p className="label-title">
               {d.is_exlusive ? locales?.Lcz_Excluding : locales?.Lcz_Including} {d.name}
             </p>
@@ -126,8 +117,7 @@ export default async function Printing({ searchParams, params }) {
               {d.currency.symbol}
               {d.amount}
             </p>
-            {index < filtered_data.length - 1 && <span>-</span>}
-          </React.Fragment>
+          </div>
         );
       });
     }
@@ -135,17 +125,13 @@ export default async function Printing({ searchParams, params }) {
     return filtered_data?.map((d, index) => {
       const amount = (room.total * d.pct) / 100;
       return (
-        <div key={`direct_room_${d.name}_${index}`} className="flex items-center gap-1">
+        <div key={`direct_room_${d.name}_${index}`} className="flex items-center gap-1 text-xs">
           <p className="label-title">
             {d.is_exlusive ? locales?.Lcz_Excluding : locales?.Lcz_Including} {d.name}
           </p>
           <p>
             {d.pct}%: {formatAmount(amount, currency)}
           </p>
-          {/* {room.gross_cost > 0 && room.gross_cost !== null && (
-            <span>{formatAmount((room.cost * d.pct) / 100, currency)}</span>
-          )} */}
-          {index < filtered_data.length - 1 && <span>-</span>}
         </div>
       );
     });
@@ -251,30 +237,22 @@ export default async function Printing({ searchParams, params }) {
                         ></p>
                       </>}
                     </div>
-                    <div className="flex-1  ">
-                      <div className={"flex items-center flex-wrap justify-end text-end"}>
+                    <div className=" text-end flex flex-col md:items-end">
+                      <InfoDisplay
+                        label={`${locales?.Lcz_Total}:`}
+                        value={formatAmount(room.total, currency)}
+                      />
+                      <TaxAmount room={room} />
+                      <div>
                         <InfoDisplay
-                          label={`${locales?.Lcz_Total}:`}
-                          value={formatAmount(room.total, currency)}
+                          label={`${locales?.Lcz_GrandTotal}:`}
+                          value={formatAmount(room.gross_total, currency)}
                         />
-                        {<>
-                          <span>-</span>
-                          <TaxAmount room={room} />
-                        </>}
                       </div>
-
-                      <div className="flex flex-col items-end">
-                        <div>
-                          <InfoDisplay
-                            label={`${locales?.Lcz_GrandTotal}:`}
-                            value={formatAmount(room.gross_total, currency)}
-                          />
-                        </div>
-                        {booking.is_direct && <InfoDisplay
-                          label={`${locales?.Lcz_DueUponBooking}:`}
-                          value={formatAmount(room.gross_guarantee, currency)}
-                        />}
-                      </div>
+                      {booking.is_direct && <InfoDisplay
+                        label={`${locales?.Lcz_DueUponBooking}:`}
+                        value={formatAmount(room.gross_guarantee, currency)}
+                      />}
                     </div>
                   </div>
 
@@ -355,41 +333,38 @@ export default async function Printing({ searchParams, params }) {
           <section className="space-y-2.5 py-4">
             <h1 className="text-xl font-medium uppercase">{locales?.Lcz_Payments}</h1>
             <div className="overflow-x-auto">
-              <table className="min-w-full divide-y-2 divide-gray-200 bg-white text-sm">
+              <table className="table-auto divide-y-2 divide-gray-200 bg-white text-sm">
                 <thead className="ltr:text-left rtl:text-right">
                   <tr>
-                    <th className=" w-fit text-center px-2 py-2 font-medium text-gray-900">
+                    <th className="px-2 py-2 font-medium text-gray-900 text-center">
                       {locales?.Lcz_Date}
                     </th>
-                    <th className="whitespace-nowrap px-4 py-2 text-right font-medium text-gray-900">
+                    <th className="px-2 py-2 font-medium text-gray-900 text-end">
                       {locales?.Lcz_Amount}
                     </th>
-                    <th className="whitespace-nowrap px-2 py-2 font-medium text-gray-900">
+                    <th className="px-2 py-2 font-medium text-gray-900">
                       {locales?.Lcz_Designation}
                     </th>
-                    <th className="whitespace-nowrap px-2 py-2 font-medium text-gray-900">
+                    <th className="px-2 py-2 font-medium text-gray-900">
                       {locales?.Lcz_Ref}
                     </th>
                   </tr>
                 </thead>
-
                 <tbody className="divide-y divide-gray-200">
                   {booking.financial?.payments?.map((p) => (
                     <tr key={p.id}>
-                      <td className=" text-center w-fit px-2 py-1 font-medium text-gray-900">
-                        {format(new Date(p.date), "dd-MMM-yyyy")}
+                      <td className="px-2 whitespace-nowrap  py-1 font-medium text-gray-900 text-center">
+                        {format(new Date(p.date), 'dd-MMM-yyyy')}
                       </td>
-                      <td className="whitespace-nowrap px-4 py-1 text-right text-gray-700">
+                      <td className="px-2 py-1 whitespace-nowrap text-gray-700 text-end">
                         {formatAmount(p.amount, p.currency.code)}
                       </td>
-                      <td className="whitespace-nowrap px-2 py-1 text-gray-700">
-                        {p.designation || "_"}
+                      <td className="px-2 py-1 whitespace-nowrap text-gray-700">
+                        {p.designation || '_'}
                       </td>
-                      {p.reference && (
-                        <td className=" px-2 py-1 text-gray-700">
-                          {p.reference}
-                        </td>
-                      )}
+                      <td className="px-2 py-1 whitespace-nowrap text-gray-700">
+                        {p.reference || '_'}
+                      </td>
                     </tr>
                   ))}
                 </tbody>
