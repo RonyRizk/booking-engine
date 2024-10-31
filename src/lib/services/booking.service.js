@@ -11,7 +11,7 @@ export class BookingService extends Token {
         if (!token) {
             throw new Error('Missing Token');
         }
-        const { data } = await axios.post(`${this.baseUrl}/Get_Exposed_Booking?Ticket=${token}`, {
+        const { data } = await axios.post(`${this.baseUrl}/Get_Exposed_Booking`, {
             booking_nbr,
             language,
             extras: withExtras ? [
@@ -24,6 +24,10 @@ export class BookingService extends Token {
                     value: true,
                 },
             ] : null,
+        }, {
+            headers: {
+                Authorization: token
+            }
         });
         if (data.ExceptionMsg !== '') {
             throw new Error(data.ExceptionMsg);

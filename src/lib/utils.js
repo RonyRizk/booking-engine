@@ -32,11 +32,35 @@ export function formatTime(hour, minute) {
     return format(parsedTime, 'hh:mm a');
 }
 export function formatAmount(amount, currency = 'USD') {
-    return new Intl.NumberFormat('en-US', { style: 'currency', currency: currency }).format(amount);
+
+
+    // return new Intl.NumberFormat('en-US', { style: 'currency', currency: currency }).format(amount);
+    return `${currency}${amount?.toFixed(2)}`;
 }
 export function calculateDaysBetweenDates(from_date, to_date) {
     const startDate = parse(from_date, 'yyyy-MM-dd', new Date());
     const endDate = parse(to_date, 'yyyy-MM-dd', new Date());
     const daysDiff = differenceInDays(endDate, startDate);
     return daysDiff || 1;
+}
+
+export function extractAndRemoveScriptTags(htmlContent) {
+    // This regex matches <script> tags and captures their contents
+    const scriptTagRegex = /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi;
+
+    // This array will store the contents of all script tags
+    let scriptContents = [];
+
+    // Extract script contents and store them in the array
+    htmlContent.replace(scriptTagRegex, (match) => {
+        const content = match.replace(/<\/?script\b[^>]*>/gi, ''); // Remove the opening and closing script tags
+        scriptContents.push(content.trim());
+        return '';
+    });
+
+    // Remove all script tags from the original content
+    const cleanContent = htmlContent.replace(scriptTagRegex, '');
+
+    // Return the cleaned content and the array of script contents
+    return scriptContents?.join(' ') ?? "";
 }

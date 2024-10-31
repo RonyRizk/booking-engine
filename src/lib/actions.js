@@ -22,12 +22,17 @@ export async function getExposedProperty({ aName, perma_link }) {
     try {
         await ensureTokenIsValid();
         const { data } = await axios.post(
-            `https://gateway.igloorooms.com/IRBE/Get_Exposed_Property?Ticket=${anchor.token}`,
+            `https://gateway.igloorooms.com/IRBE/Get_Exposed_Property`,
             {
                 id: 1,
                 language: "EN",
                 perma_link,
                 aname: aName
+            },
+            {
+                headers: {
+                    Authorization: anchor.token
+                }
             }
         );
 

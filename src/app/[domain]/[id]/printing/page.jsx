@@ -139,7 +139,7 @@ export default async function Printing({ searchParams, params }) {
   //48157715406
   const totalPersons =
     booking?.occupancy.adult_nbr + booking?.occupancy.children_nbr;
-  const currency = booking?.currency.code;
+  const currency = booking?.currency.symbol;
   const totalNights = calculateDaysBetweenDates(
     booking.from_date,
     booking.to_date
@@ -267,7 +267,7 @@ export default async function Printing({ searchParams, params }) {
                         <p className="room_amount date">
                           {printingService.formatDate(d.date, "YYYY-MM-DD")}
                         </p>
-                        <div className="room_amount amount">
+                        <div className="room_amount amount pr-1.5">
                           <p> {formatAmount(d.amount, currency)}</p>
                           {/* {<p className="text-center"> -15%</p>} */}
                         </div>
@@ -311,7 +311,7 @@ export default async function Printing({ searchParams, params }) {
                   <span> - </span>
                   {formatAmount(
                     booking.pickup_info.selected_option.amount,
-                    booking.pickup_info.selected_option.currency.code
+                    booking.pickup_info.selected_option.currency.symbol
                   )}
                 </p>
                 <InfoDisplay
@@ -322,7 +322,7 @@ export default async function Printing({ searchParams, params }) {
                   label={`${locales?.Lcz_DueUponBooking}:`}
                   value={formatAmount(
                     booking?.pickup_info.total,
-                    booking.pickup_info.currency.code
+                    booking.pickup_info.currency.symbol
                   )}
                 />
               </div>
@@ -357,7 +357,7 @@ export default async function Printing({ searchParams, params }) {
                         {format(new Date(p.date), 'dd-MMM-yyyy')}
                       </td>
                       <td className="px-2 py-1 whitespace-nowrap text-gray-700 text-end">
-                        {formatAmount(p.amount, p.currency.code)}
+                        {formatAmount(p.amount, p.currency.symbol)}
                       </td>
                       <td className="px-2 py-1 whitespace-nowrap text-gray-700">
                         {p.designation || '_'}

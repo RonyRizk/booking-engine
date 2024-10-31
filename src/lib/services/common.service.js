@@ -14,8 +14,12 @@ export class CommonServices extends Token {
         if (!token) {
             throw new Error('Missing Token');
         }
-        const { data } = await axios.post(`${this.baseUrl}/Get_Exposed_Countries?Ticket=${token}`, {
+        const { data } = await axios.post(`${this.baseUrl}/Get_Exposed_Countries`, {
             language,
+        }, {
+            headers: {
+                Authorization: token
+            }
         });
         if (data.ExceptionMsg !== '') {
             throw new Error(data.ExceptionMsg);
@@ -27,7 +31,11 @@ export class CommonServices extends Token {
         if (!token) {
             throw new Error("Missing token")
         }
-        const { data } = await axios.post(`${this.baseUrl}/Get_Exposed_Language?Ticket=${token}`, { code, sections });
+        const { data } = await axios.post(`${this.baseUrl}/Get_Exposed_Language`, { code, sections }, {
+            headers: {
+                Authorization: token
+            }
+        });
         if (data.ExceptionMsg !== '') {
             throw new Error(data.ExceptionMsg);
         }
@@ -48,7 +56,11 @@ export class CommonServices extends Token {
         if (!token) {
             throw new Error("Missing token")
         }
-        const { data } = await axios.post(`${this.baseUrl}/Get_Exposed_Property?Ticket=${token}`, { id: 1, aname: aName, language });
+        const { data } = await axios.post(`${this.baseUrl}/Get_Exposed_Property`, { id: 1, aname: aName, language }, {
+            headers: {
+                Authorization: token
+            }
+        });
 
         if (data.ExceptionMsg !== '') {
             throw new Error(data.ExceptionMsg);
