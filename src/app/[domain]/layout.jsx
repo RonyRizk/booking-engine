@@ -41,66 +41,14 @@ export async function generateMetadata({ params }, parent) {
   };
 }
 export default async function layout({ children, params }) {
-  const headerList = headers();
-  const pathname = headerList.get("x-current-path");
-  const { bodyTags, footerTags, headTags } = await getPropertyTags(params, pathname);
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
         <script type="module" src={`https://wb-cmp.igloorooms.com/be/dist/iglooroom/iglooroom.esm.js?v=${v4()}`} defer></script>
-        {headTags?.map((tag) =>
-          <Script id={tag.id} key={tag.id} strategy="afterInteractive">
-            {extractAndRemoveScriptTags(tag.body)}
-          </Script>
-        )}
       </head>
       <body>
-        {bodyTags?.map((tag) =>
-          <Script id={tag.id} key={tag.id} strategy="afterInteractive">
-            {extractAndRemoveScriptTags(tag.body)}
-          </Script>
-        )}
         {children}
-        {footerTags.length > 0 && <footer>
-          {footerTags?.map((tag) =>
-            <Script id={tag.id} key={tag.id} strategy="afterInteractive">
-              {extractAndRemoveScriptTags(tag.body)}
-            </Script>
-          )}
-        </footer>}
       </body>
     </html>
   );
-}
-
-async function getPropertyTags(params, pathname) {
-  if (pathname !== "/") {
-    return { headTags: [], bodyTags: [], footerTags: [] };
-  }
-  const baseDomain = decodeURIComponent(params.domain).split('.')[0];
-  const result = await getExposedProperty({ perma_link: baseDomain, aName: "" }) || { tags: [] };
-
-  const headTags = [];
-  const bodyTags = [];
-  const footerTags = [];
-
-  result.tags.forEach(tag => {
-    if (tag.value) {
-      const newTag = { body: tag.value, id: v4() };
-      switch (tag.key) {
-        case 'header':
-          headTags.push(newTag);
-          break;
-        case 'body':
-          bodyTags.push(newTag);
-          break;
-        case 'footer':
-          footerTags.push(newTag);
-          break;
-
-      }
-    }
-  });
-
-  return { headTags, bodyTags, footerTags };
 }

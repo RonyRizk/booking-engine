@@ -15,7 +15,7 @@ import { redirect } from "next/navigation";
 const InfoDisplay = ({ label, value, className }) => {
   return (
     <div className={`flex items-start gap-1 ${className}`}>
-      <p className="font-bold text-gray-900">{label}</p>
+      {label && <p className="font-bold text-gray-900">{label}</p>}
       <p className="">{value}</p>
     </div>
   );
@@ -222,6 +222,12 @@ export default async function Printing({ searchParams, params }) {
                         label={`${locales?.Lcz_GuestName}:`}
                         value={printingService.formatGuestName(room?.guest)}
                       />
+                      <InfoDisplay
+                        label={``}
+
+                        value={printingService.formatGuestAvailability(room?.rateplan.selected_variation, room.occupancy, locales)}
+                      />
+
                       {booking.is_direct && <>
                         <p
                           className=""
@@ -251,7 +257,7 @@ export default async function Printing({ searchParams, params }) {
                       </div>
                       {booking.is_direct && <InfoDisplay
                         label={`${locales?.Lcz_DueUponBooking}:`}
-                        value={formatAmount(room.gross_guarantee, currency)}
+                        value={formatAmount(Number(room.gross_guarantee), currency)}
                       />}
                     </div>
                   </div>

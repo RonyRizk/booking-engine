@@ -65,4 +65,21 @@ export class PrintingService extends Token {
         }
         return `${dayMonth} ${dayOfWeekAbbr}`;
     }
+
+    formatGuestAvailability({ adult_nbr, child_nbr }, { infant_nbr }, locales) {
+        // Adjust child number based on infants
+        const adjustedChildNbr = child_nbr ? Math.max(child_nbr - infant_nbr, 0) : 0;
+
+        // Define labels based on singular/plural rules
+        const adultLabel = adult_nbr > 1 ? locales?.Lcz_Adults?.toLowerCase() : locales?.Lcz_Adult?.toLowerCase();
+        const childLabel = adjustedChildNbr > 1 ? locales?.Lcz_Children?.toLowerCase() : locales.Lcz_Child?.toLowerCase();
+        const infantLabel = infant_nbr > 1 ? locales?.Lcz_Infants?.toLowerCase() : locales?.Lcz_Infant?.toLowerCase();
+
+        // Construct parts with the updated child number
+        const parts = [`${adult_nbr} ${adultLabel}`, adjustedChildNbr ? `${adjustedChildNbr} ${childLabel}` : '', infant_nbr ? `${infant_nbr} ${infantLabel}` : ''];
+
+        // Join non-empty parts with spaces
+        return parts.filter(Boolean).join('  ');
+    }
+
 }
