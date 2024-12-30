@@ -12,11 +12,11 @@ import { redirect } from "next/navigation";
 
 
 
-const InfoDisplay = ({ label, value, className }) => {
+const InfoDisplay = ({ label, value, className, asHtml, inline }) => {
   return (
-    <div className={`flex items-start gap-1 ${className}`}>
-      {label && <p className="font-bold text-gray-900">{label}</p>}
-      <p className="">{value}</p>
+    <div className={inline ? `inline items-center max-w-full gap-1 ${className}` : `flex items-start gap-1 ${className}`}>
+      {label && <p className={`font-bold text-gray-900 whitespace-nowrap   ${inline ? "inline mr-1" : ""}`}>{label}</p>}
+      {asHtml ? <p dangerouslySetInnerHTML={{ __html: value }} className={inline ? "inline" : ""}></p> : <p className={inline ? "inline" : ""}>{value}</p>}
     </div>
   );
 };
@@ -173,20 +173,27 @@ export default async function Printing({ searchParams, params }) {
               {guestCountryName && (
                 <InfoDisplay label={`${locales?.Lcz_Country}:`} value={guestCountryName} />
               )}
+              {mode !== "invoice" && booking?.guest?.notes && <div>
+                <InfoDisplay inline={true} label={`Guest Notes:`} value={booking?.guest?.notes} />
+              </div>}
               <InfoDisplay
                 label={`${locales?.Lcz_ArrivalTime}:`}
                 value={booking?.arrival?.description}
               />
-              {booking.remark && booking.is_direct && <InfoDisplay label={`${locales?.Lcz_Notes ?? "Notes"}:`} value={booking.remark} />}
-              {booking.ota_notes && !booking.is_direct && <div className="flex items-start gap-1 flex-grow">
-                <p className="font-medium text-gray-900">{locales?.Lcz_Notes ?? "Notes"}:</p>
-                <div>
-                  {booking.ota_notes?.map((notes) => (<p key={`ota_note_${notes.statement}`} className="text-gray-600">
-                    {notes.statement}
-                  </p>))}
-                </div>
-              </div>}
-              {privateNote && <InfoDisplay label={`${locales?.Lcz_PrivateNote}:`} value={privateNote.value} />}
+              {mode !== "invoice" && <>
+                {booking.remark && booking.is_direct && <div>
+                  <InfoDisplay inline={true} label={`${locales?.Lcz_GuestRemark ?? "Guest remark"}:`} value={booking.remark} />
+                </div>}
+                {booking.ota_notes && !booking.is_direct && <div className="flex items-start gap-1 flex-grow">
+                  <p className="font-medium text-gray-900">{locales?.Lcz_GuestRemark ?? "Guest remark"}:</p>
+                  <div>
+                    {booking.ota_notes?.map((notes) => (<p key={`ota_note_${notes.statement}`} className="text-gray-600">
+                      {notes.statement}
+                    </p>))}
+                  </div>
+                </div>}
+                {privateNote && <div><InfoDisplay inline={true} label={`${locales?.Lcz_BookingPrivateNote}:`} value={privateNote.value} /></div>}
+              </>}
             </div>
             <p className="text-gray-900 text-lg font-semibold">
               {booking.status.description}
@@ -224,7 +231,7 @@ export default async function Printing({ searchParams, params }) {
                       />
                       <InfoDisplay
                         label={``}
-
+                        asHtml
                         value={printingService.formatGuestAvailability(room?.rateplan.selected_variation, room.occupancy, locales)}
                       />
 
@@ -286,7 +293,7 @@ export default async function Printing({ searchParams, params }) {
           </section>
         </section>
         {booking.pickup_info && (
-          <section className="py-4 border-gray-300 border-y">
+          <section className="py-4 border-gray-300 border-y border-b-0">
             <p className="text-lg font-semibold text-gray-900 mb-2.5">
               {locales?.Lcz_PickupYes.replace("%1", booking.pickup_info.selected_option.location.description)}
             </p>
@@ -335,49 +342,67 @@ export default async function Printing({ searchParams, params }) {
             </div>
           </section>
         )}
-        {booking.financial?.payments && (
-          <section className="space-y-2.5 py-4">
-            <h1 className="text-xl font-medium uppercase">{locales?.Lcz_Payments}</h1>
-            <div className="overflow-x-auto">
-              <table className="table-auto divide-y-2 divide-gray-200 bg-white text-sm">
-                <thead className="ltr:text-left rtl:text-right">
-                  <tr>
-                    <th className="px-2 py-2 font-medium text-gray-900 text-center">
-                      {locales?.Lcz_Date}
-                    </th>
-                    <th className="px-2 py-2 font-medium text-gray-900 text-end">
-                      {locales?.Lcz_Amount}
-                    </th>
-                    <th className="px-2 py-2 font-medium text-gray-900">
-                      {locales?.Lcz_Designation}
-                    </th>
-                    <th className="px-2 py-2 font-medium text-gray-900">
-                      {locales?.Lcz_Ref}
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-200">
-                  {booking.financial?.payments?.map((p) => (
-                    <tr key={p.id}>
-                      <td className="px-2 whitespace-nowrap  py-1 font-medium text-gray-900 text-center">
-                        {format(new Date(p.date), 'dd-MMM-yyyy')}
-                      </td>
-                      <td className="px-2 py-1 whitespace-nowrap text-gray-700 text-end">
-                        {formatAmount(p.amount, p.currency.symbol)}
-                      </td>
-                      <td className="px-2 py-1 whitespace-nowrap text-gray-700">
-                        {p.designation || '_'}
-                      </td>
-                      <td className="px-2 py-1 whitespace-nowrap text-gray-700">
-                        {p.reference || '_'}
-                      </td>
+        {/*Booking Payments */}
+        <section className="py-4 space-y-2.5 border-gray-300 border-y border-b-0">
+          <div className="">
+            <InfoDisplay
+              label={`Balance:`}
+              value={formatAmount(booking?.financial?.due_amount, booking?.currency?.symbol)}
+            />
+            <InfoDisplay
+              label={`Collected:`}
+              value={formatAmount(
+                booking?.financial?.payments ? booking?.financial?.payments.reduce((prev, curr) => prev + curr.amount, 0) : 0,
+                booking?.currency?.symbol
+              )}
+            />
+
+          </div>
+
+          {booking.financial?.payments && (
+            <section className="space-y-2.5 py-4">
+              <h1 className="font-medium uppercase">{locales?.Lcz_Payments} History </h1>
+              <div className="overflow-x-auto">
+                <table className="table-auto divide-y-2 divide-gray-200 bg-white text-sm">
+                  <thead className="ltr:text-left rtl:text-right">
+                    <tr>
+                      <th className="px-2 py-2 font-medium text-gray-900 text-center">
+                        {locales?.Lcz_Date}
+                      </th>
+                      <th className="px-2 py-2 font-medium text-gray-900 text-end">
+                        {locales?.Lcz_Amount}
+                      </th>
+                      <th className="px-2 py-2 font-medium text-gray-900">
+                        {locales?.Lcz_Designation}
+                      </th>
+                      <th className="px-2 py-2 font-medium text-gray-900">
+                        {locales?.Lcz_Ref}
+                      </th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </section>
-        )}
+                  </thead>
+                  <tbody className="divide-y divide-gray-200">
+                    {booking.financial?.payments?.map((p) => (
+                      <tr key={p.id}>
+                        <td className="px-2 whitespace-nowrap  py-1 font-medium text-gray-900 text-center">
+                          {format(new Date(p.date), 'dd-MMM-yyyy')}
+                        </td>
+                        <td className="px-2 py-1 whitespace-nowrap text-gray-700 text-end">
+                          {formatAmount(p.amount, p.currency.symbol)}
+                        </td>
+                        <td className="px-2 py-1 whitespace-nowrap text-gray-700">
+                          {p.designation || '_'}
+                        </td>
+                        <td className="px-2 py-1 whitespace-nowrap text-gray-700">
+                          {p.reference || '_'}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </section>
+          )}
+        </section>
       </main>
     </>
   );

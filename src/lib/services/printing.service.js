@@ -22,7 +22,7 @@ export class PrintingService extends Token {
                 this.bookingService.getExposedBooking({ booking_nbr: bookingNumber, language }),
                 this.commonService.getExposedProperty(aName, language),
                 this.commonService.getCountries(language),
-                this.commonService.fetchLanguage(language, ["_PRINT_FRONT"])
+                this.commonService.fetchLanguage(language, ["_PRINT_FRONT", "_PMS_FRONT"])
             ])
             return { booking, property, countries, locales, isError: false }
         } catch (error) {
@@ -79,7 +79,7 @@ export class PrintingService extends Token {
         const parts = [`${adult_nbr} ${adultLabel}`, adjustedChildNbr ? `${adjustedChildNbr} ${childLabel}` : '', infant_nbr ? `${infant_nbr} ${infantLabel}` : ''];
 
         // Join non-empty parts with spaces
-        return parts.filter(Boolean).join('  ');
+        return parts.filter(Boolean).join('&nbsp&nbsp&nbsp&nbsp');
     }
 
 }

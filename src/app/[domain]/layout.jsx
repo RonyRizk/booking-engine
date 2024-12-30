@@ -1,9 +1,6 @@
 import "../globals.css";
-import Script from 'next/script';
 import { v4 } from "uuid";
 import { getExposedProperty } from "../../lib/actions"
-import { headers } from "next/headers";
-import { extractAndRemoveScriptTags } from "@/lib/utils";
 
 export async function generateMetadata({ params }, parent) {
   const domain = decodeURIComponent(params.domain).split('.');
@@ -36,7 +33,8 @@ export async function generateMetadata({ params }, parent) {
     },
     description: `${result?.name}, ${result?.country?.name} prices and availability`,
     openGraph: {
-      images: [logo, ...previousImages],
+      title,
+      images: [...(result?.images?.map(i => i.url) ?? []), logo, ...previousImages],
     },
   };
 }

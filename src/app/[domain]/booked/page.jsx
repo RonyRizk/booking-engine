@@ -28,6 +28,9 @@ export default async function page({ params, searchParams }) {
     logger.info("Invoice:property not active");
     redirect("/iglooroom?status=notactive")
   }
+  if (!searchParams) {
+    redirect(`https://${domain[0]}.bookingmystay.com`)
+  }
   return (
     <InvoicePage
       perma_link={domain[0]}
