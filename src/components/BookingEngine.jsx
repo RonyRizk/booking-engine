@@ -6,6 +6,7 @@ export default function IrBookingEngine({
   propertyId,
   perma_link,
   fromDate,
+  ages,
   toDate,
   adultCount,
   childrenCount,
@@ -35,6 +36,7 @@ export default function IrBookingEngine({
   return (
     <>
       <ir-be
+        ages={ages}
         origin="be"
         ref={bookingEngineRef}
         language={language}
