@@ -6,6 +6,7 @@ import { BookingService } from "./booking.service";
 
 
 export class PrintingService extends Token {
+    _bedPreferences = []
     constructor(token) {
         super();
         this.token = token
@@ -18,13 +19,15 @@ export class PrintingService extends Token {
 
     async getPrintingData({ bookingNumber, aName, language = "en", }) {
         try {
-            const [booking, property, countries, locales] = await Promise.all([
+            const [booking, property, countries, locales, beddingPreference] = await Promise.all([
                 this.bookingService.getExposedBooking({ booking_nbr: bookingNumber, language }),
                 this.commonService.getExposedProperty(aName, language),
                 this.commonService.getCountries(language),
-                this.commonService.fetchLanguage(language, ["_PRINT_FRONT", "_PMS_FRONT"])
+                this.commonService.fetchLanguage(language, ["_PRINT_FRONT", "_PMS_FRONT"]),
+                this.bookingService.getBedPreference()
             ])
-            return { booking, property, countries, locales, isError: false }
+            this._bedPreferences = beddingPreference
+            return { booking, property, countries, locales, beddingPreference, isError: false }
         } catch (error) {
             return { booking: null, property: null, countries: null, locales: null, isError: true }
         }
@@ -38,14 +41,14 @@ export class PrintingService extends Token {
         }
         return `${first_name} ${last_name}`;
     }
-    formatPhoneNumber({ mobile, country_phone_prefix }, is_direct) {
-        if (!is_direct) {
-            return mobile;
-        }
+    formatPhoneNumber({ mobile_without_prefix, country_phone_prefix }, is_direct) {
+        // if (!is_direct) {
+        //     return mobile;
+        // }
         if (!country_phone_prefix) {
-            return mobile;
+            return mobile_without_prefix;
         }
-        return `+${country_phone_prefix.replace('+', '')}-${mobile}`;
+        return `+${country_phone_prefix.replace('+', '')}-${mobile_without_prefix}`;
     }
     formatBookingDates(date) {
         const parsedDate = parse(date, 'yyyy-MM-dd', new Date());
@@ -64,6 +67,13 @@ export class PrintingService extends Token {
             dayOfWeekAbbr = dayOfWeekAbbr.charAt(0);
         }
         return `${dayMonth} ${dayOfWeekAbbr}`;
+    }
+    getBedLabel({ language, bed_preference }) {
+        const bed = this._bedPreferences.find(p => p.CODE_NAME === bed_preference.toString());
+        if (!bed) {
+            throw new Error(`bed with code ${bed_preference} not found`);
+        }
+        return bed[`CODE_VALUE_${language}`] ?? bed.CODE_VALUE_EN;
     }
 
     formatGuestAvailability({ adult_nbr, child_nbr }, { infant_nbr }, locales) {

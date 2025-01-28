@@ -9,17 +9,10 @@ import {
   formatTime,
 } from "@/lib/utils";
 import { redirect } from "next/navigation";
+import InfoDisplay from "@/components/InfoDisplay";
 
 
 
-const InfoDisplay = ({ label, value, className, asHtml, inline }) => {
-  return (
-    <div className={inline ? `inline items-center max-w-full gap-1 ${className}` : `flex items-start gap-1 ${className}`}>
-      {label && <p className={`font-bold text-gray-900 whitespace-nowrap   ${inline ? "inline mr-1" : ""}`}>{label}</p>}
-      {asHtml ? <p dangerouslySetInnerHTML={{ __html: value }} className={inline ? "inline" : ""}></p> : <p className={inline ? "inline" : ""}>{value}</p>}
-    </div>
-  );
-};
 export default async function Printing({ searchParams, params }) {
   const { mode = "printing", id, lang = "en", token } = searchParams;
   const printingService = new PrintingService(token);
@@ -136,7 +129,7 @@ export default async function Printing({ searchParams, params }) {
       );
     });
   };
-  //48157715406
+
   const totalPersons =
     booking?.occupancy.adult_nbr + booking?.occupancy.children_nbr;
   const currency = booking?.currency.symbol;
@@ -216,6 +209,7 @@ export default async function Printing({ searchParams, params }) {
                 <i>{property?.tax_statement}</i>
               </p>
             </div>
+            {/* Rooms */}
             <div>
               {booking?.rooms?.map((room, idx) => (
                 <section key={room.id} >
@@ -230,12 +224,17 @@ export default async function Printing({ searchParams, params }) {
                         label={`${locales?.Lcz_GuestName}:`}
                         value={printingService.formatGuestName(room?.guest)}
                       />
-                      <InfoDisplay
-                        label={``}
-                        asHtml
-                        value={printingService.formatGuestAvailability(room?.rateplan.selected_variation, room.occupancy, locales)}
-                      />
-
+                      <div className="flex items-center gap-4">
+                        <InfoDisplay
+                          label={``}
+                          asHtml
+                          value={printingService.formatGuestAvailability(room?.rateplan.selected_variation, room.occupancy, locales)}
+                        />
+                        {mode !== "invoice" && room.bed_preference && <InfoDisplay
+                          label={``}
+                          value={`(${printingService.getBedLabel({ language: lang, bed_preference: room.bed_preference })})`}
+                        />}
+                      </div>
                       {booking.is_direct && <>
                         <p
                           className=""
@@ -293,6 +292,7 @@ export default async function Printing({ searchParams, params }) {
             </div>
           </section>
         </section>
+        {/* Pickup */}
         {booking.pickup_info && (
           <section className="py-4 border-gray-300 border-y border-b-0">
             <p className="text-lg font-semibold text-gray-900 mb-2.5">
