@@ -1,6 +1,6 @@
 
 const InfoDisplay = ({ label, value, className, asHtml, inline }) => {
-    if (d === "" || d === null || d === undefined) {
+    if (value === "" || value === null || value === undefined) {
         return null;
     }
     return (
