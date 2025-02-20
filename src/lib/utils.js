@@ -1,4 +1,6 @@
+import clsx from "clsx";
 import { differenceInDays, format, parse } from "date-fns";
+import { twMerge } from "tailwind-merge";
 
 /**
  * Constructs a URL by appending query parameters to a given base URL.
@@ -31,10 +33,10 @@ export function formatTime(hour, minute) {
     const parsedTime = parse(timeString, 'HH:mm', new Date());
     return format(parsedTime, 'hh:mm a');
 }
-export function formatAmount(amount, currency = 'USD') {
-
-
-    // return new Intl.NumberFormat('en-US', { style: 'currency', currency: currency }).format(amount);
+export function formatAmount(amount, currency = 'USD', withIntl = false) {
+    if (withIntl) {
+        return new Intl.NumberFormat('en-US', { style: 'currency', currency: currency }).format(amount);
+    }
     return `${currency}${amount?.toFixed(2)}`;
 }
 export function calculateDaysBetweenDates(from_date, to_date) {
@@ -63,4 +65,8 @@ export function extractAndRemoveScriptTags(htmlContent) {
 
     // Return the cleaned content and the array of script contents
     return scriptContents?.join(' ') ?? "";
+}
+
+export function cn(...inputs) {
+    return twMerge(clsx(inputs))
 }

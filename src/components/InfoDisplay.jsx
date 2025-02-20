@@ -1,10 +1,15 @@
+import { cn } from "@/lib/utils";
 
 const InfoDisplay = ({ label, value, className, asHtml, inline }) => {
     if (value === "" || value === null || value === undefined) {
         return null;
     }
     return (
-        <div className={inline ? `inline items-center max-w-full gap-1 ${className}` : `flex items-start gap-1 ${className}`}>
+        <div className={cn("gap-1", {
+            "inline items-center max-w-full": inline,
+            "flex items-start": !inline,
+        }, className)
+        }>
             {label && <p className={`font-bold text-gray-900 whitespace-nowrap   ${inline ? "inline mr-1" : ""}`}>{label}</p>}
             {asHtml ? <p dangerouslySetInnerHTML={{ __html: value }} className={inline ? "inline" : ""}></p> : <p className={inline ? "inline" : ""}>{value}</p>}
         </div>
