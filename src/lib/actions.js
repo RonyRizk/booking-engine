@@ -35,7 +35,6 @@ export async function getExposedProperty({ aName, perma_link }) {
                 }
             }
         );
-        console.log("get exposed property result=>", data)
         return data.My_Result;
     } catch (error) {
         console.error('Error in getExposedProperty:', error);
@@ -71,12 +70,10 @@ async function ensureTokenIsValid() {
  */
 async function fetchToken() {
     try {
-        console.log("fetching token");
         const { data: tokenData } = await axios.post(
             `https://gateway.igloorooms.com/IRBE/Get_BE_Token`,
             {}
         );
-        console.log("token result=>", tokenData)
         return tokenData.My_Result;
     } catch (error) {
         console.error('Error fetching token:', error);

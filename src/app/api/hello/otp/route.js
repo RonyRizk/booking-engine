@@ -28,7 +28,12 @@ export async function POST(req) {
             // {...data}
             lang={language}
         />);
-        return Response.json({ My_Result: emailHTML.toString() });
+        return Response.json({ My_Result: emailHTML.toString() }, {
+            status: 200,
+            headers: {
+                'Content-Type': 'text/html; charset=utf-8',
+            },
+        });
     } catch (error) {
         if (error instanceof ZodError) {
             return Response.json(error.issues, { status: 400 });
