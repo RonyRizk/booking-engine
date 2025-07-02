@@ -6,6 +6,9 @@ export class CommonServices extends Token {
         super()
         this.baseUrl = baseUrl;
     }
+    setBaseUrl(url) {
+        this.baseUrl = url;
+    }
     getToken() {
         return this.token;
     }
@@ -50,7 +53,23 @@ export class CommonServices extends Token {
         }
         return object;
     }
-
+    async getSetupEntriesByTBLNAMEMulti(tables = []) {
+        const token = this.getToken();
+        if (!token) {
+            throw new Error('Missing Token');
+        }
+        const { data } = await axios.post(`${this.baseUrl}/Get_Setup_Entries_By_TBL_NAME_Multi`, {
+            TBL_NAMES: tables,
+        }, {
+            headers: {
+                Authorization: token
+            }
+        });
+        if (data.ExceptionMsg !== '') {
+            throw new Error(data.ExceptionMsg);
+        }
+        return data.My_Result;
+    }
     async getExposedProperty(aName, language) {
         const token = this.getToken()
         if (!token) {

@@ -17,19 +17,24 @@ export class PrintingService extends Token {
         this.bookingService.setToken(token)
     }
 
-    async getPrintingData({ bookingNumber, aName, language = "en", }) {
+    async getPrintingData({ bookingNumber, aName, language = "en", baseUrl, tables, includePenaltyStatement }) {
         try {
-            const [booking, property, countries, locales, beddingPreference] = await Promise.all([
+            if (baseUrl) {
+                this.commonService.setBaseUrl(baseUrl);
+                this.bookingService.setBaseUrl(baseUrl)
+            }
+            const [booking, property, countries, locales, beddingPreference, statement] = await Promise.all([
                 this.bookingService.getExposedBooking({ booking_nbr: bookingNumber, language }),
                 this.commonService.getExposedProperty(aName, language),
                 this.commonService.getCountries(language),
-                this.commonService.fetchLanguage(language, ["_PRINT_FRONT", "_PMS_FRONT"]),
-                this.bookingService.getBedPreference()
+                this.commonService.fetchLanguage(language, tables ?? ["_PRINT_FRONT", "_PMS_FRONT"]),
+                this.bookingService.getBedPreference(),
+                includePenaltyStatement ? this.bookingService.getPenaltyStatement() : Promise.resolve(null)
             ])
             this._bedPreferences = beddingPreference
-            return { booking, property, countries, locales, beddingPreference, isError: false }
+            return { booking, property, countries, locales, beddingPreference, isError: false, statement, error: null }
         } catch (error) {
-            return { booking: null, property: null, countries: null, locales: null, isError: true }
+            return { booking: null, property: null, countries: null, locales: null, isError: true, error: error.toString() }
         }
     }
 
@@ -48,7 +53,7 @@ export class PrintingService extends Token {
         if (!country_phone_prefix) {
             return mobile_without_prefix;
         }
-        return `+${country_phone_prefix.replace('+', '')}-${mobile_without_prefix}`;
+        return `+${country_phone_prefix?.replace('+', '')}-${mobile_without_prefix}`;
     }
     formatBookingDates(date) {
         const parsedDate = parse(date, 'yyyy-MM-dd', new Date());
