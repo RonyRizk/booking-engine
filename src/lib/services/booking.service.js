@@ -99,7 +99,7 @@ export class BookingService extends Token {
             }
         });
         if (data.ExceptionMsg !== '') {
-            throw new Error(data.ExceptionMsg);
+            throw new Error(JSON.stringify({ error: data.ExceptionMsg, token, booking_nbr }));
         }
         return data.My_Result;
     }
