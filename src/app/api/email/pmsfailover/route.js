@@ -22,6 +22,7 @@ export async function POST(req) {
         const emailHTML = await render(<PMSFailover {...data} reason={reason} lang={language} />);
         return new Response(emailHTML);
     } catch (error) {
+        console.error(error)
         console.error("Error rendering email:", error);
         return new Response("Failed to process booking email", { status: 500 });
     }

@@ -3,6 +3,7 @@ import { extractSearchParamsInsensitive, getBookingData, verifyToken } from '@/l
 import { CommonServices } from '@/lib/services/common.service';
 import { AutoEmailSchema } from '../../schemas';
 import { ZodError } from 'zod';
+import { logApiError } from '@/logger';
 
 // Force dynamic rendering to prevent static generation errors
 export const dynamic = 'force-dynamic';
@@ -50,6 +51,11 @@ export async function GET(req) {
                 return new Response("Invalid mode", { status: 400 });
         }
     } catch (error) {
+        logApiError(error, req, {
+            body: null,
+            validationTarget: 'ActionOtpEmailSchema',
+            step: error instanceof ZodError ? 'validation' : 'processing'
+        });
         if (error instanceof ZodError) {
             return Response.json(error.issues, { status: 400 });
         }

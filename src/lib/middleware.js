@@ -43,8 +43,7 @@ export const getBookingData = async (params, token) => {
     const { booking, isError, property, countries, locales: defaultLocales, statement, error } =
         await printingService.getPrintingData({ ...params, baseUrl, tables: sections });
     if (isError) {
-        console.log(error)
-        throw new Error()
+        throw new Error(error)
     }
     const { entries: locales } = defaultLocales
     if (!booking) {

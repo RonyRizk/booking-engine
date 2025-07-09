@@ -3,6 +3,7 @@ import { extractSearchParamsInsensitive, getBookingData, verifyToken } from '@/l
 import BookingCancellationEmail from '@/emails/booking/cancellation';
 import { BookingSchema } from '../../schemas';
 import { ZodError } from 'zod';
+import { logApiError } from '@/logger';
 
 // Force dynamic rendering to prevent static generation errors
 export const dynamic = 'force-dynamic';
@@ -18,6 +19,11 @@ export async function GET(req) {
         const emailHTML = await render(<BookingCancellationEmail {...data} lang={lang} />);
         return new Response(emailHTML);
     } catch (error) {
+        logApiError(error, req, {
+            body: null,
+            validationTarget: 'BookingSchema',
+            step: error instanceof ZodError ? 'validation' : 'processing'
+        });
         if (error instanceof ZodError) {
             return Response.json(error.issues, { status: 400 });
         }

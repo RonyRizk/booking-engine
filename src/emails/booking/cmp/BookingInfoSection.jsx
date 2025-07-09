@@ -97,19 +97,13 @@ const BookedOnDate = ({ booking, locales, lang = "en" }) => {
     </EmailText>
   );
 };
-
+const printingService = new PrintingService()
 // Guest Phone
 const GuestPhone = ({ booking, locales }) => {
-  if (
-    !booking.guest?.country_phone_prefix ||
-    !booking.guest?.mobile_without_prefix
-  )
-    return null;
-
+  const phone = printingService.formatPhoneNumber(booking.guest, booking.is_direct)
   return (
     <EmailText style={{ margin: 0 }}>
-      <b>{`${locales?.Lcz_Phone}:`}</b> {booking.guest.country_phone_prefix} -{" "}
-      {booking.guest.mobile_without_prefix}
+      <b>{`${locales?.Lcz_Phone}:`}</b> {phone}
     </EmailText>
   );
 };

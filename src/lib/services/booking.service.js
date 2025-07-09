@@ -1,6 +1,15 @@
 import axios from "axios";
 import { Token } from "../token";
-
+export class BookingServiceError extends Error {
+    constructor(method, params, originalError) {
+        const message = `Error in ${method} with params ${JSON.stringify(params)}: ${originalError.message || originalError}`;
+        super(message);
+        this.name = 'BookingServiceError';
+        this.method = method;
+        this.params = params;
+        this.originalError = originalError;
+    }
+}
 export class BookingService extends Token {
     constructor(baseUrl) {
         super()
@@ -30,6 +39,7 @@ export class BookingService extends Token {
      * });
      */
     async getPenaltyStatement(props) {
+        // const method = 'getPenaltyStatement';
         const token = this.getToken();
         if (!token) {
             throw new Error('Missing Token');
