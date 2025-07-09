@@ -4,8 +4,8 @@ const EmailLogo = ({ src, alt, width = 180 }) => (
         <Img
             src={src}
             alt={alt}
-            width={width}
-            style={{ maxWidth: '100%', height: 'auto' }}
+            // width={width}
+            style={{ maxWidth: width, height: 'auto' }}
         />
     </Section>
 );
