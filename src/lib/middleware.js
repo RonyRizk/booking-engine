@@ -28,8 +28,8 @@ export const getSystemData = async (
     let locales = null;
     if (withProperty) {
         [property, locales] = await Promise.all([
-            commonService.fetchLanguage(language, sections),
             commonService.getExposedProperty(aName, language),
+            commonService.fetchLanguage(language, sections),
         ]);
     } else {
         property = null;

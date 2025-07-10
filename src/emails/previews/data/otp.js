@@ -3,21 +3,19 @@ import { common } from "./common";
 export const otpData = {
     ...common,
     otp: "129382",
-    extraData: {
-        ip: "192.168.45.203",
-        "country": {
-            "cities": null,
-            "code": null,
-            "currency": null,
-            "flag": null,
-            "gmt_offset": 3,
-            "id": 2,
-            "name": "Lebanon",
-            "phone_prefix": "+961"
-        },
-        city: {
-            name: "Vaduz"
-        },
-        organization: "Alpine Communications Group"
+    geo: {
+        "status": "success",
+        "country": "Lebanon",
+        "countryCode": "LB",
+        "region": "BA",
+        "regionName": "Beyrouth",
+        "city": "Beirut",
+        "zip": "",
+        "lat": 33.8933,
+        "lon": 35.5016,
+        "timezone": "Asia/Beirut",
+        "isp": "Mobile Interim Company no.2 sal",
+        "org": "Data Consult SAL",
+        "query": "185.127.183.55"
     }
 }

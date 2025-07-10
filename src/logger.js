@@ -1,7 +1,27 @@
 
 import winston from "winston";
 const { combine, timestamp, json, printf } = winston.format;
-
+const apiInfoFormat = printf(({ level, message, timestamp, ...meta }) => {
+    return JSON.stringify({
+        timestamp,
+        level,
+        message,
+        route: meta.route || 'unknown',
+        method: meta.method || 'unknown',
+        params: meta.params || {},
+        searchParams: meta.searchParams || {},
+        body: meta.body || {},
+        userAgent: meta.userAgent,
+        ip: meta.ip,
+        error: meta.error ? {
+            name: meta.error.name,
+            message: meta.error.message,
+            stack: meta.error.stack,
+            cause: meta.error.cause
+        } : message,
+        ...meta
+    });
+});
 const apiErrorFormat = printf(({ level, message, timestamp, ...meta }) => {
     // return JSON.stringify({
     //     timestamp,
@@ -73,6 +93,18 @@ const apiErrorLogger = winston.createLogger({
         })
     ],
 });
+const apiInfoLogger = winston.createLogger({
+    level: "info",
+    format: combine(timestamp(), apiInfoFormat),
+    transports: [
+        new winston.transports.File({
+            filename: "logs/next-api-info.log",
+        }),
+        new winston.transports.Console({
+            format: combine(timestamp(), json()) // Console uses JSON for readability
+        })
+    ],
+});
 
 // Helper function to extract request context
 const getRequestContext = (req) => {
@@ -101,6 +133,13 @@ const logApiError = (error, req, additionalContext = {}) => {
         ...additionalContext
     });
 };
+const logApiInfo = (req, additionalContext = {}) => {
+    const requestContext = getRequestContext(req);
+    apiInfoLogger.info({
+        ...requestContext,
+        ...additionalContext
+    });
+};
 
 const originalConsoleError = console.error;
 console.error = (...args) => {
@@ -114,4 +153,4 @@ console.log = (...args) => {
     logger.info(...args);
 };
 
-export { logger, errorLogger, apiErrorLogger, logApiError, getRequestContext };
+export { logger, errorLogger, apiErrorLogger, apiInfoLogger, logApiError, getRequestContext, logApiInfo };

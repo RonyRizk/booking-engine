@@ -599,7 +599,7 @@ export const common = {
             "flag": null,
             "gmt_offset": 3,
             "id": 2,
-            "name": "Lebanon",
+            "name": "Lebanons",
             "phone_prefix": "+961"
         },
         "currency": {

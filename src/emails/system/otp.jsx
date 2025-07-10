@@ -2,11 +2,12 @@ import React from 'react'
 import EmailContainer from '../components/EmailContainer'
 import EmailText from '../components/EmailText'
 import SystemHeader from './SystemHeader'
+import { Container } from '@react-email/components'
 
-export default function OTPEmail({ otp, name, extraData, lang, variant }) {
+export default function OTPEmail({ otp, name, geo, lang, variant, property }) {
     return (
         <EmailContainer lang={lang}>
-            <SystemHeader name={name} />
+            <SystemHeader name={""} />
             {variant === "action" && <EmailText>Dear {name},</EmailText>}
             {variant === "action" ? <EmailText>
                 <b>{otp}</b> is your One-Time Password (OTP) verification code.
@@ -14,15 +15,18 @@ export default function OTPEmail({ otp, name, extraData, lang, variant }) {
                 : <EmailText>
                     <b>{otp}</b> is your login verification code.
                 </EmailText>}
-            {extraData && <EmailText>
-                Login geolocation info:<br />
-                IP: {extraData?.ip}<br />
-                Location: {extraData?.country.name}, {extraData?.city.name}<br />
-                Organization: {extraData?.organization}<br />
-            </EmailText>}
+            {geo && <Container>
+                <EmailText>Login geolocation info:</EmailText>
+                {geo.query && <EmailText color={!property ? undefined : geo.country?.toLowerCase() !== property?.country?.name?.toLowerCase() ? "red" : undefined}>
+                    <span style={{ color: "#333333" }}>IP:</span> {geo.query}
+                </EmailText>}
+                {(geo.country || geo.city) && <EmailText>Location: {geo?.country}, {geo?.city}</EmailText>}
+                {geo.org && <EmailText>Organization: {geo?.org}</EmailText>}
+            </Container>
+            }
             <EmailText color={variant !== "action" ? "red" : undefined}>
                 If you did not initiate the sign-in request, we strongly advise you to change your password immediately!
             </EmailText>
-        </EmailContainer>
+        </EmailContainer >
     )
 }
