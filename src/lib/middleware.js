@@ -40,22 +40,16 @@ export const getSystemData = async (
 
 export const getBookingData = async (params, token) => {
     const printingService = new PrintingService(token);
-    const { booking, isError, property, countries, locales: defaultLocales, statement, error } =
+    const { booking, property, countries, locales: defaultLocales, statement, error } =
         await printingService.getPrintingData({ ...params, baseUrl, tables: sections });
-    if (isError) {
-        throw new Error(error)
-    }
     const { entries: locales } = defaultLocales
-    if (!booking) {
-        throw new Error("No booking found")
-    }
     const totalPersons = booking?.occupancy?.adult_nbr + booking?.occupancy?.children_nbr;
     const currency = booking?.currency?.symbol;
     const totalNights = calculateDaysBetweenDates(booking.from_date, booking.to_date);
     const guestCountryName = printingService.getUserCountry(countries, booking.guest.country_id);
     const privateNote = booking.extras?.find((k) => k.key === "private_note");
     const bookingEmail = property?.contacts?.find((c) => c.type === "booking")?.email;
-    const phone = `+${property?.country?.phone_prefix?.replace("+", "") || ""} - ${property?.phone || ""}`;
+    const phone = `+${property?.country?.phone_prefix?.replace("+", "") || ""}-${property?.phone || ""}`;
     return {
         locales,
         totalPersons,
@@ -82,10 +76,13 @@ export function extractSearchParamsInsensitive(
     lowercaseValues = true
 ) {
     const out = {};
-    const { searchParams } = new URL(req.url);
+    const { searchParams } = req.nextUrl;
     for (const [rawKey, rawVal] of searchParams.entries()) {
         const key = rawKey.toLowerCase();
         const val = lowercaseValues ? rawVal.toLowerCase() : rawVal;
+        if (!val) {
+            continue
+        }
         out[key] = val;
     }
     return out;

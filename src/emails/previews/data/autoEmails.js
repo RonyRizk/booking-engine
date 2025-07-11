@@ -429,33 +429,33 @@ const booking = {
 }
 const _baseData = {
     ...common,
+    setupTables: {
+        _PRE_ARRIVAL_EMAIL: {
+            ENTRY_00: "We can't wait to welcome you in [DAYS] days at [PROPERTY_NAME]",
+            ENTRY_01: 'Dear [GUEST_NAME]',
+            ENTRY_02: 'We thought of reminding you that you are arriving at [PROPERTY_NAME] in [DAYS] days.',
+            ENTRY_03: 'Your hotel booking number is [BOOK_NBR]. Follow this <a href="[LINK]">Link</a> to view all details.',
+            ENTRY_04: 'Contact us anytime by email [PROPERTY_EMAIL] or call us on [PROPERTY_PHONE]. You can always go to "My Bookings" to view, change or cancel a reservation.',
+            ENTRY_05: 'See you soon',
+            ENTRY_06: 'Your hotel booking number is [BOOK_NBR].'
+        },
+        _POST_DEPARTURE_EMAIL: {
+            ENTRY_00: 'Thank you for staying with us',
+            ENTRY_01: 'Dear [GUEST_NAME]',
+            ENTRY_02: '[PROPERTY_NAME]'
+        }
+    },
     booking
 }
 const preArrivalReminder = {
     ..._baseData,
-    description: "Check our pool&nbsp;"
 }
 const duringTheStayReminder = {
     ..._baseData,
-    description: `At Casa Mespilea we are promoting a new vision of urban living. It is a family-owned bourgeois townhouse, built in 1890, has been recently renovated and offers its guests the experience of Mediterranean urban holidays, living in the centre of Paphos. We are located in the centre of the town very close to popular bars, restaurants and the beautiful Town Hall square.<br />
-<br />
-<strong>Facilities</strong><br />
-&bull; We offer an all-day restaurant service in our gorgeous garden (brunch, lunch and dinner). If you would like to see our menu and make a booking, please ask a member of staff.<br />
-&bull; If you have not already booked, we offer a traditional breakfast for the customer of the guest house with additional cost of &euro;9.5.<br />
-&bull; You can access our beautiful roof deck and enjoy the sunset by using the stairs inside the main building.<br />
-&bull; We offer a cleaning service on the 3rd day of your stay. If you require any room supplies, please let a member of staff know.<br />
-&bull; The rooms have air-conditioning unit which woks as cooling &amp; heating.<br />
-<br />
-We are more than happy to help with any other questions you may have i.e taxi bookings, special tour and activities, sightseeing recommendations.<br />
-<br />
-Best regards,<br />
-Yioula &amp; Costas<br />
-+35799313002 or +35799683757`
 }
 
 const postDepartureReminder = {
     ..._baseData,
-    description: "Feel free to review u on google: xdhvhcvhbnhv,mb v,zlksvlkgvn,mcvnnbnb"
 }
 
 export { preArrivalReminder, duringTheStayReminder, postDepartureReminder }

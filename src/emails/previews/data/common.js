@@ -34,43 +34,43 @@ export const common = {
         "allowed_booking_sources": [
             {
                 "code": "003",
-                "description": "Phone\/Email",
-                "id": "af0ef034-08d6-4833-95e2-3acc1b33769a",
+                "description": "Phone/Email",
+                "id": "759925c6-2671-434a-8230-3e47907ec671",
                 "tag": "",
                 "type": "SETUP"
             },
             {
                 "code": "002",
                 "description": "Walk-in",
-                "id": "28791f07-c7a5-4b4b-a72b-4b493bae3253",
+                "id": "0fc172fd-9918-435c-a113-7f768ed02760",
                 "tag": "",
                 "type": "SETUP"
             },
             {
                 "code": "005",
                 "description": "Social media",
-                "id": "b68e429a-feb7-45d4-9073-f962b726d5b8",
+                "id": "4e63ca1b-40b3-4818-9a38-f6ec438f1b82",
                 "tag": "",
                 "type": "SETUP"
             },
             {
                 "code": "000",
-                "description": "-- Agents\/Corpo --",
-                "id": "fdb6023b-6b58-4806-8056-8611512c444a",
+                "description": "-- Agents/Corpo --",
+                "id": "2d2b6c02-aa4f-41b2-9549-ebb949f7251a",
                 "tag": "",
                 "type": "LABEL"
             },
             {
                 "code": "001",
                 "description": "Alitalia Cabin Crew",
-                "id": "b8e99f0d-d73a-49c0-8509-3deb6d3dd21b",
+                "id": "33c2b352-5856-437d-b0d5-824de7ba6842",
                 "tag": "2",
                 "type": "TRAVEL_AGENCY"
             },
             {
                 "code": "001",
                 "description": "scappadays",
-                "id": "c38b5dd7-05f2-4bed-9311-0d0a7df0c32a",
+                "id": "7861cfea-b1ba-4e35-8476-5a5cf25ef70f",
                 "tag": "1",
                 "type": "TRAVEL_AGENCY"
             }
@@ -82,32 +82,10 @@ export const common = {
             },
             {
                 "id": 1,
-                "name": "Euro\/Mastercard"
+                "name": "Euro/Mastercard"
             }
         ],
         "allowed_payment_methods": [
-            {
-                "code": "000",
-                "data": null,
-                "description": "No payment required",
-                "display_order": null,
-                "id": null,
-                "is_active": false,
-                "is_payment_gateway": false,
-                "localizables": null,
-                "property_id": 42
-            },
-            {
-                "code": "001",
-                "data": null,
-                "description": "Manual card processing",
-                "display_order": null,
-                "id": null,
-                "is_active": false,
-                "is_payment_gateway": false,
-                "localizables": null,
-                "property_id": 42
-            },
             {
                 "code": "005",
                 "data": null,
@@ -133,7 +111,7 @@ export const common = {
                     },
                     {
                         "code": "BANK_TRANSFER_INFO",
-                        "description": "<p>Your booking will be held for 3 days until the transfer is made to the following bank account.<\/p><p><strong>PARADISE BANK c <\/strong><\/p><p><strong>Account name: <\/strong>Blue Hotel<\/p><p><strong>Account number: <\/strong>108608010001<\/p><p><strong>IBAN: <em>abcd<\/em><\/strong><\/p>",
+                        "description": "<p>Your booking will be held for 3 days until the transfer is made to the following bank account.</p><p><strong>PARADISE BANK c </strong></p><p><strong>Account name: </strong>Blue Hotel</p><p><strong>Account number: </strong>108608010001</p><p><strong>IBAN: <em>abcd</em></strong></p>",
                         "id": 1122,
                         "language": {
                             "code": "EN",
@@ -161,7 +139,7 @@ export const common = {
                     },
                     {
                         "code": "BANK_TRANSFER_INFO",
-                        "description": "<p>سيتم حجز حجزك لمدة 3 أيام حتى يتم تحويل المبلغ إلى الحساب البنكي التالي.<\/p><p><strong>بنك بارادايس<\/strong><\/p><p><strong>اسم الحساب: <\/strong>فندق بلو<\/p><p><strong>رقم الحساب: <\/strong>108608010001<\/p><p><strong>الآيبان: <\/strong>XX92 8000 0108 6080 1000 0002<\/p>",
+                        "description": "<p>سيتم حجز حجزك لمدة 3 أيام حتى يتم تحويل المبلغ إلى الحساب البنكي التالي.</p><p><strong>بنك بارادايس</strong></p><p><strong>اسم الحساب: </strong>فندق بلو</p><p><strong>رقم الحساب: </strong>108608010001</p><p><strong>الآيبان: </strong>XX92 8000 0108 6080 1000 0002</p>",
                         "id": 1124,
                         "language": {
                             "code": "AR",
@@ -189,7 +167,7 @@ export const common = {
                     },
                     {
                         "code": "BANK_TRANSFER_INFO",
-                        "description": "<p><span style=\"color: rgb(102, 102, 102); background-color: rgb(255, 255, 255);\">Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu p<\/span><\/p>",
+                        "description": "<p><span style=\"color: rgb(102, 102, 102); background-color: rgb(255, 255, 255);\">Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu p</span></p>",
                         "id": 1140,
                         "language": {
                             "code": "RU",
@@ -203,7 +181,7 @@ export const common = {
                     },
                     {
                         "code": "BANK_TRANSFER_INFO",
-                        "description": "<p>Η κράτησή σας θα διατηρηθεί για 3 ημέρες μέχρι να γίνει η μεταφορά στον παρακάτω τραπεζικό λογαριασμό.<br><strong>Τράπεζα Παράδεισος<\/strong><br><strong>Όνομα λογαριασμού: <\/strong>Ξενοδοχείο Μπλε<br><strong>Αριθμός λογαριασμού: <\/strong>108608010001<br><strong>IBAN: <\/strong>XX92 8000 0108 6080 1000 0002<\/p>",
+                        "description": "<p>Η κράτησή σας θα διατηρηθεί για 3 ημέρες μέχρι να γίνει η μεταφορά στον παρακάτω τραπεζικό λογαριασμό.<br><strong>Τράπεζα Παράδεισος</strong><br><strong>Όνομα λογαριασμού: </strong>Ξενοδοχείο Μπλε<br><strong>Αριθμός λογαριασμού: </strong>108608010001<br><strong>IBAN: </strong>XX92 8000 0108 6080 1000 0002</p>",
                         "id": 1123,
                         "language": {
                             "code": "EL",
@@ -217,7 +195,7 @@ export const common = {
                     },
                     {
                         "code": "BANK_TRANSFER_INFO",
-                        "description": "<p><span style=\"background-color: rgb(255, 255, 255); color: rgb(102, 102, 102);\">Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu p<\/span><\/p>",
+                        "description": "<p><span style=\"background-color: rgb(255, 255, 255); color: rgb(102, 102, 102);\">Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu p</span></p>",
                         "id": 1137,
                         "language": {
                             "code": "PL",
@@ -261,6 +239,28 @@ export const common = {
                 "property_id": 42
             },
             {
+                "code": "000",
+                "data": null,
+                "description": "No payment required",
+                "display_order": null,
+                "id": null,
+                "is_active": true,
+                "is_payment_gateway": false,
+                "localizables": null,
+                "property_id": 42
+            },
+            {
+                "code": "001",
+                "data": null,
+                "description": "Manual card processing",
+                "display_order": null,
+                "id": null,
+                "is_active": true,
+                "is_payment_gateway": false,
+                "localizables": null,
+                "property_id": 42
+            },
+            {
                 "code": "MPGS",
                 "data": null,
                 "description": "MPGS",
@@ -277,17 +277,6 @@ export const common = {
                 "description": "JCC",
                 "display_order": null,
                 "id": 16,
-                "is_active": false,
-                "is_payment_gateway": true,
-                "localizables": null,
-                "property_id": 42
-            },
-            {
-                "code": "SAFERPAY",
-                "data": null,
-                "description": "VPayments",
-                "display_order": null,
-                "id": 13,
                 "is_active": false,
                 "is_payment_gateway": true,
                 "localizables": null,
@@ -316,23 +305,45 @@ export const common = {
                 "property_id": 42
             },
             {
-                "code": "NetCommerce",
-                "data": null,
-                "description": "NetCommerce",
-                "display_order": null,
-                "id": 12,
-                "is_active": false,
-                "is_payment_gateway": true,
-                "localizables": null,
-                "property_id": 42
-            },
-            {
                 "code": "Areeba",
                 "data": null,
                 "description": "Areeba",
                 "display_order": null,
                 "id": 10,
                 "is_active": false,
+                "is_payment_gateway": true,
+                "localizables": null,
+                "property_id": 42
+            },
+            {
+                "code": "NetCommerce",
+                "data": null,
+                "description": "NetCommerce",
+                "display_order": null,
+                "id": 12,
+                "is_active": true,
+                "is_payment_gateway": true,
+                "localizables": null,
+                "property_id": 42
+            },
+            {
+                "code": "SAFERPAY",
+                "data": null,
+                "description": "VPayments",
+                "display_order": null,
+                "id": 13,
+                "is_active": true,
+                "is_payment_gateway": true,
+                "localizables": null,
+                "property_id": 42
+            },
+            {
+                "code": "HYPER_PAY",
+                "data": null,
+                "description": "Hyper Pay",
+                "display_order": null,
+                "id": 17,
+                "is_active": true,
                 "is_payment_gateway": true,
                 "localizables": null,
                 "property_id": 42
@@ -352,7 +363,7 @@ export const common = {
             {
                 "amenity_type": "room",
                 "code": "climatecontrol",
-                "description": "A\/C"
+                "description": "A/C"
             },
             {
                 "amenity_type": "service",
@@ -372,7 +383,7 @@ export const common = {
             {
                 "amenity_type": "property",
                 "code": "nonsmoking",
-                "description": "Non-smoking rooms \/ floors"
+                "description": "Non-smoking rooms / floors"
             },
             {
                 "amenity_type": "property",
@@ -501,7 +512,7 @@ export const common = {
             "rate_per_night": 30.000,
             "title": "Baby cots are available upon request"
         },
-        "be_listing_mode": "list",
+        "be_listing_mode": "grid",
         "calendar_legends": [
             {
                 "color": "#31bef1",
@@ -599,7 +610,7 @@ export const common = {
             "flag": null,
             "gmt_offset": 3,
             "id": 2,
-            "name": "Lebanons",
+            "name": "Lebanon",
             "phone_prefix": "+961"
         },
         "currency": {
@@ -614,42 +625,60 @@ export const common = {
             "non_standard_conditions": "Here it is",
             "rooming": "All rooms have a stunning sea view and balcony. They are offered as single, double, premium suite with Jacuzzi and family connected rooms. Sizes range between 25 and 50sqm. Interior is elegant and trendy."
         },
+        "extra_info": [
+            {
+                "key": "EMAIL_DURING_THE_STAY_CUSTOM_MESSAGE",
+                "value": "At Casa Mespilea we are promoting a new vision of urban living. It is a family-owned bourgeois townhouse, built in 1890, has been recently renovated and offers its guests the experience of Mediterranean urban holidays, living in the centre of Paphos. We are located in the centre of the town very close to popular bars, restaurants and the beautiful Town Hall square.<br />\n<br />\n<strong>Facilities</strong><br />\n&bull; We offer an all-day restaurant service in our gorgeous garden (brunch, lunch and dinner). If you would like to see our menu and make a booking, please ask a member of staff.<br />\n&bull; If you have not already booked, we offer a traditional breakfast for the customer of the guest house with additional cost of &euro;9.5.<br />\n&bull; You can access our beautiful roof deck and enjoy the sunset by using the stairs inside the main building.<br />\n&bull; We offer a cleaning service on the 3rd day of your stay. If you require any room supplies, please let a member of staff know.<br />\n&bull; The rooms have air-conditioning unit which woks as cooling &amp; heating.<br />\n<br />\nWe are more than happy to help with any other questions you may have i.e taxi bookings, special tour and activities, sightseeing recommendations.<br />\n<br />\nBest regards,<br />\nYioula &amp; Costas<br />\n+35799313002 or +35799683757"
+            },
+            {
+                "key": "EMAIL_POST_DEPARTURE_CUSTOM_MESSAGE",
+                "value": "Feel free to review u on google: xdhvhcvhbnhv,mb v,zlksvlkgvn,mcvnnbnb<br />\nuse the coupon loyal 10 and benefit from 10% on your next stay/&nbsp;"
+            },
+            {
+                "key": "EMAIL_PRE_ARRIVAL_CUSTOM_MESSAGE",
+                "value": "Check our pool&nbsp;"
+            },
+            {
+                "key": "EMAIL_PRE_ARRIVAL_DAYS_BEFORE_CHECK_IN",
+                "value": "2"
+            }
+        ],
         "id": 42,
         "images": [
             {
                 "thumbnail": "",
                 "tooltip": "Outdoors",
-                "url": "https:\/\/dhl6m8m6g2w2j.cloudfront.net\/ac\/AcImage_42_271.jpg"
+                "url": "https://dhl6m8m6g2w2j.cloudfront.net/ac/AcImage_42_271.jpg"
             },
             {
                 "thumbnail": "",
                 "tooltip": null,
-                "url": "https:\/\/dhl6m8m6g2w2j.cloudfront.net\/ac\/AcImage_42_248.jpg"
+                "url": "https://dhl6m8m6g2w2j.cloudfront.net/ac/AcImage_42_248.jpg"
             },
             {
                 "thumbnail": "",
                 "tooltip": null,
-                "url": "https:\/\/dhl6m8m6g2w2j.cloudfront.net\/ac\/AcImage_42_249.jpg"
+                "url": "https://dhl6m8m6g2w2j.cloudfront.net/ac/AcImage_42_249.jpg"
             },
             {
                 "thumbnail": "",
                 "tooltip": null,
-                "url": "https:\/\/dhl6m8m6g2w2j.cloudfront.net\/ac\/AcImage_42_252.jpg"
+                "url": "https://dhl6m8m6g2w2j.cloudfront.net/ac/AcImage_42_252.jpg"
             },
             {
                 "thumbnail": "",
                 "tooltip": null,
-                "url": "https:\/\/dhl6m8m6g2w2j.cloudfront.net\/ac\/AcImage_42_242.jpg"
+                "url": "https://dhl6m8m6g2w2j.cloudfront.net/ac/AcImage_42_242.jpg"
             },
             {
                 "thumbnail": "",
                 "tooltip": null,
-                "url": "https:\/\/dhl6m8m6g2w2j.cloudfront.net\/ac\/AcImage_42_272.jpg"
+                "url": "https://dhl6m8m6g2w2j.cloudfront.net/ac/AcImage_42_272.jpg"
             },
             {
                 "thumbnail": "",
                 "tooltip": null,
-                "url": "https:\/\/dhl6m8m6g2w2j.cloudfront.net\/ac\/AcImage_42_270.jpg"
+                "url": "https://dhl6m8m6g2w2j.cloudfront.net/ac/AcImage_42_270.jpg"
             }
         ],
         "internet_offering": {
@@ -854,53 +883,8 @@ export const common = {
             }
         },
         "postal": null,
-        "privacy_policy": "<p><strong>INFORMATION AND CONSENT<\/strong><\/p> <p>This Privacy Policy describes how we collect, use, process, and disclose your information, including personal information about you (hereinafter, the \"User\"), in conjunction with your access to and use of our booking system.<\/p> <p>By reading this Privacy Policy, the user is hereby informed on how we collect, process and protect personal data furnished through the booking engine.<\/p> <p>The User must carefully read this Privacy Policy to determine whether they wish to provide their personal data, or those of third parties, to <strong>[AC_NAME]<\/strong>.<\/p> <p>When this policy mentions \"booking system\", \"booking engine\", \"system\", \"website\", \"platform\", \"app\", \"webapp\", \"services\" or \"online services\" it refers to all pages and functions under <strong>[URL]<\/strong> unless specified otherwise.<\/p> <p>By accessing the platform or providing information, you agree to our privacy practices as set out in this privacy statement. We may change this policy from time to time. You should check this policy to ensure you are aware of the most recent version.<\/p> <p>&nbsp;<\/p> <p><strong>IDENTITY<\/strong><\/p> <p>When this policy mentions \"we\", \"us\", \"our\", \"data controller\" or \"controller\" it refers to the <strong>[AC_NAME]<\/strong>.<\/p> <p>&nbsp;<\/p> <p><strong>Data Controller: [AC_NAME]<\/strong> operates this booking system through a data processor, as explained below. For the purposes of the General Data Protection Regulation (\"GDPR\") (EU) 2016\/679, we are the Data Controller. There is a strict contractual framework between the data controller and the data processor for the protection of your personal information. We are:<\/p> <p>&nbsp;<\/p> <div><strong>[AC_NAME]<\/strong><\/div> <div><strong>[ADDRESS]<\/strong><\/div> <div><strong>[AREA]<\/strong><\/div> <div><strong>[LEVEL2]<\/strong><\/div> <div><strong>[COUNTRY]<\/strong><\/div> <p>&nbsp;<\/p> <p><strong>Data Processor: <\/strong>A third-party Data Processor operates this booking system on behalf of&nbsp;<strong>[AC_NAME]<\/strong> and is committed to protecting the privacy of the users of this system. For the purposes of the GDPR, this third-party is the Data Processor.<\/p> <p>&nbsp;<\/p> <p><strong>OBLIGATORY NATURE OF PROVIDING THE DATA<\/strong><\/p> <p>The data requested in the forms accessible from the booking engine is, in general, mandatory (unless specified otherwise in the required field) to meet the stated purposes. Accordingly, if they are not provided or are not provided correctly, we will be unable to process the request.<\/p> <p>&nbsp;<\/p> <p><strong>PERSONAL DATA WE COLLECT AND PROCESS<\/strong><br><br><strong>This will include:<\/strong><\/p> <ul>     <li>personal information about you which we ask you for (e.g. your name, address, and email address) when you make a booking from our booking engine;<\/li>     <li>financial details in order to process your booking when we require pre-payment;<\/li>     <li>details of transactions you carry out through our booking engine and details of the fulfillment of your orders.<\/li>     <li>our data processor may only collect and process personal data collected and\/or processed on behalf of us in accordance with our instructions.<\/li> <\/ul> <p><br><strong>We grant permission to our data processor:<\/strong><\/p> <ul>     <li>to use your personal information for reserving rooms and\/or other services for you at&nbsp;<strong>[AC_NAME]<\/strong><\/li>     <li>to pass on your financial details to <strong>[AC_NAME]<\/strong> and\/or an appropriate third party (for example, a credit card company) for the purpose of confirming or paying for a booking;<\/li>     <li>to use your information for marketing purposes (where you explicitly agree with this); and<\/li>     <li>to pre-complete forms and other details on our website to make your next visit to our booking engine easier (e.g. when amending or canceling a booking).<\/li> <\/ul> <p><br><strong>Social Login: <\/strong>In the event of registration and\/or access through a third-party account, we may collect and access certain information of the User’s profile from the corresponding social network, solely for internal administrative purposes and\/or for the purposes indicated above.<\/p> <p>&nbsp;<\/p> <p><strong>Third-party data (e.g. book for a friend): <\/strong>In the event that the User provides third-party data, they declare that they have the third party’s consent and undertake to provide the interested party -the data holder- with the information contained in this Privacy Policy, duly exonerating us and our data processor from any liability in this regard. However, we may carry out the necessary verification to verify this fact, adopting the corresponding due diligence measures, in accordance with the data protection regulations.<\/p> <p>&nbsp;<\/p> <p><strong>Sensitive Data: <\/strong>Unless specifically requested, we ask that you not send us, and you not disclose, on or through the Services or otherwise to us, any Sensitive Personal Data (e.g., social security numbers, national identification number, data related to racial or ethnic origin, political opinions, religion, ideological or other beliefs, health, biometric or genetic characteristics, criminal background, trade union membership, or administrative or criminal proceedings and sanctions).<\/p> <p>&nbsp;<\/p> <p><strong>Use of Services by Minors: <\/strong>The Services are not directed to individuals under the age of sixteen (16), and we request that they not provide Personal Data through the Services.<\/p> <p>&nbsp;<\/p> <p><strong>PURPOSE OF PROCESSING PERSONAL DATA<\/strong><\/p> <p>Depending on the User’s requests, the personal data collected will be processed in accordance with the following purposes:<\/p> <ul>     <li>To manage the bookings made, including payment management (where applicable) and the management of the user’s requests and preferences.<\/li>     <li>To manage registration in loyalty or membership programs, as well as obtaining and redeeming points.<\/li>     <li>To manage the User’s contact requests with us through the channels provided for this end.<\/li>     <li>To manage the sending of personalized commercial communications from us, by electronic and\/or conventional means, in cases in which the User expressly consents.<\/li>     <li>To manage the provision of the contracted accommodation service, as well as additional services.<\/li>     <li>To manage surveys and\/or evaluations regarding the quality of the services provided by us and\/or the perception of its image as a company.<\/li> <\/ul> <p>&nbsp;<\/p> <p><strong>DATA RETENTION<\/strong><\/p> <p>We will retain your Personal Data for the period necessary to fulfill the purposes outlined in this Privacy Policy unless a longer retention period is required or permitted by law or if the User requests their withdrawal from us, opposes or revokes their consent.<\/p> <p>The criteria used to determine our retention periods include:<\/p> <ul>     <li>The length of time we have an ongoing relationship with you and provide the Services to you (for example, for as long as you have an account with us or keep using the Services or if you have a booking that has not yet been fulfilled)<\/li>     <li>Whether there is a legal obligation to which we are subject (for example, certain laws require us to keep records of your transactions for a certain period of time before we can delete them)<\/li>     <li>Whether retention is advisable considering our legal position (such as, for statutes of limitations, litigation or regulatory investigations)<\/li> <\/ul> <p>&nbsp;<\/p> <p><strong>LEGITIMATE INTEREST FOR PROCESSING YOUR DATA<\/strong><\/p> <p>The data processing required in fulfillment of the aforementioned purposes that require the User’s consent cannot be undertaken without said consent.<\/p> <p>Likewise, in the event that the User withdraws their consent to any of the processing, this will not affect the legality of the processing carried out previously.<\/p> <p>To revoke such consent, the User may contact us through the appropriate channels.<\/p> <p>By the same token, in those cases in which it is necessary to process the User’s data for the fulfillment of a legal obligation or for the execution of the existing contractual relationship between us and the User, the processing would be legitimized as it is necessary for compliance with said purposes.<\/p> <p>&nbsp;<\/p> <p><strong>DATA DISCLOSURE<\/strong><\/p> <p>We will use and disclose Personal Data as we believe to be necessary or appropriate:<\/p> <ul>     <li>to comply with applicable law, including laws outside your country of residence;<\/li>     <li>to comply with the legal process;<\/li>     <li>to respond to requests from public and government authorities, including authorities outside your country of residence, and to meet national security or law enforcement requirements;<\/li>     <li>to enforce our terms and conditions;<\/li>     <li>to protect our operations;<\/li><li>to protect the rights, privacy, safety or property of our own, you or others; and<\/li>     <li>to allow us to pursue available remedies or limit the damage that we may sustain.<\/li> <\/ul> <p>We may use and disclose Other Data for any purpose, except where we are not allowed to under applicable law. In some instances, we may combine Other Data with Personal Data (such as combining your name with your location). If we do, we will treat the combined data as Personal Data as long as it is combined.<\/p> <p>&nbsp;<\/p> <p><strong>INTERNATIONAL TRANSFERS OF PERSONAL DATA<\/strong><\/p> <p>We may transfer your personal information to our data processor(s) or\/and sub-processor(s) based outside of the EEA for the purposes described in this policy. If we do this, your personal information will continue to be subject to one or more appropriate safeguards set out in the law. These might be the use of model contracts in a form approved by regulators, or having our suppliers sign up to an independent privacy scheme approved by regulators (like the US <a target=\"_new\" rel=\"noopener noreferrer\" href=\"https:\/\/www.privacyshield.gov\/\">Privacy Shield<\/a> scheme).<\/p> <p>&nbsp;<\/p> <p><strong>USER'S RESPONSIBILITY<\/strong><\/p> <p>The User guarantees that they are of legal age or legally emancipated, where applicable, fully capable, and that the information furnished to us is true, accurate, complete and up-to-date. For these purposes, the User is responsible for the truthfulness of all the data communicated and will keep the information updated, so that said data reflects their current situation.<\/p> <p>The User guarantees that he\/she has informed third parties on whose behalf he\/she has provided data, where applicable, of the aspects contained in this document. Also guarantees that he\/she has obtained the third party’s authorization to provide their data to us for the purposes indicated.<\/p> <p>The User will be responsible for false or inaccurate information provided on the Website and for damages, whether direct or indirect, that this may cause to us or third parties.<\/p> <p>&nbsp;<\/p> <p><strong>EXERCISE OF RIGHTS AND DATA DELETION<\/strong><\/p> <p>The User may contact us at any time free of charge by emailing support@igloorooms.com and providing his unique account email, to:<\/p> <ul>     <li>To obtain confirmation about whether personal data concerning the User is being processed by us.<\/li>     <li>To access their personal details.<\/li>     <li>To rectify any inaccurate or incomplete data.<\/li>     <li>To request the deletion of their personal data when, among other reasons, the data is no longer necessary for the purposes for which it was collected.<\/li>     <li>To confirm revocation of consent.<\/li>     <li>To obtain from us the limitation of data processing when any of the conditions provided in the data protection regulations are met.<\/li>     <li>To request the portability of your data.<\/li> <\/ul> <p>Likewise, the user is informed that at any time he\/she may file a complaint regarding the protection of their personal data before the competent Data Protection Authority.<\/p> <p>&nbsp;<\/p> <p><strong>SECURITY MEASURES<\/strong><\/p> <p>We will process the User’s data at all times in an absolute confidential way and maintain the mandatory duty to secrecy with regard to said data, in accordance with the provisions set out in applicable regulations, and to this end, adopting the measures of a technical and organizational nature required to guarantee the security of their data and prevent them from being altered, lost, processed or accessed illegally, depending on the state of the technology, the nature of the stored data and the risks to which they are exposed.<\/p><p>&nbsp;<\/p> <p><strong>BOOKING CONDITIONS<\/strong><\/p> <p>The User agrees to accept the cancellation, the no-refund and the no-show policies mentioned during the booking process and sent by email upon booking confirmation. Policies may vary based on room type and\/or dates of stay. We are not liable for cancellations or changes caused by force majeure events beyond our control (e.g., natural disasters, strikes, pandemics).<\/p>",
-        "promotions": [
-            {
-                "from": "2025-04-26",
-                "id": 26086,
-                "is_last_minute_discount": false,
-                "is_loyalty": false,
-                "key": "COUPONTEST",
-                "mode": null,
-                "to": "2025-06-30",
-                "type": null,
-                "value": null
-            },
-            {
-                "from": "2025-04-26",
-                "id": 26087,
-                "is_last_minute_discount": false,
-                "is_loyalty": false,
-                "key": "COUPONTEST",
-                "mode": null,
-                "to": "2025-06-30",
-                "type": null,
-                "value": null
-            },
-            {
-                "from": "2025-04-26",
-                "id": 26088,
-                "is_last_minute_discount": false,
-                "is_loyalty": false,
-                "key": "COUPONTEST",
-                "mode": null,
-                "to": "2025-06-30",
-                "type": null,
-                "value": null
-            },
-            {
-                "from": "2025-04-26",
-                "id": 26089,
-                "is_last_minute_discount": false,
-                "is_loyalty": false,
-                "key": "COUPONTEST",
-                "mode": null,
-                "to": "2025-06-30",
-                "type": null,
-                "value": null
-            }
-        ],
+        "privacy_policy": "<p><strong>INFORMATION AND CONSENT</strong></p> <p>This Privacy Policy describes how we collect, use, process, and disclose your information, including personal information about you (hereinafter, the \"User\"), in conjunction with your access to and use of our booking system.</p> <p>By reading this Privacy Policy, the user is hereby informed on how we collect, process and protect personal data furnished through the booking engine.</p> <p>The User must carefully read this Privacy Policy to determine whether they wish to provide their personal data, or those of third parties, to <strong>[AC_NAME]</strong>.</p> <p>When this policy mentions \"booking system\", \"booking engine\", \"system\", \"website\", \"platform\", \"app\", \"webapp\", \"services\" or \"online services\" it refers to all pages and functions under <strong>[URL]</strong> unless specified otherwise.</p> <p>By accessing the platform or providing information, you agree to our privacy practices as set out in this privacy statement. We may change this policy from time to time. You should check this policy to ensure you are aware of the most recent version.</p> <p>&nbsp;</p> <p><strong>IDENTITY</strong></p> <p>When this policy mentions \"we\", \"us\", \"our\", \"data controller\" or \"controller\" it refers to the <strong>[AC_NAME]</strong>.</p> <p>&nbsp;</p> <p><strong>Data Controller: [AC_NAME]</strong> operates this booking system through a data processor, as explained below. For the purposes of the General Data Protection Regulation (\"GDPR\") (EU) 2016/679, we are the Data Controller. There is a strict contractual framework between the data controller and the data processor for the protection of your personal information. We are:</p> <p>&nbsp;</p> <div><strong>[AC_NAME]</strong></div> <div><strong>[ADDRESS]</strong></div> <div><strong>[AREA]</strong></div> <div><strong>[LEVEL2]</strong></div> <div><strong>[COUNTRY]</strong></div> <p>&nbsp;</p> <p><strong>Data Processor: </strong>A third-party Data Processor operates this booking system on behalf of&nbsp;<strong>[AC_NAME]</strong> and is committed to protecting the privacy of the users of this system. For the purposes of the GDPR, this third-party is the Data Processor.</p> <p>&nbsp;</p> <p><strong>OBLIGATORY NATURE OF PROVIDING THE DATA</strong></p> <p>The data requested in the forms accessible from the booking engine is, in general, mandatory (unless specified otherwise in the required field) to meet the stated purposes. Accordingly, if they are not provided or are not provided correctly, we will be unable to process the request.</p> <p>&nbsp;</p> <p><strong>PERSONAL DATA WE COLLECT AND PROCESS</strong><br><br><strong>This will include:</strong></p> <ul>     <li>personal information about you which we ask you for (e.g. your name, address, and email address) when you make a booking from our booking engine;</li>     <li>financial details in order to process your booking when we require pre-payment;</li>     <li>details of transactions you carry out through our booking engine and details of the fulfillment of your orders.</li>     <li>our data processor may only collect and process personal data collected and/or processed on behalf of us in accordance with our instructions.</li> </ul> <p><br><strong>We grant permission to our data processor:</strong></p> <ul>     <li>to use your personal information for reserving rooms and/or other services for you at&nbsp;<strong>[AC_NAME]</strong></li>     <li>to pass on your financial details to <strong>[AC_NAME]</strong> and/or an appropriate third party (for example, a credit card company) for the purpose of confirming or paying for a booking;</li>     <li>to use your information for marketing purposes (where you explicitly agree with this); and</li>     <li>to pre-complete forms and other details on our website to make your next visit to our booking engine easier (e.g. when amending or canceling a booking).</li> </ul> <p><br><strong>Social Login: </strong>In the event of registration and/or access through a third-party account, we may collect and access certain information of the User’s profile from the corresponding social network, solely for internal administrative purposes and/or for the purposes indicated above.</p> <p>&nbsp;</p> <p><strong>Third-party data (e.g. book for a friend): </strong>In the event that the User provides third-party data, they declare that they have the third party’s consent and undertake to provide the interested party -the data holder- with the information contained in this Privacy Policy, duly exonerating us and our data processor from any liability in this regard. However, we may carry out the necessary verification to verify this fact, adopting the corresponding due diligence measures, in accordance with the data protection regulations.</p> <p>&nbsp;</p> <p><strong>Sensitive Data: </strong>Unless specifically requested, we ask that you not send us, and you not disclose, on or through the Services or otherwise to us, any Sensitive Personal Data (e.g., social security numbers, national identification number, data related to racial or ethnic origin, political opinions, religion, ideological or other beliefs, health, biometric or genetic characteristics, criminal background, trade union membership, or administrative or criminal proceedings and sanctions).</p> <p>&nbsp;</p> <p><strong>Use of Services by Minors: </strong>The Services are not directed to individuals under the age of sixteen (16), and we request that they not provide Personal Data through the Services.</p> <p>&nbsp;</p> <p><strong>PURPOSE OF PROCESSING PERSONAL DATA</strong></p> <p>Depending on the User’s requests, the personal data collected will be processed in accordance with the following purposes:</p> <ul>     <li>To manage the bookings made, including payment management (where applicable) and the management of the user’s requests and preferences.</li>     <li>To manage registration in loyalty or membership programs, as well as obtaining and redeeming points.</li>     <li>To manage the User’s contact requests with us through the channels provided for this end.</li>     <li>To manage the sending of personalized commercial communications from us, by electronic and/or conventional means, in cases in which the User expressly consents.</li>     <li>To manage the provision of the contracted accommodation service, as well as additional services.</li>     <li>To manage surveys and/or evaluations regarding the quality of the services provided by us and/or the perception of its image as a company.</li> </ul> <p>&nbsp;</p> <p><strong>DATA RETENTION</strong></p> <p>We will retain your Personal Data for the period necessary to fulfill the purposes outlined in this Privacy Policy unless a longer retention period is required or permitted by law or if the User requests their withdrawal from us, opposes or revokes their consent.</p> <p>The criteria used to determine our retention periods include:</p> <ul>     <li>The length of time we have an ongoing relationship with you and provide the Services to you (for example, for as long as you have an account with us or keep using the Services or if you have a booking that has not yet been fulfilled)</li>     <li>Whether there is a legal obligation to which we are subject (for example, certain laws require us to keep records of your transactions for a certain period of time before we can delete them)</li>     <li>Whether retention is advisable considering our legal position (such as, for statutes of limitations, litigation or regulatory investigations)</li> </ul> <p>&nbsp;</p> <p><strong>LEGITIMATE INTEREST FOR PROCESSING YOUR DATA</strong></p> <p>The data processing required in fulfillment of the aforementioned purposes that require the User’s consent cannot be undertaken without said consent.</p> <p>Likewise, in the event that the User withdraws their consent to any of the processing, this will not affect the legality of the processing carried out previously.</p> <p>To revoke such consent, the User may contact us through the appropriate channels.</p> <p>By the same token, in those cases in which it is necessary to process the User’s data for the fulfillment of a legal obligation or for the execution of the existing contractual relationship between us and the User, the processing would be legitimized as it is necessary for compliance with said purposes.</p> <p>&nbsp;</p> <p><strong>DATA DISCLOSURE</strong></p> <p>We will use and disclose Personal Data as we believe to be necessary or appropriate:</p> <ul>     <li>to comply with applicable law, including laws outside your country of residence;</li>     <li>to comply with the legal process;</li>     <li>to respond to requests from public and government authorities, including authorities outside your country of residence, and to meet national security or law enforcement requirements;</li>     <li>to enforce our terms and conditions;</li>     <li>to protect our operations;</li><li>to protect the rights, privacy, safety or property of our own, you or others; and</li>     <li>to allow us to pursue available remedies or limit the damage that we may sustain.</li> </ul> <p>We may use and disclose Other Data for any purpose, except where we are not allowed to under applicable law. In some instances, we may combine Other Data with Personal Data (such as combining your name with your location). If we do, we will treat the combined data as Personal Data as long as it is combined.</p> <p>&nbsp;</p> <p><strong>INTERNATIONAL TRANSFERS OF PERSONAL DATA</strong></p> <p>We may transfer your personal information to our data processor(s) or/and sub-processor(s) based outside of the EEA for the purposes described in this policy. If we do this, your personal information will continue to be subject to one or more appropriate safeguards set out in the law. These might be the use of model contracts in a form approved by regulators, or having our suppliers sign up to an independent privacy scheme approved by regulators (like the US <a target=\"_new\" rel=\"noopener noreferrer\" href=\"https://www.privacyshield.gov/\">Privacy Shield</a> scheme).</p> <p>&nbsp;</p> <p><strong>USER'S RESPONSIBILITY</strong></p> <p>The User guarantees that they are of legal age or legally emancipated, where applicable, fully capable, and that the information furnished to us is true, accurate, complete and up-to-date. For these purposes, the User is responsible for the truthfulness of all the data communicated and will keep the information updated, so that said data reflects their current situation.</p> <p>The User guarantees that he/she has informed third parties on whose behalf he/she has provided data, where applicable, of the aspects contained in this document. Also guarantees that he/she has obtained the third party’s authorization to provide their data to us for the purposes indicated.</p> <p>The User will be responsible for false or inaccurate information provided on the Website and for damages, whether direct or indirect, that this may cause to us or third parties.</p> <p>&nbsp;</p> <p><strong>EXERCISE OF RIGHTS AND DATA DELETION</strong></p> <p>The User may contact us at any time free of charge by emailing support@igloorooms.com and providing his unique account email, to:</p> <ul>     <li>To obtain confirmation about whether personal data concerning the User is being processed by us.</li>     <li>To access their personal details.</li>     <li>To rectify any inaccurate or incomplete data.</li>     <li>To request the deletion of their personal data when, among other reasons, the data is no longer necessary for the purposes for which it was collected.</li>     <li>To confirm revocation of consent.</li>     <li>To obtain from us the limitation of data processing when any of the conditions provided in the data protection regulations are met.</li>     <li>To request the portability of your data.</li> </ul> <p>Likewise, the user is informed that at any time he/she may file a complaint regarding the protection of their personal data before the competent Data Protection Authority.</p> <p>&nbsp;</p> <p><strong>SECURITY MEASURES</strong></p> <p>We will process the User’s data at all times in an absolute confidential way and maintain the mandatory duty to secrecy with regard to said data, in accordance with the provisions set out in applicable regulations, and to this end, adopting the measures of a technical and organizational nature required to guarantee the security of their data and prevent them from being altered, lost, processed or accessed illegally, depending on the state of the technology, the nature of the stored data and the risks to which they are exposed.</p><p>&nbsp;</p> <p><strong>BOOKING CONDITIONS</strong></p> <p>The User agrees to accept the cancellation, the no-refund and the no-show policies mentioned during the booking process and sent by email upon booking confirmation. Policies may vary based on room type and/or dates of stay. We are not liable for cancellations or changes caused by force majeure events beyond our control (e.g., natural disasters, strikes, pandemics).</p>",
+        "promotions": [],
         "roomtypes": [
             {
                 "amenities": [
@@ -940,47 +924,47 @@ export const common = {
                     {
                         "thumbnail": "",
                         "tooltip": "Standard Rooms",
-                        "url": "https:\/\/dhl6m8m6g2w2j.cloudfront.net\/ac\/AcImage_42_235.jpg"
+                        "url": "https://dhl6m8m6g2w2j.cloudfront.net/ac/AcImage_42_235.jpg"
                     },
                     {
                         "thumbnail": "",
                         "tooltip": "Standard Rooms",
-                        "url": "https:\/\/dhl6m8m6g2w2j.cloudfront.net\/ac\/AcImage_42_251.jpg"
+                        "url": "https://dhl6m8m6g2w2j.cloudfront.net/ac/AcImage_42_251.jpg"
                     },
                     {
                         "thumbnail": "",
                         "tooltip": "Standard Rooms",
-                        "url": "https:\/\/dhl6m8m6g2w2j.cloudfront.net\/ac\/AcImage_42_225.jpg"
+                        "url": "https://dhl6m8m6g2w2j.cloudfront.net/ac/AcImage_42_225.jpg"
                     },
                     {
                         "thumbnail": "",
                         "tooltip": "Standard Rooms",
-                        "url": "https:\/\/dhl6m8m6g2w2j.cloudfront.net\/ac\/AcImage_42_236.jpg"
+                        "url": "https://dhl6m8m6g2w2j.cloudfront.net/ac/AcImage_42_236.jpg"
                     },
                     {
                         "thumbnail": "",
                         "tooltip": "Standard Rooms",
-                        "url": "https:\/\/dhl6m8m6g2w2j.cloudfront.net\/ac\/AcImage_42_238.jpg"
+                        "url": "https://dhl6m8m6g2w2j.cloudfront.net/ac/AcImage_42_238.jpg"
                     },
                     {
                         "thumbnail": "",
                         "tooltip": "Standard Rooms",
-                        "url": "https:\/\/dhl6m8m6g2w2j.cloudfront.net\/ac\/AcImage_42_241.jpg"
+                        "url": "https://dhl6m8m6g2w2j.cloudfront.net/ac/AcImage_42_241.jpg"
                     },
                     {
                         "thumbnail": "",
                         "tooltip": "Standard Rooms",
-                        "url": "https:\/\/dhl6m8m6g2w2j.cloudfront.net\/ac\/AcImage_42_231.jpg"
+                        "url": "https://dhl6m8m6g2w2j.cloudfront.net/ac/AcImage_42_231.jpg"
                     },
                     {
                         "thumbnail": "",
                         "tooltip": "Standard Rooms",
-                        "url": "https:\/\/dhl6m8m6g2w2j.cloudfront.net\/ac\/AcImage_42_226.jpg"
+                        "url": "https://dhl6m8m6g2w2j.cloudfront.net/ac/AcImage_42_226.jpg"
                     },
                     {
                         "thumbnail": "",
                         "tooltip": "Standard Rooms",
-                        "url": "https:\/\/dhl6m8m6g2w2j.cloudfront.net\/ac\/AcImage_42_229.jpg"
+                        "url": "https://dhl6m8m6g2w2j.cloudfront.net/ac/AcImage_42_229.jpg"
                     }
                 ],
                 "inventory": null,
@@ -990,7 +974,7 @@ export const common = {
                 "main_image": {
                     "thumbnail": null,
                     "tooltip": "Standard Rooms",
-                    "url": "https:\/\/dhl6m8m6g2w2j.cloudfront.net\/ac\/AcImage_42_235.jpg"
+                    "url": "https://dhl6m8m6g2w2j.cloudfront.net/ac/AcImage_42_235.jpg"
                 },
                 "name": "Standard Rooms",
                 "not_available_reason": null,
@@ -1001,7 +985,7 @@ export const common = {
                 },
                 "occupancy_max": {
                     "adult_nbr": 2,
-                    "children_nbr": 0,
+                    "children_nbr": 1,
                     "infant_nbr": 0
                 },
                 "physicalrooms": [
@@ -1092,12 +1076,12 @@ export const common = {
                         "agents": [],
                         "assignable_units": null,
                         "cancelation": null,
-                        "custom_text": null,
+                        "custom_text": "Car Rental included",
                         "extra_bed_for_code": "002",
-                        "extra_bed_max": 0,
+                        "extra_bed_max": 1,
                         "extra_bed_rate_per_night": 0.000,
-                        "extra_bed_rate_per_night_additional_child": 0.0,
-                        "extra_bed_rate_per_night_first_child": 0.0,
+                        "extra_bed_rate_per_night_additional_child": 0,
+                        "extra_bed_rate_per_night_first_child": 0,
                         "guarantee": null,
                         "id": 123,
                         "is_active": true,
@@ -1112,7 +1096,7 @@ export const common = {
                             "code": "002",
                             "name": "Bed & breakfast"
                         },
-                        "name": "Standard Rooms\/Bed-&-breakfast",
+                        "name": "Standard Rooms/Car Rental included/Bed-&-breakfast",
                         "not_available_reason": null,
                         "pre_payment_amount": null,
                         "pre_payment_amount_gross": null,
@@ -1132,10 +1116,10 @@ export const common = {
                         "cancelation": null,
                         "custom_text": null,
                         "extra_bed_for_code": "002",
-                        "extra_bed_max": 0,
+                        "extra_bed_max": 1,
                         "extra_bed_rate_per_night": 0.000,
-                        "extra_bed_rate_per_night_additional_child": 0.0,
-                        "extra_bed_rate_per_night_first_child": 0.0,
+                        "extra_bed_rate_per_night_additional_child": 0,
+                        "extra_bed_rate_per_night_first_child": 0,
                         "guarantee": null,
                         "id": 2001,
                         "is_active": true,
@@ -1150,7 +1134,7 @@ export const common = {
                             "code": "002",
                             "name": "Bed & breakfast"
                         },
-                        "name": "Standard Rooms\/Bed-&-breakfast\/Non-ref.",
+                        "name": "Standard Rooms/Bed-&-breakfast/Non-ref.",
                         "not_available_reason": null,
                         "pre_payment_amount": null,
                         "pre_payment_amount_gross": null,
@@ -1172,8 +1156,8 @@ export const common = {
                         "extra_bed_for_code": "001",
                         "extra_bed_max": 0,
                         "extra_bed_rate_per_night": 0.000,
-                        "extra_bed_rate_per_night_additional_child": 0.0,
-                        "extra_bed_rate_per_night_first_child": 0.0,
+                        "extra_bed_rate_per_night_additional_child": 0,
+                        "extra_bed_rate_per_night_first_child": 0,
                         "guarantee": null,
                         "id": 3156,
                         "is_active": true,
@@ -1188,7 +1172,7 @@ export const common = {
                             "code": "001",
                             "name": "Bed only"
                         },
-                        "name": "Standard Rooms\/WS\/Bed-only",
+                        "name": "Standard Rooms/WS/Bed-only",
                         "not_available_reason": null,
                         "pre_payment_amount": null,
                         "pre_payment_amount_gross": null,
@@ -1199,6 +1183,100 @@ export const common = {
                             "description": "Per Room"
                         },
                         "short_name": "Bed only",
+                        "sleeps": 2,
+                        "variations": null
+                    },
+                    {
+                        "agents": [
+                            {
+                                "code": "TEST1",
+                                "id": 2,
+                                "is_active": null,
+                                "name": "Alitalia Cabin Crew",
+                                "payment_mode": null,
+                                "verification_mode": null
+                            }
+                        ],
+                        "assignable_units": null,
+                        "cancelation": null,
+                        "custom_text": "Breakfast at $7/person",
+                        "extra_bed_for_code": "001",
+                        "extra_bed_max": 0,
+                        "extra_bed_rate_per_night": 0.000,
+                        "extra_bed_rate_per_night_additional_child": 0,
+                        "extra_bed_rate_per_night_first_child": 0,
+                        "guarantee": null,
+                        "id": 3882,
+                        "is_active": true,
+                        "is_available_to_book": false,
+                        "is_booking_engine_enabled": true,
+                        "is_channel_enabled": false,
+                        "is_closed": null,
+                        "is_extra_bed_free_for_children": false,
+                        "is_non_refundable": false,
+                        "is_targeting_travel_agency": true,
+                        "meal_plan": {
+                            "code": "001",
+                            "name": "Bed only"
+                        },
+                        "name": "Standard Rooms/Breakfast at $7/person/Bed-only/Ali",
+                        "not_available_reason": null,
+                        "pre_payment_amount": null,
+                        "pre_payment_amount_gross": null,
+                        "rate_restrictions": null,
+                        "selected_variation": null,
+                        "sell_mode": {
+                            "code": "001",
+                            "description": "Per Room"
+                        },
+                        "short_name": "Bed only",
+                        "sleeps": 2,
+                        "variations": null
+                    },
+                    {
+                        "agents": [
+                            {
+                                "code": "9SCAPPA9",
+                                "id": 1,
+                                "is_active": null,
+                                "name": "scappadays",
+                                "payment_mode": null,
+                                "verification_mode": null
+                            }
+                        ],
+                        "assignable_units": null,
+                        "cancelation": null,
+                        "custom_text": "massage, dinner, wine",
+                        "extra_bed_for_code": "002",
+                        "extra_bed_max": 0,
+                        "extra_bed_rate_per_night": 0.000,
+                        "extra_bed_rate_per_night_additional_child": 0,
+                        "extra_bed_rate_per_night_first_child": 0,
+                        "guarantee": null,
+                        "id": 4523,
+                        "is_active": true,
+                        "is_available_to_book": false,
+                        "is_booking_engine_enabled": true,
+                        "is_channel_enabled": false,
+                        "is_closed": null,
+                        "is_extra_bed_free_for_children": false,
+                        "is_non_refundable": false,
+                        "is_targeting_travel_agency": true,
+                        "meal_plan": {
+                            "code": "002",
+                            "name": "Bed & breakfast"
+                        },
+                        "name": "Standard Rooms/massage, dinner, wine/Bed-&-breakfast/sca",
+                        "not_available_reason": null,
+                        "pre_payment_amount": null,
+                        "pre_payment_amount_gross": null,
+                        "rate_restrictions": null,
+                        "selected_variation": null,
+                        "sell_mode": {
+                            "code": "001",
+                            "description": "Per Room"
+                        },
+                        "short_name": "Bed & breakfast",
                         "sleeps": 2,
                         "variations": null
                     }
@@ -1266,57 +1344,57 @@ export const common = {
                     {
                         "thumbnail": "",
                         "tooltip": "Premium Suites",
-                        "url": "https:\/\/dhl6m8m6g2w2j.cloudfront.net\/ac\/AcImage_42_221.jpg"
+                        "url": "https://dhl6m8m6g2w2j.cloudfront.net/ac/AcImage_42_221.jpg"
                     },
                     {
                         "thumbnail": "",
                         "tooltip": "Premium Suites",
-                        "url": "https:\/\/dhl6m8m6g2w2j.cloudfront.net\/ac\/AcImage_42_224.jpg"
+                        "url": "https://dhl6m8m6g2w2j.cloudfront.net/ac/AcImage_42_224.jpg"
                     },
                     {
                         "thumbnail": "",
                         "tooltip": "Premium Suites",
-                        "url": "https:\/\/dhl6m8m6g2w2j.cloudfront.net\/ac\/AcImage_42_251.jpg"
+                        "url": "https://dhl6m8m6g2w2j.cloudfront.net/ac/AcImage_42_251.jpg"
                     },
                     {
                         "thumbnail": "",
                         "tooltip": "Premium Suites",
-                        "url": "https:\/\/dhl6m8m6g2w2j.cloudfront.net\/ac\/AcImage_42_225.jpg"
+                        "url": "https://dhl6m8m6g2w2j.cloudfront.net/ac/AcImage_42_225.jpg"
                     },
                     {
                         "thumbnail": "",
                         "tooltip": "Premium Suites",
-                        "url": "https:\/\/dhl6m8m6g2w2j.cloudfront.net\/ac\/AcImage_42_222.jpg"
+                        "url": "https://dhl6m8m6g2w2j.cloudfront.net/ac/AcImage_42_222.jpg"
                     },
                     {
                         "thumbnail": "",
                         "tooltip": "Premium Suites",
-                        "url": "https:\/\/dhl6m8m6g2w2j.cloudfront.net\/ac\/AcImage_42_236.jpg"
+                        "url": "https://dhl6m8m6g2w2j.cloudfront.net/ac/AcImage_42_236.jpg"
                     },
                     {
                         "thumbnail": "",
                         "tooltip": "Premium Suites",
-                        "url": "https:\/\/dhl6m8m6g2w2j.cloudfront.net\/ac\/AcImage_42_234.jpg"
+                        "url": "https://dhl6m8m6g2w2j.cloudfront.net/ac/AcImage_42_234.jpg"
                     },
                     {
                         "thumbnail": "",
                         "tooltip": "Premium Suites",
-                        "url": "https:\/\/dhl6m8m6g2w2j.cloudfront.net\/ac\/AcImage_42_223.jpg"
+                        "url": "https://dhl6m8m6g2w2j.cloudfront.net/ac/AcImage_42_223.jpg"
                     },
                     {
                         "thumbnail": "",
                         "tooltip": "Premium Suites",
-                        "url": "https:\/\/dhl6m8m6g2w2j.cloudfront.net\/ac\/AcImage_42_231.jpg"
+                        "url": "https://dhl6m8m6g2w2j.cloudfront.net/ac/AcImage_42_231.jpg"
                     },
                     {
                         "thumbnail": "",
                         "tooltip": "Premium Suites",
-                        "url": "https:\/\/dhl6m8m6g2w2j.cloudfront.net\/ac\/AcImage_42_226.jpg"
+                        "url": "https://dhl6m8m6g2w2j.cloudfront.net/ac/AcImage_42_226.jpg"
                     },
                     {
                         "thumbnail": "",
                         "tooltip": "Premium Suites",
-                        "url": "https:\/\/dhl6m8m6g2w2j.cloudfront.net\/ac\/AcImage_42_229.jpg"
+                        "url": "https://dhl6m8m6g2w2j.cloudfront.net/ac/AcImage_42_229.jpg"
                     }
                 ],
                 "inventory": null,
@@ -1326,7 +1404,7 @@ export const common = {
                 "main_image": {
                     "thumbnail": null,
                     "tooltip": "Premium Suites",
-                    "url": "https:\/\/dhl6m8m6g2w2j.cloudfront.net\/ac\/AcImage_42_221.jpg"
+                    "url": "https://dhl6m8m6g2w2j.cloudfront.net/ac/AcImage_42_221.jpg"
                 },
                 "name": "Premium Suites",
                 "not_available_reason": null,
@@ -1445,6 +1523,108 @@ export const common = {
                 "rate": null,
                 "rateplans": [
                     {
+                        "agents": [
+                            {
+                                "code": "9SCAPPA9",
+                                "id": 1,
+                                "is_active": null,
+                                "name": "scappadays",
+                                "payment_mode": null,
+                                "verification_mode": null
+                            }
+                        ],
+                        "assignable_units": null,
+                        "cancelation": null,
+                        "custom_text": "massage, dinner, wine",
+                        "extra_bed_for_code": "002",
+                        "extra_bed_max": 3,
+                        "extra_bed_rate_per_night": 10.000,
+                        "extra_bed_rate_per_night_additional_child": 0,
+                        "extra_bed_rate_per_night_first_child": 0,
+                        "guarantee": null,
+                        "id": 124,
+                        "is_active": true,
+                        "is_available_to_book": false,
+                        "is_booking_engine_enabled": true,
+                        "is_channel_enabled": false,
+                        "is_closed": null,
+                        "is_extra_bed_free_for_children": false,
+                        "is_non_refundable": false,
+                        "is_targeting_travel_agency": true,
+                        "meal_plan": {
+                            "code": "002",
+                            "name": "Bed & breakfast"
+                        },
+                        "name": "Premium Suites/massage, dinner, wine/Bed-&-breakfast/sca",
+                        "not_available_reason": null,
+                        "pre_payment_amount": null,
+                        "pre_payment_amount_gross": null,
+                        "rate_restrictions": null,
+                        "selected_variation": null,
+                        "sell_mode": {
+                            "code": "001",
+                            "description": "Per Room"
+                        },
+                        "short_name": "Bed & breakfast",
+                        "sleeps": 2,
+                        "variations": null
+                    },
+                    {
+                        "agents": [
+                            {
+                                "code": "9SCAPPA9",
+                                "id": 1,
+                                "is_active": null,
+                                "name": "scappadays",
+                                "payment_mode": null,
+                                "verification_mode": null
+                            },
+                            {
+                                "code": "TEST1",
+                                "id": 2,
+                                "is_active": null,
+                                "name": "Alitalia Cabin Crew",
+                                "payment_mode": null,
+                                "verification_mode": null
+                            }
+                        ],
+                        "assignable_units": null,
+                        "cancelation": null,
+                        "custom_text": null,
+                        "extra_bed_for_code": "001",
+                        "extra_bed_max": 3,
+                        "extra_bed_rate_per_night": 8.000,
+                        "extra_bed_rate_per_night_additional_child": 0,
+                        "extra_bed_rate_per_night_first_child": 0,
+                        "guarantee": null,
+                        "id": 1946,
+                        "is_active": true,
+                        "is_available_to_book": false,
+                        "is_booking_engine_enabled": true,
+                        "is_channel_enabled": true,
+                        "is_closed": null,
+                        "is_extra_bed_free_for_children": false,
+                        "is_non_refundable": false,
+                        "is_targeting_travel_agency": true,
+                        "meal_plan": {
+                            "code": "002",
+                            "name": "Bed & breakfast"
+                        },
+                        "name": "Premium Suites/Bed-&-breakfast/sca/Ali",
+                        "not_available_reason": null,
+                        "pre_payment_amount": null,
+                        "pre_payment_amount_gross": null,
+                        "rate_restrictions": null,
+                        "selected_variation": null,
+                        "sell_mode": {
+                            "code": "001",
+                            "description": "Per Room"
+                        },
+                        "short_name": "Bed & breakfast",
+                        "sleeps": 2,
+                        "variations": null
+                    },
+                    {
                         "agents": [],
                         "assignable_units": null,
                         "cancelation": null,
@@ -1452,8 +1632,8 @@ export const common = {
                         "extra_bed_for_code": "002",
                         "extra_bed_max": 3,
                         "extra_bed_rate_per_night": 5.000,
-                        "extra_bed_rate_per_night_additional_child": 5.0,
-                        "extra_bed_rate_per_night_first_child": 10.0,
+                        "extra_bed_rate_per_night_additional_child": 5,
+                        "extra_bed_rate_per_night_first_child": 10,
                         "guarantee": null,
                         "id": 3755,
                         "is_active": true,
@@ -1468,7 +1648,7 @@ export const common = {
                             "code": "003",
                             "name": "Half board"
                         },
-                        "name": "Premium Suites\/Breakfast & dinner\/Half-board",
+                        "name": "Premium Suites/Breakfast & dinner/Half-board",
                         "not_available_reason": null,
                         "pre_payment_amount": null,
                         "pre_payment_amount_gross": null,
@@ -1504,11 +1684,267 @@ export const common = {
                 }
             },
             {
+                "amenities": [],
+                "availabilities": null,
+                "bedding_setup": [
+                    {
+                        "code": "doublebed",
+                        "count": 1,
+                        "name": "Double bed"
+                    }
+                ],
+                "description": "Luxury Suites with balcony and amenities",
+                "exposed_inventory": null,
+                "id": 112,
+                "images": [
+                    {
+                        "thumbnail": "",
+                        "tooltip": "VIP Suites",
+                        "url": "https://dhl6m8m6g2w2j.cloudfront.net/ac/AcImage_42_224.jpg"
+                    },
+                    {
+                        "thumbnail": "",
+                        "tooltip": "VIP Suites",
+                        "url": "https://dhl6m8m6g2w2j.cloudfront.net/ac/AcImage_42_251.jpg"
+                    },
+                    {
+                        "thumbnail": "",
+                        "tooltip": "VIP Suites",
+                        "url": "https://dhl6m8m6g2w2j.cloudfront.net/ac/AcImage_42_241.jpg"
+                    },
+                    {
+                        "thumbnail": "",
+                        "tooltip": "VIP Suites",
+                        "url": "https://dhl6m8m6g2w2j.cloudfront.net/ac/AcImage_42_239.jpg"
+                    },
+                    {
+                        "thumbnail": "",
+                        "tooltip": "VIP Suites",
+                        "url": "https://dhl6m8m6g2w2j.cloudfront.net/ac/AcImage_42_234.jpg"
+                    },
+                    {
+                        "thumbnail": "",
+                        "tooltip": "VIP Suites",
+                        "url": "https://dhl6m8m6g2w2j.cloudfront.net/ac/AcImage_42_231.jpg"
+                    },
+                    {
+                        "thumbnail": "",
+                        "tooltip": "VIP Suites",
+                        "url": "https://dhl6m8m6g2w2j.cloudfront.net/ac/AcImage_42_226.jpg"
+                    },
+                    {
+                        "thumbnail": "",
+                        "tooltip": "VIP Suites",
+                        "url": "https://dhl6m8m6g2w2j.cloudfront.net/ac/AcImage_42_229.jpg"
+                    }
+                ],
+                "inventory": null,
+                "is_active": true,
+                "is_available_to_book": null,
+                "is_bed_configuration_enabled": false,
+                "main_image": {
+                    "thumbnail": null,
+                    "tooltip": "VIP Suites",
+                    "url": "https://dhl6m8m6g2w2j.cloudfront.net/ac/AcImage_42_224.jpg"
+                },
+                "name": "VIP Suites",
+                "not_available_reason": null,
+                "occupancy_default": {
+                    "adult_nbr": 4,
+                    "children_nbr": 0,
+                    "infant_nbr": null
+                },
+                "occupancy_max": {
+                    "adult_nbr": 6,
+                    "children_nbr": 0,
+                    "infant_nbr": 0
+                },
+                "physicalrooms": [
+                    {
+                        "calendar_cell": null,
+                        "hk_status": null,
+                        "housekeeper": null,
+                        "id": 52,
+                        "is_active": true,
+                        "name": "201"
+                    },
+                    {
+                        "calendar_cell": null,
+                        "hk_status": null,
+                        "housekeeper": {
+                            "assigned_units": null,
+                            "id": 21,
+                            "is_active": false,
+                            "is_soft_deleted": false,
+                            "mobile": null,
+                            "name": "Anita Meyers",
+                            "note": null,
+                            "password": null,
+                            "phone_prefix": null,
+                            "property_id": 0,
+                            "username": null
+                        },
+                        "id": 11,
+                        "is_active": true,
+                        "name": "202"
+                    },
+                    {
+                        "calendar_cell": null,
+                        "hk_status": null,
+                        "housekeeper": {
+                            "assigned_units": null,
+                            "id": 25,
+                            "is_active": false,
+                            "is_soft_deleted": false,
+                            "mobile": null,
+                            "name": "testasdasdadadasdasdasdasdasdasdadasdass",
+                            "note": null,
+                            "password": null,
+                            "phone_prefix": null,
+                            "property_id": 0,
+                            "username": null
+                        },
+                        "id": 53,
+                        "is_active": true,
+                        "name": "203"
+                    },
+                    {
+                        "calendar_cell": null,
+                        "hk_status": null,
+                        "housekeeper": {
+                            "assigned_units": null,
+                            "id": 9,
+                            "is_active": false,
+                            "is_soft_deleted": false,
+                            "mobile": null,
+                            "name": "Najiaa",
+                            "note": null,
+                            "password": null,
+                            "phone_prefix": null,
+                            "property_id": 0,
+                            "username": null
+                        },
+                        "id": 54,
+                        "is_active": true,
+                        "name": "204"
+                    },
+                    {
+                        "calendar_cell": null,
+                        "hk_status": null,
+                        "housekeeper": {
+                            "assigned_units": null,
+                            "id": 9,
+                            "is_active": false,
+                            "is_soft_deleted": false,
+                            "mobile": null,
+                            "name": "Najiaa",
+                            "note": null,
+                            "password": null,
+                            "phone_prefix": null,
+                            "property_id": 0,
+                            "username": null
+                        },
+                        "id": 55,
+                        "is_active": true,
+                        "name": "205"
+                    },
+                    {
+                        "calendar_cell": null,
+                        "hk_status": null,
+                        "housekeeper": {
+                            "assigned_units": null,
+                            "id": 10,
+                            "is_active": false,
+                            "is_soft_deleted": false,
+                            "mobile": null,
+                            "name": "Bassamx Yzzz",
+                            "note": null,
+                            "password": null,
+                            "phone_prefix": null,
+                            "property_id": 0,
+                            "username": null
+                        },
+                        "id": 56,
+                        "is_active": true,
+                        "name": "206"
+                    }
+                ],
+                "rate": null,
+                "rateplans": [
+                    {
+                        "agents": [
+                            {
+                                "code": "TEST1",
+                                "id": 2,
+                                "is_active": null,
+                                "name": "Alitalia Cabin Crew",
+                                "payment_mode": null,
+                                "verification_mode": null
+                            }
+                        ],
+                        "assignable_units": null,
+                        "cancelation": null,
+                        "custom_text": "",
+                        "extra_bed_for_code": "002",
+                        "extra_bed_max": 2,
+                        "extra_bed_rate_per_night": 20.000,
+                        "extra_bed_rate_per_night_additional_child": 10,
+                        "extra_bed_rate_per_night_first_child": 10,
+                        "guarantee": null,
+                        "id": 4476,
+                        "is_active": true,
+                        "is_available_to_book": false,
+                        "is_booking_engine_enabled": true,
+                        "is_channel_enabled": false,
+                        "is_closed": null,
+                        "is_extra_bed_free_for_children": false,
+                        "is_non_refundable": false,
+                        "is_targeting_travel_agency": true,
+                        "meal_plan": {
+                            "code": "001",
+                            "name": "Bed only"
+                        },
+                        "name": "VIP Suites/Bed-only/Ali",
+                        "not_available_reason": null,
+                        "pre_payment_amount": null,
+                        "pre_payment_amount_gross": null,
+                        "rate_restrictions": null,
+                        "selected_variation": null,
+                        "sell_mode": {
+                            "code": "001",
+                            "description": "Per Room"
+                        },
+                        "short_name": "Bed only",
+                        "sleeps": 4,
+                        "variations": null
+                    }
+                ],
+                "size": 75.000,
+                "smoking_option": {
+                    "allowed_smoking_options": [
+                        {
+                            "code": "",
+                            "description": "No preferences"
+                        },
+                        {
+                            "code": "001",
+                            "description": "Smoking"
+                        },
+                        {
+                            "code": "002",
+                            "description": "Non-smoking"
+                        }
+                    ],
+                    "code": "001",
+                    "description": "Ask"
+                }
+            },
+            {
                 "amenities": [
                     {
                         "amenity_type": "room",
                         "code": "cablesatellitetv",
-                        "description": "Cable \/ Satellite TV"
+                        "description": "Cable / Satellite TV"
                     },
                     {
                         "amenity_type": "room",
@@ -1561,7 +1997,7 @@ export const common = {
                     {
                         "code": "twindoublechangeable",
                         "count": 1,
-                        "name": "Twin\/Double changeable beds"
+                        "name": "Twin/Double changeable beds"
                     },
                     {
                         "code": "sofabed",
@@ -1576,42 +2012,42 @@ export const common = {
                     {
                         "thumbnail": "",
                         "tooltip": "Penthouse",
-                        "url": "https:\/\/dhl6m8m6g2w2j.cloudfront.net\/ac\/AcImage_42_17204.jpg"
+                        "url": "https://dhl6m8m6g2w2j.cloudfront.net/ac/AcImage_42_17204.jpg"
                     },
                     {
                         "thumbnail": "",
                         "tooltip": "Penthouse",
-                        "url": "https:\/\/dhl6m8m6g2w2j.cloudfront.net\/ac\/AcImage_42_224.jpg"
+                        "url": "https://dhl6m8m6g2w2j.cloudfront.net/ac/AcImage_42_224.jpg"
                     },
                     {
                         "thumbnail": "",
                         "tooltip": "Penthouse",
-                        "url": "https:\/\/dhl6m8m6g2w2j.cloudfront.net\/ac\/AcImage_42_240.jpg"
+                        "url": "https://dhl6m8m6g2w2j.cloudfront.net/ac/AcImage_42_240.jpg"
                     },
                     {
                         "thumbnail": "",
                         "tooltip": "Penthouse",
-                        "url": "https:\/\/dhl6m8m6g2w2j.cloudfront.net\/ac\/AcImage_42_234.jpg"
+                        "url": "https://dhl6m8m6g2w2j.cloudfront.net/ac/AcImage_42_234.jpg"
                     },
                     {
                         "thumbnail": "",
                         "tooltip": "Penthouse",
-                        "url": "https:\/\/dhl6m8m6g2w2j.cloudfront.net\/ac\/AcImage_42_223.jpg"
+                        "url": "https://dhl6m8m6g2w2j.cloudfront.net/ac/AcImage_42_223.jpg"
                     },
                     {
                         "thumbnail": "",
                         "tooltip": "Penthouse",
-                        "url": "https:\/\/dhl6m8m6g2w2j.cloudfront.net\/ac\/AcImage_42_231.jpg"
+                        "url": "https://dhl6m8m6g2w2j.cloudfront.net/ac/AcImage_42_231.jpg"
                     },
                     {
                         "thumbnail": "",
                         "tooltip": "Penthouse",
-                        "url": "https:\/\/dhl6m8m6g2w2j.cloudfront.net\/ac\/AcImage_42_256.jpg"
+                        "url": "https://dhl6m8m6g2w2j.cloudfront.net/ac/AcImage_42_256.jpg"
                     },
                     {
                         "thumbnail": "",
                         "tooltip": "Penthouse",
-                        "url": "https:\/\/dhl6m8m6g2w2j.cloudfront.net\/ac\/AcImage_42_229.jpg"
+                        "url": "https://dhl6m8m6g2w2j.cloudfront.net/ac/AcImage_42_229.jpg"
                     }
                 ],
                 "inventory": null,
@@ -1621,7 +2057,7 @@ export const common = {
                 "main_image": {
                     "thumbnail": null,
                     "tooltip": "Penthouse",
-                    "url": "https:\/\/dhl6m8m6g2w2j.cloudfront.net\/ac\/AcImage_42_17204.jpg"
+                    "url": "https://dhl6m8m6g2w2j.cloudfront.net/ac/AcImage_42_17204.jpg"
                 },
                 "name": "Penthouse",
                 "not_available_reason": null,
@@ -1655,8 +2091,8 @@ export const common = {
                         "extra_bed_for_code": "001",
                         "extra_bed_max": 0,
                         "extra_bed_rate_per_night": 0.000,
-                        "extra_bed_rate_per_night_additional_child": 0.0,
-                        "extra_bed_rate_per_night_first_child": 0.0,
+                        "extra_bed_rate_per_night_additional_child": 0,
+                        "extra_bed_rate_per_night_first_child": 0,
                         "guarantee": null,
                         "id": 3766,
                         "is_active": true,
@@ -1671,7 +2107,7 @@ export const common = {
                             "code": "002",
                             "name": "Bed & breakfast"
                         },
-                        "name": "Penthouse\/Bed-&-breakfast",
+                        "name": "Penthouse/Bed-&-breakfast",
                         "not_available_reason": null,
                         "pre_payment_amount": null,
                         "pre_payment_amount_gross": null,
@@ -1693,8 +2129,8 @@ export const common = {
                         "extra_bed_for_code": "001",
                         "extra_bed_max": 0,
                         "extra_bed_rate_per_night": 0.000,
-                        "extra_bed_rate_per_night_additional_child": 0.0,
-                        "extra_bed_rate_per_night_first_child": 0.0,
+                        "extra_bed_rate_per_night_additional_child": 0,
+                        "extra_bed_rate_per_night_first_child": 0,
                         "guarantee": null,
                         "id": 3929,
                         "is_active": true,
@@ -1709,7 +2145,7 @@ export const common = {
                             "code": "006",
                             "name": "All-inclusive"
                         },
-                        "name": "Penthouse\/Bone fire express and 30 minutes massage or yoga\/All-inclusive",
+                        "name": "Penthouse/Bone fire express and 30 minutes massage or yoga/All-inclusive",
                         "not_available_reason": null,
                         "pre_payment_amount": null,
                         "pre_payment_amount_gross": null,
@@ -1731,8 +2167,8 @@ export const common = {
                         "extra_bed_for_code": "001",
                         "extra_bed_max": 0,
                         "extra_bed_rate_per_night": 0.000,
-                        "extra_bed_rate_per_night_additional_child": 0.0,
-                        "extra_bed_rate_per_night_first_child": 0.0,
+                        "extra_bed_rate_per_night_additional_child": 0,
+                        "extra_bed_rate_per_night_first_child": 0,
                         "guarantee": null,
                         "id": 3942,
                         "is_active": true,
@@ -1747,7 +2183,7 @@ export const common = {
                             "code": "002",
                             "name": "Bed & breakfast"
                         },
-                        "name": "Penthouse\/WS\/Bed-&-breakfast",
+                        "name": "Penthouse/WS/Bed-&-breakfast",
                         "not_available_reason": null,
                         "pre_payment_amount": null,
                         "pre_payment_amount_gross": null,
@@ -1778,12 +2214,12 @@ export const common = {
         "social_media": [
             {
                 "code": "001",
-                "link": "https:\/\/www.facebook.com\/DemoHotel",
+                "link": "https://www.facebook.com/DemoHotel",
                 "name": "Facebook"
             },
             {
                 "code": "002",
-                "link": "https:\/\/www.instagram.com\/DemoHotel",
+                "link": "https://www.instagram.com/DemoHotel",
                 "name": "Instragram"
             },
             {
@@ -1793,7 +2229,7 @@ export const common = {
             },
             {
                 "code": "004",
-                "link": "https:\/\/www.youtube.com",
+                "link": "https://www.youtube.com",
                 "name": "YouTube"
             },
             {
@@ -1808,7 +2244,7 @@ export const common = {
             },
             {
                 "code": "007",
-                "link": "https:\/\/www.tripadvisor.com",
+                "link": "https://www.tripadvisor.com",
                 "name": "Trip Advisor"
             }
         ],
@@ -1823,23 +2259,23 @@ export const common = {
             }
         ],
         "space_theme": {
-            "background_image": "https:\/\/gateway.igloorooms.com\/irimages\/acbg\/AcBg_42.jpg?t=1595742815420",
+            "background_image": "https://gateway.igloorooms.com/irimages/acbg/AcBg_42.jpg?t=1595742815420",
             "button_bg_color": "af1f2f",
             "button_border_radius": "28",
-            "favicon": "https:\/\/gateway.igloorooms.com\/irimages\/acfavicon\/AcFavicon_42.png",
+            "favicon": "https://gateway.igloorooms.com/irimages/acfavicon/AcFavicon_42.png",
             "heading_bar_color": "949494",
             "heading_font_color": "FFFFFF",
-            "logo": "https:\/\/gateway.igloorooms.com\/irimages\/aclogo\/AcLogo_42.png",
+            "logo": "https://gateway.igloorooms.com/irimages/aclogo/AcLogo_42.png",
             "website": "www.demo.igloospace.com"
         },
         "tags": [
             {
                 "key": "conversion",
-                "value": " <!-- Event snippet to record bookings -->\\n<script>\\n  gtag('event', 'sales', {\\n      'value': $$total_price$$,\\n      'currency': '$$cur_code$$',\\n      'booking_no': '$$booking_xref$$'\\n  });\\n<\\\/script>"
+                "value": " <!-- Event snippet to record bookings -->\\n<script>\\n  gtag('event', 'sales', {\\n      'value': $$total_price$$,\\n      'currency': '$$cur_code$$',\\n      'booking_no': '$$booking_xref$$'\\n  });\\n<\\/script>"
             },
             {
                 "key": "header",
-                "value": "<script>\u000aconsole.log(\"hello world from header tag\")\u000a<\/script>"
+                "value": "<script>\nconsole.log(\"hello world from header tag\")\n</script>"
             },
             {
                 "key": "body",
@@ -1878,7 +2314,6 @@ export const common = {
             "check_in_till": "24:00",
             "check_out_till": "12:00"
         }
-
     },
     locales: {
         "AVAILABLE_ROOM": "%1 left",

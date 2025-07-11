@@ -1,22 +1,17 @@
-import axios from "axios";
 import { Token } from "../token";
-export class BookingServiceError extends Error {
-    constructor(method, params, originalError) {
-        const message = `Error in ${method} with params ${JSON.stringify(params)}: ${originalError.message || originalError}`;
-        super(message);
-        this.name = 'BookingServiceError';
-        this.method = method;
-        this.params = params;
-        this.originalError = originalError;
-    }
-}
+import { ApiService } from "./api.service";
+
 export class BookingService extends Token {
     constructor(baseUrl) {
         super()
-        this.baseUrl = baseUrl
+        this.apiService = new ApiService(baseUrl)
+    }
+    setToken(token) {
+        this.token = token;
+        this.apiService.setToken(token)
     }
     setBaseUrl(url) {
-        this.baseUrl = url
+        this.apiService.setBaseUrl(url);
     }
     /**
      * Fetches the penalty statement for a specific booking.
@@ -39,46 +34,17 @@ export class BookingService extends Token {
      * });
      */
     async getPenaltyStatement(props) {
-        // const method = 'getPenaltyStatement';
-        const token = this.getToken();
-        if (!token) {
-            throw new Error('Missing Token');
-        }
-        const { data } = await axios.post(`${this.baseUrl}/Get_Penalty_Statement`, props, {
-            headers: {
-                Authorization: token
-            }
-        });
-        if (data.ExceptionMsg !== '') {
-            throw new Error(data.ExceptionMsg);
-        }
+        const data = await this.apiService.makePostRequest(`/Get_Penalty_Statement`, props);
         return data.My_Result;
     }
     async getBedPreference() {
-        const token = this.getToken();
-        if (!token) {
-            throw new Error('Missing Token');
-        }
-        const { data } = await axios.post(`${this.baseUrl}/Get_Setup_Entries_By_TBL_NAME`, {
+        const data = await this.apiService.makePostRequest(`/Get_Setup_Entries_By_TBL_NAME`, {
             TBL_NAME: '_BED_PREFERENCE_TYPE',
-        }, {
-            headers: {
-                Authorization: token
-            }
         });
-        if (data.ExceptionMsg !== '') {
-            throw new Error(data.ExceptionMsg);
-        }
         return data.My_Result;
     }
     async getExposedBooking({ booking_nbr, language, withExtras = true }) {
-        const token = this.getToken();
-        if (!token) {
-            throw new Error('Missing Token');
-        }
-        // if (booking_nbr === 83862713858)
-        //     throw new Error("Invalid booking")
-        const { data } = await axios.post(`${this.baseUrl}/Get_Exposed_Booking`, {
+        const data = await this.apiService.makePostRequest(`/Get_Exposed_Booking`, {
             booking_nbr,
             language,
             extras: withExtras ? [
@@ -103,14 +69,7 @@ export class BookingService extends Token {
                     "value": ""
                 }
             ] : null,
-        }, {
-            headers: {
-                Authorization: token
-            }
         });
-        if (data.ExceptionMsg !== '') {
-            throw new Error(JSON.stringify({ error: data.ExceptionMsg, token, booking_nbr }));
-        }
         return data.My_Result;
     }
 }

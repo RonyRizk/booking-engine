@@ -1,4 +1,3 @@
-import axios from "axios";
 import { format, parse } from "date-fns";
 import { CommonServices } from "./common.service";
 import { Token } from "../token";
@@ -18,24 +17,20 @@ export class PrintingService extends Token {
     }
 
     async getPrintingData({ bookingNumber, aName, language = "en", baseUrl, tables, includePenaltyStatement }) {
-        try {
-            if (baseUrl) {
-                this.commonService.setBaseUrl(baseUrl);
-                this.bookingService.setBaseUrl(baseUrl)
-            }
-            const [booking, property, countries, locales, beddingPreference, statement] = await Promise.all([
-                this.bookingService.getExposedBooking({ booking_nbr: bookingNumber, language }),
-                this.commonService.getExposedProperty(aName, language),
-                this.commonService.getCountries(language),
-                this.commonService.fetchLanguage(language, tables ?? ["_PRINT_FRONT", "_PMS_FRONT"]),
-                this.bookingService.getBedPreference(),
-                includePenaltyStatement ? this.bookingService.getPenaltyStatement() : Promise.resolve(null)
-            ])
-            this._bedPreferences = beddingPreference
-            return { booking, property, countries, locales, beddingPreference, isError: false, statement, error: null }
-        } catch (error) {
-            return { booking: null, property: null, countries: null, locales: null, isError: true, error: error.toString() }
+        if (baseUrl) {
+            this.commonService.setBaseUrl(baseUrl);
+            this.bookingService.setBaseUrl(baseUrl)
         }
+        const [booking, property, countries, locales, beddingPreference, statement] = await Promise.all([
+            this.bookingService.getExposedBooking({ booking_nbr: bookingNumber, language }),
+            this.commonService.getExposedProperty(aName, language),
+            this.commonService.getCountries(language),
+            this.commonService.fetchLanguage(language, tables ?? ["_PRINT_FRONT", "_PMS_FRONT"]),
+            this.bookingService.getBedPreference(),
+            includePenaltyStatement ? this.bookingService.getPenaltyStatement() : Promise.resolve(null)
+        ])
+        this._bedPreferences = beddingPreference
+        return { booking, property, countries, locales, beddingPreference, statement, error: null }
     }
 
     //Helpers

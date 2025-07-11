@@ -4,6 +4,7 @@ import BookingEmail from '@/emails/booking';
 import { BookingSchema } from '../schemas';
 import { ZodError } from 'zod';
 import { logApiError } from '@/logger';
+import { ApiError } from '@/lib/services/api.service';
 
 // Force dynamic rendering to prevent static generation errors
 export const dynamic = 'force-dynamic';
@@ -25,8 +26,8 @@ export async function GET(req) {
         if (error instanceof ZodError) {
             return Response.json(error.issues, { status: 400 })
         }
-        if (error.message === "No booking found") {
-            return new Response("No booking found", { status: 404 });
+        if (error instanceof ApiError) {
+            return Response.json(error, { status: 400 })
         }
         return new Response(error.message, { status: 500 });
     }

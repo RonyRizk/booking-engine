@@ -17,19 +17,20 @@ export async function GET(req) {
 
         const commonService = new CommonServices("https://gateway.igloorooms.com/IRBE")
         commonService.setToken(token)
-        const [data] = await Promise.all(
+        const [data, tables] = await Promise.all(
             [getBookingData({ bookingNumber: id, aName: aname, language: lang }, token),
-                // commonService.getSetupEntriesByTBLNAMEMulti([
-                //     ""
-                // ])
+            commonService.getSetupEntriesByTBLNameMulti([
+                '_PRE_ARRIVAL_EMAIL',
+                '_DURING_THE_STAY_EMAIL',
+                '_POST_DEPARTURE_EMAIL'
+            ], lang)
             ]
         );
-
         let Component;
         switch (mode) {
             case "pre":
                 Component = (await import('@/emails/booking/AutoEmailPreArrival')).default;
-                return new Response(await render(<Component {...data} description="" lang={lang} />), {
+                return new Response(await render(<Component {...data} setupTables={tables} lang={lang} />), {
                     headers: {
                         'content-type': 'text/html'
                     }
@@ -37,7 +38,7 @@ export async function GET(req) {
 
             case "post":
                 Component = (await import('@/emails/booking/AutoEmailPostDeparture')).default;
-                return new Response(await render(<Component {...data} lang={lang} />), {
+                return new Response(await render(<Component {...data} setupTables={tables} lang={lang} />), {
                     headers: {
                         'content-type': 'text/html'
                     }
@@ -45,7 +46,7 @@ export async function GET(req) {
 
             case "during":
                 Component = (await import('@/emails/booking/AutoEmailDuringStay')).default;
-                return new Response(await render(<Component {...data} description="" lang={lang} />));
+                return new Response(await render(<Component {...data} setupTables={tables} lang={lang} />));
 
             default:
                 return new Response("Invalid mode", { status: 400 });

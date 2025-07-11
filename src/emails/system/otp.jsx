@@ -5,6 +5,7 @@ import SystemHeader from './SystemHeader'
 import { Container } from '@react-email/components'
 
 export default function OTPEmail({ otp, name, geo, lang, variant, property }) {
+    const showGeoInfo = geo?.query || geo?.country || geo?.city || geo?.org
     return (
         <EmailContainer lang={lang}>
             <SystemHeader name={""} />
@@ -15,7 +16,7 @@ export default function OTPEmail({ otp, name, geo, lang, variant, property }) {
                 : <EmailText>
                     <b>{otp}</b> is your login verification code.
                 </EmailText>}
-            {geo && <Container>
+            {showGeoInfo && <Container>
                 <EmailText>Login geolocation info:</EmailText>
                 {geo.query && <EmailText color={!property ? undefined : geo.country?.toLowerCase() !== property?.country?.name?.toLowerCase() ? "red" : undefined}>
                     <span style={{ color: "#333333" }}>IP:</span> {geo.query}

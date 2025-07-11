@@ -15,16 +15,18 @@ import ExtraServices from "@/components/printing/ExtraServices";
 export default async function Printing({ searchParams, params }) {
   const { mode = "printing", id, lang = "en", token } = searchParams;
   const printingService = new PrintingService(token);
-  const { booking, isError, property, countries, locales: defaultLocales } =
-    await printingService.getPrintingData({
-      bookingNumber: id,
-      aName: params.id,
-      language: lang,
-    });
-
-  if (isError) {
+  let data = {}
+  try {
+    data =
+      await printingService.getPrintingData({
+        bookingNumber: id,
+        aName: params.id,
+        language: lang,
+      });
+  } catch (error) {
     return redirect("https://x.igloorooms.com/manage/acbookinglist.aspx")
   }
+  const { booking, property, countries, locales: defaultLocales } = data
   const { entries: locales } = defaultLocales
   if (!booking) {
     return null;
