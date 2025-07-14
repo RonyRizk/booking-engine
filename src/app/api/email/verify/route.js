@@ -26,11 +26,16 @@ export async function POST(req) {
         logApiError(error, req, {
             body: requestBody,
             validationTarget: 'VerifyEmailSchema',
-            step: error instanceof ZodError ? 'validation' : 'processing'
+            step: error instanceof ZodError ? 'validation' : 'processing',
+            userName: requestBody?.name || 'unknown',
+            hasUrl: !!requestBody?.url
         });
         if (error instanceof ZodError) {
-            return Response.json(error.issues, { status: 400 });
+            return Response.json({
+                error: 'Validation failed',
+                issues: error.issues
+            }, { status: 400 });
         }
-        return new Response(error.message, { status: 500 });
+        return new Response(`Failed to process verify email: ${error.message}`, { status: 500 });
     }
 }

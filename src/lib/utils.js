@@ -37,7 +37,7 @@ export function formatAmount(amount, currency = 'USD', withIntl = false) {
     if (withIntl) {
         return new Intl.NumberFormat('en-US', { style: 'currency', currency: currency }).format(amount);
     }
-    return `${currency}${amount?.toFixed(2)}`;
+    return `${currency} ${amount?.toFixed(2)}`;
 }
 export function calculateDaysBetweenDates(from_date, to_date) {
     const startDate = parse(from_date, 'yyyy-MM-dd', new Date());

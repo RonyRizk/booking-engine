@@ -26,9 +26,9 @@ export default function BookingCHM({ booking, lang, locales, bookingDetailsUrl, 
             <PropertyHeader property={property} />
             <EmailText color={operation === "CANCEL" ? "red" : undefined}><b>{getOperationName()} {booking.channel_booking_nbr}</b></EmailText>
             <BookingInfoSection.BookingDetails >
-                <EmailText style={{ margin: "0" }}>
+                {channelName && <EmailText style={{ margin: "0" }}>
                     <b>{locales?.Lcz_ChannelName}:</b> {channelName}
-                </EmailText>
+                </EmailText>}
                 <BookingInfoSection.GuestInfo {..._baseProps} />
                 <BookingInfoSection.BookedOnDate {..._baseProps} />
                 <BookingInfoSection.CheckInOutInfo {..._baseProps} property={property} />

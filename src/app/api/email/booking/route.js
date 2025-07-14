@@ -21,14 +21,21 @@ export async function GET(req) {
         logApiError(error, req, {
             body: null,
             validationTarget: 'BookingSchema',
-            step: error instanceof ZodError ? 'validation' : 'processing'
+            step: error instanceof ZodError ? 'validation' : 'processing',
+            bookingId: extractSearchParamsInsensitive(req).id || 'unknown'
         });
         if (error instanceof ZodError) {
-            return Response.json(error.issues, { status: 400 })
+            return Response.json({
+                error: 'Validation failed',
+                issues: error.issues
+            }, { status: 400 });
         }
         if (error instanceof ApiError) {
-            return Response.json(error, { status: 400 })
+            return Response.json(error, { status: 400 });
         }
-        return new Response(error.message, { status: 500 });
+        if (error.message === "No booking found") {
+            return new Response("No booking found", { status: 404 });
+        }
+        return new Response(`Failed to process booking email: ${error.message}`, { status: 500 });
     }
 }

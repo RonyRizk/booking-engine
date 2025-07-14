@@ -4,6 +4,7 @@ import { CommonServices } from '@/lib/services/common.service';
 import { AutoEmailSchema } from '../../schemas';
 import { ZodError } from 'zod';
 import { logApiError } from '@/logger';
+import { ApiError } from '@/lib/services/api.service';
 
 // Force dynamic rendering to prevent static generation errors
 export const dynamic = 'force-dynamic';
@@ -27,42 +28,62 @@ export async function GET(req) {
             ]
         );
         let Component;
-        switch (mode) {
-            case "pre":
-                Component = (await import('@/emails/booking/AutoEmailPreArrival')).default;
-                return new Response(await render(<Component {...data} setupTables={tables} lang={lang} />), {
-                    headers: {
-                        'content-type': 'text/html'
-                    }
-                });
+        let emailHTML;
+        
+        try {
+            switch (mode) {
+                case "pre":
+                    Component = (await import('@/emails/booking/AutoEmailPreArrival')).default;
+                    emailHTML = await render(<Component {...data} setupTables={tables} lang={lang} />);
+                    return new Response(emailHTML, {
+                        headers: {
+                            'content-type': 'text/html'
+                        }
+                    });
 
-            case "post":
-                Component = (await import('@/emails/booking/AutoEmailPostDeparture')).default;
-                return new Response(await render(<Component {...data} setupTables={tables} lang={lang} />), {
-                    headers: {
-                        'content-type': 'text/html'
-                    }
-                });
+                case "post":
+                    Component = (await import('@/emails/booking/AutoEmailPostDeparture')).default;
+                    emailHTML = await render(<Component {...data} setupTables={tables} lang={lang} />);
+                    return new Response(emailHTML, {
+                        headers: {
+                            'content-type': 'text/html'
+                        }
+                    });
 
-            case "during":
-                Component = (await import('@/emails/booking/AutoEmailDuringStay')).default;
-                return new Response(await render(<Component {...data} setupTables={tables} lang={lang} />));
+                case "during":
+                    Component = (await import('@/emails/booking/AutoEmailDuringStay')).default;
+                    emailHTML = await render(<Component {...data} setupTables={tables} lang={lang} />);
+                    return new Response(emailHTML, {
+                        headers: {
+                            'content-type': 'text/html'
+                        }
+                    });
 
-            default:
-                return new Response("Invalid mode", { status: 400 });
+                default:
+                    throw new Error(`Invalid mode: ${mode}`);
+            }
+        } catch (renderError) {
+            throw new Error(`Failed to render ${mode} email component: ${renderError.message}`);
         }
     } catch (error) {
         logApiError(error, req, {
             body: null,
-            validationTarget: 'ActionOtpEmailSchema',
-            step: error instanceof ZodError ? 'validation' : 'processing'
+            validationTarget: 'AutoEmailSchema',
+            step: error instanceof ZodError ? 'validation' : 'processing',
+            mode: extractSearchParamsInsensitive(req).mode || 'unknown'
         });
         if (error instanceof ZodError) {
-            return Response.json(error.issues, { status: 400 });
+            return Response.json({
+                error: 'Validation failed',
+                issues: error.issues
+            }, { status: 400 });
+        }
+        if (error instanceof ApiError) {
+            return Response.json(error, { status: 400 });
         }
         if (error.message === "No booking found") {
             return new Response("No booking found", { status: 404 });
         }
-        return new Response(error.message, { status: 500 });
+        return new Response(`Failed to process auto email: ${error.message}`, { status: 500 });
     }
 }

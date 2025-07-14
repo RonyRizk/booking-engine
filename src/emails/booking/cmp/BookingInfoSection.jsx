@@ -14,8 +14,7 @@ const BookingInfoSection = ({ children }) => {
 const PropertyDetails = ({
   property,
   locales,
-  bookingEmail,
-  phone,
+  showMapLink = true,
   children,
 }) => {
   return (
@@ -28,6 +27,14 @@ const PropertyDetails = ({
         ]
           .filter(Boolean)
           .join(", ")}
+        {showMapLink && <>
+          {" "}
+          <EmailLink
+            href={`https://www.google.com/maps/preview?q=${property.location.latitude},${property.location.longitude}`}
+          >
+            {locales?.Lcz_Map}
+          </EmailLink>
+        </>}
       </EmailText>
       {children}
     </Section>
@@ -40,7 +47,7 @@ const ContactInfo = ({ locales, phone, bookingEmail }) => {
 
   return (
     <EmailText style={{ margin: "0" }}>
-      <b>{`${locales?.Lcz_Phone}:`}</b> {phone} - {locales.Lcz_Email}:{" "}
+      <b>{`${locales?.Lcz_Phone}:`}</b> {phone} <br /> <b>{locales.Lcz_Email}</b>:{" "}
       <EmailLink href={`mailto:${bookingEmail}`}>{bookingEmail}</EmailLink>{" "}
     </EmailText>
   );

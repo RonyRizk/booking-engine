@@ -45,9 +45,9 @@ export default function BookingHeader({
             <BookingInfoSection.BookingDetails>
                 <BookingInfoSection.NonCancelledOnly booking={booking}>
                     <BookingInfoSection.DirectBookingOnly booking={booking}>
-                        <BookingInfoSection.PropertyDetails property={property} />
+                        <BookingInfoSection.PropertyDetails property={property} locales={locales} />
                         <BookingInfoSection.ContactInfo property={property} phone={phone} locales={locales} bookingEmail={bookingEmail} />
-                        <BookingInfoSection.LocationInfo property={property} locales={locales} />
+                        {/* <BookingInfoSection.LocationInfo property={property} locales={locales} /> */}
                     </BookingInfoSection.DirectBookingOnly>
                 </BookingInfoSection.NonCancelledOnly>
                 <BookingInfoSection.GuestInfo {..._baseProps} />

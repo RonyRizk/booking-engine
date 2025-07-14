@@ -2,7 +2,7 @@ const { z } = require("zod");
 
 const LanguageSchema = z.optional(z.string().length(2)).default('en');
 const BaseSchema = z.object({
-    aname: z.string().min(3),
+    aname: z.string().min(2),
     lang: LanguageSchema
 })
 const BookingSchema =
@@ -11,8 +11,8 @@ const BookingSchema =
     })
 
 const BookingCHMSchema = z.object({
-    ota_name: z.string().min(3),
-    ota_url: z.optional(z.string()),
+    ota_name: z.optional(z.string().min(3)).nullable(),
+    ota_url: z.optional(z.string()).nullable(),
     operation: z.enum(["COMMIT", "MODIFY", 'CANCEL']),
     booking_details_url: z.optional(z.string().min(3))
 })

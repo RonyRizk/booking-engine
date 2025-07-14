@@ -22,15 +22,23 @@ export async function POST(req) {
     } catch (error) {
         logApiError(error, req, {
             body: requestBody,
-            validationTarget: 'BookingSchema',
-            step: error instanceof ZodError ? 'validation' : 'processing'
+            validationTarget: 'BookingSchema|BookingCHMSchema',
+            step: error instanceof ZodError ? 'validation' : 'processing',
+            bookingId: extractSearchParamsInsensitive(req).id || 'unknown',
+            operation: requestBody?.operation || 'unknown'
         });
         if (error instanceof ZodError) {
-            return Response.json(error.issues, { status: 400 });
+            return Response.json({
+                error: 'Validation failed',
+                issues: error.issues
+            }, { status: 400 });
         }
         if (error instanceof ApiError) {
-            return Response.json(error, { status: 400 })
+            return Response.json(error, { status: 400 });
         }
-        return new Response(error.toString(), { status: 500 });
+        if (error.message === "No booking found") {
+            return new Response("No booking found", { status: 404 });
+        }
+        return new Response(`Failed to process CHM booking email: ${error.message}`, { status: 500 });
     }
 }

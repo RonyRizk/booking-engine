@@ -29,15 +29,20 @@ export async function POST(req) {
     } catch (error) {
         logApiError(error, req, {
             body: requestBody,
-            validationTarget: 'OtpEmailSchema|BaseSchema',
-            step: error instanceof ZodError ? 'validation' : 'processing'
+            validationTarget: 'OTPEmailSchema',
+            step: error instanceof ZodError ? 'validation' : 'processing',
+            otpLength: requestBody?.otp?.length || 0,
+            userName: requestBody?.name || 'unknown'
         });
         if (error instanceof ZodError) {
-            return Response.json(error.issues, { status: 400 });
+            return Response.json({
+                error: 'Validation failed',
+                issues: error.issues
+            }, { status: 400 });
         }
         if (error instanceof ApiError) {
-            return Response.json(error, { status: 400 })
+            return Response.json(error, { status: 400 });
         }
-        return new Response("Failed to process otp email", { status: 500 });
+        return new Response(`Failed to process OTP login email: ${error.message}`, { status: 500 });
     }
 }
