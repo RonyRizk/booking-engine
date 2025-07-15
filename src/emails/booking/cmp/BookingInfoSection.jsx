@@ -1,4 +1,4 @@
-import { Section } from "@react-email/components";
+import { Section, Text } from "@react-email/components";
 import EmailText from "@/emails/components/EmailText";
 import EmailLink from "@/emails/components/EmailLink";
 import { PrintingService } from "@/lib/services/printing.service";
@@ -26,10 +26,10 @@ const PropertyDetails = ({
           property?.country?.name ?? null,
         ]
           .filter(Boolean)
-          .join(", ")}
+          .join(", ").concat(".")}
         {showMapLink && <>
-          {" "}
           <EmailLink
+            style={{ marginInlineStart: "8px" }}
             href={`https://www.google.com/maps/preview?q=${property.location.latitude},${property.location.longitude}`}
           >
             {locales?.Lcz_Map}

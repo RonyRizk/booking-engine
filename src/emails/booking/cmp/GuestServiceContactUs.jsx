@@ -6,7 +6,7 @@ export default function GuestServiceContactUs({ property, locales }) {
     const bookingEmail = property.contacts?.find(
         (c) => c.type === "booking"
     )?.email;
-    const phone = `+${property?.country?.phone_prefix?.replace("+", "") + " -" || ""} ${property?.phone}`;
+    const phone = `+${property?.country?.phone_prefix?.replace("+", "") + "-" || ""}${property?.phone}`;
     const processedString = locales?.Lcz_GuestService_ContactUs
         ?.replace('{0}', `__EMAIL__`)
         ?.replace('{1}', `__PHONE__`)

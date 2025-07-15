@@ -29,35 +29,23 @@ export async function GET(req) {
         );
         let Component;
         let emailHTML;
-        
+
         try {
             switch (mode) {
                 case "pre":
                     Component = (await import('@/emails/booking/AutoEmailPreArrival')).default;
                     emailHTML = await render(<Component {...data} setupTables={tables} lang={lang} />);
-                    return new Response(emailHTML, {
-                        headers: {
-                            'content-type': 'text/html'
-                        }
-                    });
+                    return new Response(emailHTML);
 
                 case "post":
                     Component = (await import('@/emails/booking/AutoEmailPostDeparture')).default;
                     emailHTML = await render(<Component {...data} setupTables={tables} lang={lang} />);
-                    return new Response(emailHTML, {
-                        headers: {
-                            'content-type': 'text/html'
-                        }
-                    });
+                    return new Response(emailHTML);
 
                 case "during":
                     Component = (await import('@/emails/booking/AutoEmailDuringStay')).default;
                     emailHTML = await render(<Component {...data} setupTables={tables} lang={lang} />);
-                    return new Response(emailHTML, {
-                        headers: {
-                            'content-type': 'text/html'
-                        }
-                    });
+                    return new Response(emailHTML);
 
                 default:
                     throw new Error(`Invalid mode: ${mode}`);
