@@ -48,11 +48,13 @@ export default function PrintingHeader({ booking, property, locales, mode }) {
                             className="size-6 aspect-1 ml-2"
                         />
                     </div>
-                    {mode === "invoice" && property?.tax_nbr && (
-                        <div className="flex md:justify-end">
+                    <div className="flex flex-col md:items-end">
+                        <InfoDisplay label={``} value={property?.registered_name} />
+                        {mode === "invoice" && property?.tax_nbr && (
                             <InfoDisplay label={`${locales?.Lcz_TaxID}:`} value={property?.tax_nbr} />
-                        </div>
-                    )}
+                        )}
+                    </div>
+
                 </div>
             </nav>
             <section className="pb-4">
@@ -68,4 +70,4 @@ export default function PrintingHeader({ booking, property, locales, mode }) {
             </section>
         </header>
     );
-} 
+}
