@@ -29,10 +29,12 @@ export default function RoomDetails({
     }
     return room.ota_meta?.smoking_preferences;
   }
+  const haveMultipleRooms = property?.roomtypes?.find(rt => rt.id === room?.roomtype?.id)?.physicalrooms?.length > 1 ?? false
   return (
     <section>
       <div className="flex items-center gap-2.5 font-bold text-base mb-1.5">
         <p>{room.roomtype.name}</p>
+        {haveMultipleRooms && <p>({locales.Lcz_UnitNbr?.replace('%1', room.roomtype.id) ?? `unit ${room.roomtype.id}`})</p>}
         <p>{room.rateplan.short_name || room.rateplan.name}</p>
       </div>
       <div className="flex gap-2.5 flex-col md:flex-row md:justify-between mb-2.5 md:gap-10 md:flex-wrap">

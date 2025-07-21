@@ -7,7 +7,7 @@ import { logger } from "@/logger";
 
 export default async function SiteHomePage({ params, searchParams }) {
   const domain = decodeURIComponent(params.domain).split('.');
-  const { checkin, checkout, adults, source, children, rtid, ages, stag, aff, cur, nights, lang, loyalty, promo, agent } =
+  const { checkin, checkout, adults, source, children, u, ages, stag, aff, cur, nights, lang, loyalty, promo, agent } =
     searchParams;
   logger.info(`domain: ${domain}`)
   logger.info("Main:Home Page called");
@@ -39,7 +39,7 @@ export default async function SiteHomePage({ params, searchParams }) {
       cur={cur}
       aff={aff}
       stag={stag}
-      roomtype_id={rtid}
+      roomtype_id={u}
       fromDate={checkin}
       toDate={checkout}
       adultCount={adults}
