@@ -35,7 +35,7 @@ export default function RoomDetails({
   return (
     <Row key={room.id} style={{ marginBottom: "15px", width: "100%" }}>
       <Column align={lang === "ar" ? "right" : 'left'} style={{ width: "70%", verticalAlign: 'top', }}>
-        <EmailText style={{ margin: 0 }}><b>{room.roomtype.name} - {room.rateplan.short_name} {custom_text}</b> <br /> {room.guest.first_name} - {printingService.formatGuestAvailability(room.occupancy, { infant_nbr: room.occupancy.infant_nbr }, locales)}.
+        <EmailText style={{ margin: 0 }}><b>{room.roomtype.name} - {room.rateplan.short_name} {custom_text}</b> <br /> {room.guest.first_name} - <span dangerouslySetInnerHTML={{ __html: printingService.formatGuestAvailability(room.occupancy, { infant_nbr: room.occupancy.infant_nbr }, locales) }}></span>.
           <br /><i>{locales?.Lcz_Cancellation}: {room.rateplan.cancelation}
             {" "}Guarantee: {room.rateplan.guarantee}</i></EmailText>
       </Column>

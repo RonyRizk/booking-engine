@@ -810,8 +810,8 @@ let _data = {
                 "notes": "",
                 "occupancy": {
                     "adult_nbr": 2,
-                    "children_nbr": 0,
-                    "infant_nbr": 0
+                    "children_nbr": 1,
+                    "infant_nbr": 1
                 },
                 "ota_meta": null,
                 "ota_meta_plain": null,
