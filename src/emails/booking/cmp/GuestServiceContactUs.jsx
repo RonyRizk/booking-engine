@@ -93,7 +93,7 @@ export default function GuestServiceContactUs({ property, locales }) {
                     {locales.Lcz_OrCallOn} {phone}.
                 </>}
             </EmailText>
-            {locales?.Lcz_ClickHereToManageBooking && <EmailButton href="https://iglooroomsdemohotel.bookingmystay.com/signin">
+            {locales?.Lcz_ClickHereToManageBooking && <EmailButton href={`https://${property.perma_link}.bookingmystay.com/signin`}>
                 {locales.Lcz_ClickHereToManageBooking?.replace(" ?", "")?.replace(".", "")}
             </EmailButton>}
         </Section>
