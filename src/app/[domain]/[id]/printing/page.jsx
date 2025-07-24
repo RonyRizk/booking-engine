@@ -32,7 +32,7 @@ export default async function Printing({ searchParams, params }) {
     return null;
   }
 
-  const totalPersons = booking?.occupancy.adult_nbr + booking?.occupancy.children_nbr;
+  const totalPersons = printingService.calculateTotalPersons(booking);
   const currency = booking?.currency.symbol;
   const totalNights = calculateDaysBetweenDates(booking.from_date, booking.to_date);
   const guestCountryName = printingService.getUserCountry(countries, booking.guest.country_id);

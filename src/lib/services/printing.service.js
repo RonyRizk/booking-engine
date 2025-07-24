@@ -76,10 +76,10 @@ export class PrintingService extends Token {
         return bed[`CODE_VALUE_${language}`] ?? bed.CODE_VALUE_EN;
     }
 
-    formatGuestAvailability({ adult_nbr, child_nbr }, { infant_nbr }, locales) {
+    formatGuestAvailability({ adult_nbr, children_nbr, infant_nbr }, locales) {
         // Adjust child number based on infants
         const adultCount = adult_nbr > 0 ? adult_nbr : 0;
-        const childCount = child_nbr > 0 ? child_nbr : 0;
+        const childCount = children_nbr > 0 ? children_nbr : 0;
         const infantCount = infant_nbr > 0 ? infant_nbr : 0;
 
         // Define labels based on singular/plural rules
@@ -98,34 +98,15 @@ export class PrintingService extends Token {
         if (infantCount > 0) {
             parts.push(`${infantCount} ${infantLabel}`);
         }
-
         return parts.join('&nbsp&nbsp&nbsp&nbsp');
-
-        /*
-        
-        const adultCount = adult_nbr > 0 ? adult_nbr : 0;
-    const childCount = child_nbr > 0 ? child_nbr : 0;
-    const infantCount = infant_nbr > 0 ? infant_nbr : 0;
-
-    const adultLabel = adultCount > 1 ? locales.entries.Lcz_Adults.toLowerCase() : locales.entries.Lcz_Adult.toLowerCase();
-    const childLabel = childCount > 1 ? locales.entries.Lcz_Children.toLowerCase() : locales.entries.Lcz_Child.toLowerCase();
-    const infantLabel = infantCount > 1 ? locales.entries.Lcz_Infants.toLowerCase() : locales.entries.Lcz_Infant.toLowerCase();
-
-    const parts = [];
-    if (adultCount > 0) {
-      parts.push(`${adultCount} ${adultLabel}`);
-    }
-    if (childCount > 0) {
-      parts.push(`${childCount} ${childLabel}`);
-    }
-    if (infantCount > 0) {
-      parts.push(`${infantCount} ${infantLabel}`);
     }
 
-    return parts.join('&nbsp&nbsp&nbsp&nbsp');
-        
-        
-        */
+    calculateTotalPersons(booking) {
+        const sumOfOccupancy = ({ adult_nbr, children_nbr, infant_nbr }) => {
+            return (adult_nbr ?? 0) + (children_nbr ?? 0) + (infant_nbr ?? 0);
+        };
+        return booking.rooms.reduce((prev, cur) => {
+            return sumOfOccupancy(cur.occupancy) + prev;
+        }, 0);
     }
-
 }

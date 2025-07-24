@@ -48,8 +48,7 @@ export default function RoomDetails({
               label={``}
               asHtml
               value={printingService.formatGuestAvailability(
-                room?.rateplan.selected_variation,
-                room.occupancy,
+                room?.occupancy,
                 locales
               )}
             />
