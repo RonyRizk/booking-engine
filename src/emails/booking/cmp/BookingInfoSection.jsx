@@ -29,8 +29,9 @@ const PropertyDetails = ({
           .join(", ").concat(".")}
         {showMapLink && <>
           <EmailLink
-            style={{ marginInlineStart: "8px" }}
+            style={{ marginLeft: "8px", marginRight: "8px" }}
             href={`https://www.google.com/maps/preview?q=${property.location.latitude},${property.location.longitude}`}
+
           >
             {locales?.Lcz_Map}
           </EmailLink>
