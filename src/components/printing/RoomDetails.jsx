@@ -42,7 +42,7 @@ export default function RoomDetails({
           <div className="flex items-center gap-4">
             <InfoDisplay
               label={`${locales?.Lcz_GuestName}:`}
-              value={printingService.formatGuestName(room?.guest)}
+              value={printingService.formatGuestName(room.sharing_persons?.find(p => p.is_main) ?? room?.guest)}
             />
             <InfoDisplay
               label={``}

@@ -16,7 +16,7 @@ export default function ExtraServices({ booking, locales }) {
                         {/* <span>Dates</span> */}
                         <div className="flex flex-col md:items-center md:flex-row">
 
-                            <InfoDisplay inline label={""} className={" md:mr-4"} value={service.description}></InfoDisplay>
+                            <InfoDisplay inline label={""} className={"break-words max-w-[90vw] md:max-w-2xl md:mr-4"} value={service.description}></InfoDisplay>
                             <div className="flex items-center">
                                 {(service.start_date || service.end_date) && <span>(</span>}
                                 {service.start_date && <InfoDisplay
