@@ -32,10 +32,11 @@ export default function RoomDetails({
     }
     return room.ota_meta?.smoking_preferences;
   }
+  const guest = room.sharing_persons?.find(guest => guest.is_main) || room.guest
   return (
     <Row key={room.id} style={{ marginBottom: "15px", width: "100%" }}>
       <Column align={lang === "ar" ? "right" : 'left'} style={{ width: "70%", verticalAlign: 'top', }}>
-        <EmailText style={{ margin: 0 }}><b>{room.roomtype.name} - {room.rateplan.short_name} {custom_text}</b> <br /> {room.guest.first_name} - <span dangerouslySetInnerHTML={{ __html: printingService.formatGuestAvailability(room.occupancy, locales) }}></span>.
+        <EmailText style={{ margin: 0 }}><b>{room.roomtype.name} - {room.rateplan.short_name} {custom_text}</b> <br /> {printingService.formatGuestName(guest)} - <span dangerouslySetInnerHTML={{ __html: printingService.formatGuestAvailability(room.occupancy, locales) }}></span>.
           <br /><i>{locales?.Lcz_Cancellation}: {room.rateplan.cancelation}
             {" "}Guarantee: {room.rateplan.guarantee}</i></EmailText>
       </Column>
