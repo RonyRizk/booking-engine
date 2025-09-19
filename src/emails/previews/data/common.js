@@ -1090,7 +1090,7 @@ export const common = {
                         "is_channel_enabled": true,
                         "is_closed": null,
                         "is_extra_bed_free_for_children": false,
-                        "is_non_refundable": false,
+                        "is_non_refundable": true,
                         "is_targeting_travel_agency": false,
                         "meal_plan": {
                             "code": "002",

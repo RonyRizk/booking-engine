@@ -618,11 +618,12 @@ let _data = {
             "description": "Not sure yet"
         },
         "booked_on": {
-            "date": "2025-06-18",
-            "hour": 19,
-            "minute": 5
+            "date": "2025-09-18",
+            "hour": 16,
+            "minute": 3
         },
-        "booking_nbr": "18623255432",
+        "booking_nbr": "80347800505",
+        "bypassed_ota_revisions": null,
         "channel_booking_nbr": null,
         "cost": null,
         "currency": {
@@ -630,32 +631,54 @@ let _data = {
             "id": 4,
             "symbol": "US$"
         },
+        "events": [
+            {
+                "date": "2025-09-18",
+                "hour": 16,
+                "id": null,
+                "minute": 3,
+                "second": 16,
+                "type": "Conf. email",
+                "user": "System"
+            },
+            {
+                "date": "2025-09-18",
+                "hour": 16,
+                "id": 8308910,
+                "minute": 3,
+                "second": 5,
+                "type": "Confirmed",
+                "user": "A35"
+            }
+        ],
         "extra_services": null,
         "extras": [
             {
-                "key": "payment_code",
-                "value": "005"
+                "key": "is_backend",
+                "value": "true"
             }
         ],
         "financial": {
-            "due_amount": 133.19778,
+            "cancelation_penality_as_if_today": 444.000,
+            "collected": 0,
+            "due_amount": 444.000,
             "due_dates": null,
             "gross_cost": 0,
-            "gross_total": 133.19778,
-            "invoice_nbr": "186232",
+            "gross_total": 444.000,
+            "invoice_nbr": "803478",
             "payments": null,
-            "total_amount": 119.998
+            "total_amount": 400.000
         },
         "format": {
-            "from_date": "Sun, 13 Jul 2025",
-            "to_date": "Tue, 15 Jul 2025"
+            "from_date": "Sat, 27 Sep 2025",
+            "to_date": "Mon, 29 Sep 2025"
         },
-        "from_date": "2025-07-13",
+        "from_date": "2025-09-27",
         "guest": {
             "address": "",
             "alternative_email": null,
             "cci": null,
-            "city": null,
+            "city": "asdf",
             "country": {
                 "cities": null,
                 "code": "LB",
@@ -669,23 +692,24 @@ let _data = {
             "country_id": 2,
             "country_phone_prefix": "+961",
             "dob": null,
-            "email": "TEST@TEST.com",
-            "first_name": "test",
-            "id": 718617,
+            "email": "codeboosterdotnet@gmail.com",
+            "first_name": "Test",
+            "id": 20278,
             "id_info": null,
             "is_main": false,
-            "last_name": "TEST",
-            "mobile": "1213123123123",
-            "mobile_without_prefix": "1213123123123",
-            "nbr_confirmed_bookings": 8,
+            "last_name": "Test",
+            "mobile": "89988998",
+            "mobile_without_prefix": "89988998",
+            "nbr_confirmed_bookings": 27,
             "notes": "",
             "password": null,
-            "subscribe_to_news_letter": true
+            "subscribe_to_news_letter": false
         },
         "is_direct": true,
         "is_editable": true,
-        "is_in_loyalty_mode": null,
+        "is_in_loyalty_mode": false,
         "is_pms_enabled": true,
+        "is_requested_to_cancel": null,
         "occupancy": {
             "adult_nbr": 2,
             "children_nbr": 0,
@@ -698,6 +722,7 @@ let _data = {
         "ota_commission": null,
         "ota_guarante": null,
         "ota_guarantee_plain": null,
+        "ota_manipulations": null,
         "ota_notes": null,
         "ota_services": null,
         "ota_services_plain": null,
@@ -720,10 +745,12 @@ let _data = {
             "be_listing_mode": null,
             "calendar_legends": null,
             "city": null,
+            "cleaning_frequency": null,
             "contacts": null,
             "country": null,
             "currency": null,
             "description": null,
+            "extra_info": null,
             "id": 42,
             "images": null,
             "internet_offering": null,
@@ -745,6 +772,7 @@ let _data = {
             "postal": null,
             "privacy_policy": null,
             "promotions": null,
+            "registered_name": null,
             "roomtypes": null,
             "social_media": null,
             "sources": null,
@@ -759,26 +787,66 @@ let _data = {
         "remark": "",
         "rooms": [
             {
+                "applicable_policies": [
+                    {
+                        "brackets": [
+                            {
+                                "amount": 120.000,
+                                "amount_formatted": "US$120.00",
+                                "code": "004",
+                                "currency_id": 4,
+                                "due_on": "2025-09-18",
+                                "due_on_formatted": "Thursday, 18 Sep 2025, 14:00",
+                                "gross_amount": 133.200,
+                                "gross_amount_formatted": "US$133.20",
+                                "statement": "100% of the total price"
+                            }
+                        ],
+                        "combined_statement": "US$133.20 if cancelled later or in case of no show.",
+                        "type": "cancelation"
+                    },
+                    {
+                        "brackets": [
+                            {
+                                "amount": 60.000,
+                                "amount_formatted": "US$60.00",
+                                "code": "001",
+                                "currency_id": 4,
+                                "due_on": "2025-09-18",
+                                "due_on_formatted": null,
+                                "gross_amount": 66.600,
+                                "gross_amount_formatted": "US$66.60",
+                                "statement": "First night from your booking will be charged."
+                            }
+                        ],
+                        "combined_statement": "First night from your booking will be charged.",
+                        "type": "guarantee"
+                    }
+                ],
                 "assigned_units_pool": null,
                 "bed_preference": null,
                 "check_in": false,
                 "cost": null,
                 "days": [
                     {
-                        "amount": 59.999,
+                        "amount": 60.000,
                         "cost": null,
-                        "date": "2025-07-13"
+                        "date": "2025-09-27"
                     },
                     {
-                        "amount": 59.999,
+                        "amount": 60.000,
                         "cost": null,
-                        "date": "2025-07-14"
+                        "date": "2025-09-28"
                     }
                 ],
-                "from_date": "2025-07-13",
+                "departure_time": {
+                    "code": "",
+                    "description": ""
+                },
+                "from_date": "2025-09-27",
                 "gross_cost": null,
                 "gross_guarantee": null,
-                "gross_total": 133.19778,
+                "gross_total": 133.200,
                 "guarantee": null,
                 "guest": {
                     "address": null,
@@ -790,11 +858,11 @@ let _data = {
                     "country_phone_prefix": null,
                     "dob": null,
                     "email": null,
-                    "first_name": "test",
+                    "first_name": "Foufou",
                     "id": null,
                     "id_info": null,
                     "is_main": false,
-                    "last_name": "TEST",
+                    "last_name": "El Wa7esh",
                     "mobile": null,
                     "mobile_without_prefix": null,
                     "nbr_confirmed_bookings": 0,
@@ -802,16 +870,16 @@ let _data = {
                     "password": null,
                     "subscribe_to_news_letter": null
                 },
-                "identifier": "cb4f9547-7d96-4892-a04a-84a367df4d0a",
+                "identifier": "9e3a85d5-69bb-41e8-a7e0-b3e3c9a31628",
                 "in_out": {
                     "code": "000",
                     "description": "Not Set"
                 },
                 "notes": "",
                 "occupancy": {
-                    "adult_nbr": 2,
-                    "children_nbr": 1,
-                    "infant_nbr": 1
+                    "adult_nbr": 1,
+                    "children_nbr": 0,
+                    "infant_nbr": null
                 },
                 "ota_meta": null,
                 "ota_meta_plain": null,
@@ -822,7 +890,7 @@ let _data = {
                 "rateplan": {
                     "agents": null,
                     "assignable_units": null,
-                    "cancelation": "No penalty if cancelled before Saturday, 28 Jun 2025, 14:00. US$66.60 if cancelled between Saturday, 28 Jun 2025, 14:00 and Thursday, 3 Jul 2025, 14:00. US$133.20 if cancelled later or in case of no show.",
+                    "cancelation": "US$133.20 if cancelled later or in case of no show.",
                     "custom_text": null,
                     "extra_bed_for_code": null,
                     "extra_bed_max": null,
@@ -836,8 +904,9 @@ let _data = {
                     "is_booking_engine_enabled": null,
                     "is_channel_enabled": null,
                     "is_closed": null,
+                    "is_derived": false,
                     "is_extra_bed_free_for_children": false,
-                    "is_non_refundable": false,
+                    "is_non_refundable": true,
                     "is_targeting_travel_agency": null,
                     "meal_plan": {
                         "code": "002",
@@ -852,8 +921,8 @@ let _data = {
                         "IS_MLS_VIOLATED": false,
                         "MLS_ALERT": null,
                         "MLS_ALERT_VALUE": null,
-                        "adult_child_offering": "2 adults",
-                        "adult_nbr": 2,
+                        "adult_child_offering": "1 adult",
+                        "adult_nbr": 1,
                         "amount": null,
                         "amount_gross": null,
                         "amount_per_night": null,
@@ -926,8 +995,8 @@ let _data = {
                         "country_phone_prefix": null,
                         "dob": "1900-01-01",
                         "email": null,
-                        "first_name": "test",
-                        "id": 70267,
+                        "first_name": "Foufou",
+                        "id": 109253,
                         "id_info": {
                             "number": "",
                             "type": {
@@ -936,7 +1005,7 @@ let _data = {
                             }
                         },
                         "is_main": true,
-                        "last_name": "TEST",
+                        "last_name": "El Wa7esh",
                         "mobile": null,
                         "mobile_without_prefix": null,
                         "nbr_confirmed_bookings": 0,
@@ -947,13 +1016,247 @@ let _data = {
                 ],
                 "smoking_option": null,
                 "taxes": null,
-                "to_date": "2025-07-15",
-                "total": 119.998,
+                "to_date": "2025-09-29",
+                "total": 120.000,
+                "unit": null
+            },
+            {
+                "applicable_policies": [
+                    {
+                        "brackets": [
+                            {
+                                "amount": 280.000,
+                                "amount_formatted": "US$280.00",
+                                "code": "004",
+                                "currency_id": 4,
+                                "due_on": "2025-09-18",
+                                "due_on_formatted": "Thursday, 18 Sep 2025, 14:00",
+                                "gross_amount": 310.800,
+                                "gross_amount_formatted": "US$310.80",
+                                "statement": "100% of the total price"
+                            }
+                        ],
+                        "combined_statement": "US$310.80 if cancelled later or in case of no show.",
+                        "type": "cancelation"
+                    },
+                    {
+                        "brackets": [
+                            {
+                                "amount": 140.000,
+                                "amount_formatted": "US$140.00",
+                                "code": "001",
+                                "currency_id": 4,
+                                "due_on": "2025-09-18",
+                                "due_on_formatted": null,
+                                "gross_amount": 155.400,
+                                "gross_amount_formatted": "US$155.40",
+                                "statement": "First night from your booking will be charged."
+                            }
+                        ],
+                        "combined_statement": "First night from your booking will be charged.",
+                        "type": "guarantee"
+                    }
+                ],
+                "assigned_units_pool": null,
+                "bed_preference": null,
+                "check_in": false,
+                "cost": null,
+                "days": [
+                    {
+                        "amount": 140.000,
+                        "cost": null,
+                        "date": "2025-09-27"
+                    },
+                    {
+                        "amount": 140.000,
+                        "cost": null,
+                        "date": "2025-09-28"
+                    }
+                ],
+                "departure_time": {
+                    "code": "",
+                    "description": ""
+                },
+                "from_date": "2025-09-27",
+                "gross_cost": null,
+                "gross_guarantee": null,
+                "gross_total": 310.800,
+                "guarantee": null,
+                "guest": {
+                    "address": null,
+                    "alternative_email": null,
+                    "cci": null,
+                    "city": null,
+                    "country": null,
+                    "country_id": null,
+                    "country_phone_prefix": null,
+                    "dob": null,
+                    "email": null,
+                    "first_name": "Khayou la Foufou",
+                    "id": null,
+                    "id_info": null,
+                    "is_main": false,
+                    "last_name": "Mannou Wahech",
+                    "mobile": null,
+                    "mobile_without_prefix": null,
+                    "nbr_confirmed_bookings": 0,
+                    "notes": null,
+                    "password": null,
+                    "subscribe_to_news_letter": null
+                },
+                "identifier": "eea812e3-c1ed-4df3-873b-0f3258d6258f",
+                "in_out": {
+                    "code": "000",
+                    "description": "Not Set"
+                },
+                "notes": "",
+                "occupancy": {
+                    "adult_nbr": 1,
+                    "children_nbr": 0,
+                    "infant_nbr": null
+                },
+                "ota_meta": null,
+                "ota_meta_plain": null,
+                "ota_taxes": null,
+                "ota_unique_id": null,
+                "prepayment_amount": null,
+                "prepayment_amount_gross": null,
+                "rateplan": {
+                    "agents": null,
+                    "assignable_units": null,
+                    "cancelation": "US$310.80 if cancelled later or in case of no show.",
+                    "custom_text": null,
+                    "extra_bed_for_code": null,
+                    "extra_bed_max": null,
+                    "extra_bed_rate_per_night": null,
+                    "extra_bed_rate_per_night_additional_child": null,
+                    "extra_bed_rate_per_night_first_child": null,
+                    "guarantee": "First night from your booking will be charged.",
+                    "id": 3755,
+                    "is_active": null,
+                    "is_available_to_book": false,
+                    "is_booking_engine_enabled": null,
+                    "is_channel_enabled": null,
+                    "is_closed": null,
+                    "is_derived": false,
+                    "is_extra_bed_free_for_children": false,
+                    "is_non_refundable": false,
+                    "is_targeting_travel_agency": null,
+                    "meal_plan": {
+                        "code": "003",
+                        "name": null
+                    },
+                    "name": "Breakfast & dinner\/Half-board",
+                    "not_available_reason": null,
+                    "pre_payment_amount": null,
+                    "pre_payment_amount_gross": null,
+                    "rate_restrictions": null,
+                    "selected_variation": {
+                        "IS_MLS_VIOLATED": false,
+                        "MLS_ALERT": null,
+                        "MLS_ALERT_VALUE": null,
+                        "adult_child_offering": "1 adult",
+                        "adult_nbr": 1,
+                        "amount": null,
+                        "amount_gross": null,
+                        "amount_per_night": null,
+                        "amount_per_night_gross": null,
+                        "applicable_policies": null,
+                        "bed_preference_code": null,
+                        "child_nbr": 0,
+                        "discount_pct": null,
+                        "discounted_amount": null,
+                        "discounted_gross_amount": null,
+                        "extra_bed_free_nbr": null,
+                        "extra_bed_nbr": null,
+                        "extra_bed_rate_per_night": null,
+                        "food_nbr_upsell": 0,
+                        "infant_nbr": null,
+                        "is_lmd": null,
+                        "nights": null,
+                        "nights_nbr": null,
+                        "prepayment_amount": null,
+                        "prepayment_amount_gross": null,
+                        "rate_plan_id": 3755,
+                        "smoking_code": null,
+                        "total_before_discount": null
+                    },
+                    "sell_mode": null,
+                    "short_name": "Half board",
+                    "sleeps": null,
+                    "variations": null
+                },
+                "roomtype": {
+                    "amenities": null,
+                    "availabilities": null,
+                    "bedding_setup": null,
+                    "description": null,
+                    "exposed_inventory": null,
+                    "id": 111,
+                    "images": null,
+                    "inventory": null,
+                    "is_active": null,
+                    "is_available_to_book": null,
+                    "is_bed_configuration_enabled": null,
+                    "main_image": null,
+                    "name": "Premium Suites",
+                    "not_available_reason": null,
+                    "occupancy_default": null,
+                    "occupancy_max": null,
+                    "physicalrooms": null,
+                    "rate": null,
+                    "rateplans": null,
+                    "size": null,
+                    "smoking_option": null
+                },
+                "sharing_persons": [
+                    {
+                        "address": null,
+                        "alternative_email": null,
+                        "cci": null,
+                        "city": null,
+                        "country": {
+                            "cities": null,
+                            "code": null,
+                            "currency": null,
+                            "flag": null,
+                            "gmt_offset": 0,
+                            "id": null,
+                            "name": null,
+                            "phone_prefix": null
+                        },
+                        "country_id": null,
+                        "country_phone_prefix": null,
+                        "dob": "1900-01-01",
+                        "email": null,
+                        "first_name": "Khayou la Foufou",
+                        "id": 109254,
+                        "id_info": {
+                            "number": "",
+                            "type": {
+                                "code": "001",
+                                "description": "Passport"
+                            }
+                        },
+                        "is_main": true,
+                        "last_name": "Mannou Wahech",
+                        "mobile": null,
+                        "mobile_without_prefix": null,
+                        "nbr_confirmed_bookings": 0,
+                        "notes": null,
+                        "password": null,
+                        "subscribe_to_news_letter": null
+                    }
+                ],
+                "smoking_option": null,
+                "taxes": null,
+                "to_date": "2025-09-29",
+                "total": 280.000,
                 "unit": null
             }
         ],
         "source": {
-            "code": "",
+            "code": null,
             "description": null,
             "id": null,
             "tag": "",
@@ -963,9 +1266,9 @@ let _data = {
             "code": "002",
             "description": "Confirmed"
         },
-        "system_id": 14890915,
-        "to_date": "2025-07-15",
-        "total": 119.998
+        "system_id": 14930357,
+        "to_date": "2025-09-29",
+        "total": 400.000
     }
     //Booking with extra service
     // booking: {
