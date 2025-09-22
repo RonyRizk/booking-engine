@@ -2,7 +2,22 @@ import InfoDisplay from "@/components/InfoDisplay";
 import { formatAmount } from "@/lib/utils";
 import { format } from "date-fns";
 
-export default function PaymentInformation({ booking, locales, mode }) {
+export default function PaymentInformation({ booking, locales, mode, setupTables }) {
+
+    function getPaymentDescription(setupTables, paymentTypeCode, paymentMethodCode, designation) {
+        const type = setupTables?._PAY_TYPE?.[paymentTypeCode];
+        const method = setupTables?._PAY_METHOD?.[paymentMethodCode];
+
+        if (type && method) {
+            return `${type}: ${method}`;
+        }
+
+        if (type) return type;
+        if (method) return method;
+        if (designation) return designation
+        return "_";
+    }
+
     return (
         <section className="py-4 space-y-2.5 border-gray-300 border-y border-b-0">
             <div className="">
@@ -58,22 +73,27 @@ export default function PaymentInformation({ booking, locales, mode }) {
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-200">
-                                {booking.financial?.payments?.map((p) => (
-                                    <tr key={p.id}>
-                                        <td className="px-2 whitespace-nowrap py-1 font-medium text-gray-900 text-center">
-                                            {format(new Date(p.date), 'dd-MMM-yyyy')}
-                                        </td>
-                                        <td className="px-2 py-1 whitespace-nowrap text-gray-700 text-end">
-                                            {formatAmount(p.amount, p.currency.symbol)}
-                                        </td>
-                                        <td className="px-2 py-1 whitespace-nowrap text-gray-700">
-                                            {p.designation || '_'}
-                                        </td>
-                                        <td className="px-2 py-1 whitespace-nowrap text-gray-700">
-                                            {p.reference || '_'}
-                                        </td>
-                                    </tr>
-                                ))}
+                                {booking.financial?.payments?.map((p) => {
+                                    if (!["001", "010"].includes(p.payment_type.code)) {
+                                        return null
+                                    }
+                                    return (
+                                        <tr key={p.id}>
+                                            <td className="px-2 whitespace-nowrap py-1 font-medium text-gray-900 text-center">
+                                                {format(new Date(p.date), 'dd-MMM-yyyy')}
+                                            </td>
+                                            <td className="px-2 py-1 whitespace-nowrap text-gray-700 text-end">
+                                                {formatAmount(p.amount, p.currency.symbol)}
+                                            </td>
+                                            <td className="px-2 py-1 whitespace-nowrap text-gray-700">
+                                                {getPaymentDescription(setupTables, p.payment_type?.code, p.payment_method?.code, p?.designation)}
+                                            </td>
+                                            <td className="px-2 py-1 whitespace-nowrap text-gray-700">
+                                                {p.reference || '_'}
+                                            </td>
+                                        </tr>
+                                    )
+                                })}
                             </tbody>
                         </table>
                     </div>

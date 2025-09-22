@@ -34,7 +34,7 @@ export default async function middleware(req) {
         }`;
     const headers = new Headers(req.headers);
     headers.set("x-current-path", req.nextUrl.pathname);
-    console.log("hostname", hostname)
+    // console.log("hostname", hostname)
     if (
         hostname === "localhost:5863"
     ) {

@@ -26,7 +26,7 @@ export default async function Printing({ searchParams, params }) {
   } catch (error) {
     return redirect("https://x.igloorooms.com/manage/acbookinglist.aspx")
   }
-  const { booking, property, countries, locales: defaultLocales } = data
+  const { booking, property, setupTables, countries, locales: defaultLocales } = data
   const { entries: locales } = defaultLocales
   if (!booking) {
     return null;
@@ -83,7 +83,7 @@ export default async function Printing({ searchParams, params }) {
         {/* {!booking?.is_direct && <ChannelServices booking={booking} locales={locales} />} */}
         <PickupInformation booking={booking} locales={locales} />
         <ExtraServices booking={booking} locales={locales} />
-        <PaymentInformation mode={mode} booking={booking} locales={locales} />
+        <PaymentInformation setupTables={setupTables} mode={mode} booking={booking} locales={locales} />
       </main>
     </>
   );

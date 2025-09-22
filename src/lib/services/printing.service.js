@@ -21,16 +21,17 @@ export class PrintingService extends Token {
             this.commonService.setBaseUrl(baseUrl);
             this.bookingService.setBaseUrl(baseUrl)
         }
-        const [booking, property, countries, locales, beddingPreference, statement] = await Promise.all([
+        const [booking, property, countries, locales, beddingPreference, setupTables, statement] = await Promise.all([
             this.bookingService.getExposedBooking({ booking_nbr: bookingNumber, language }),
             this.commonService.getExposedProperty(aName, language),
             this.commonService.getCountries(language),
             this.commonService.fetchLanguage(language, tables ?? ["_PRINT_FRONT", "_PMS_FRONT"]),
             this.bookingService.getBedPreference(),
+            this.commonService.getSetupEntriesByTBLNameMulti(['_PAY_TYPE', '_PAY_TYPE_GROUP', '_PAY_METHOD'], 'en'),
             includePenaltyStatement ? this.bookingService.getPenaltyStatement() : Promise.resolve(null)
         ])
-        this._bedPreferences = beddingPreference
-        return { booking, property, countries, locales, beddingPreference, statement, error: null }
+        this._bedPreferences = beddingPreference;
+        return { booking, property, countries, locales, beddingPreference, setupTables, statement, error: null }
     }
 
     //Helpers
