@@ -53,7 +53,7 @@ export default function PaymentInformation({ booking, locales, mode, setupTables
             )}
             {booking.financial?.payments && (
                 <section className="space-y-2.5 py-4">
-                    <h1 className="font-medium uppercase">{locales?.Lcz_Payments} History </h1>
+                    <h1 className="font-medium uppercase">{mode === "printing" ? "Guest Folio" : `${locales?.Lcz_Payments} History`} </h1>
                     <div className="overflow-x-auto">
                         <table className="table-auto divide-y-2 divide-gray-200 bg-white text-sm">
                             <thead className="ltr:text-left rtl:text-right">
@@ -74,7 +74,7 @@ export default function PaymentInformation({ booking, locales, mode, setupTables
                             </thead>
                             <tbody className="divide-y divide-gray-200">
                                 {booking.financial?.payments?.map((p) => {
-                                    if (!["001", "010"].includes(p.payment_type.code)) {
+                                    if (!["001", "010"].includes(p.payment_type.code) && mode !== "printing") {
                                         return null
                                     }
                                     return (
@@ -101,4 +101,4 @@ export default function PaymentInformation({ booking, locales, mode, setupTables
             )}
         </section>
     );
-} 
+}
