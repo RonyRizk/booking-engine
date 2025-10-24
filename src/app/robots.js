@@ -4,10 +4,12 @@ export default function robots() {
             userAgent: '*',
             allow: '/',
             // disallow: '/private/',
-        }, {
-            userAgent: ['Googlebot', 'AdsBot-Google-Mobile', 'AdsBot-Google', 'Google-Site-Verification'],
-            allow: ['/'],
-        },]
+        },
+            // {
+            // userAgent: ['Googlebot', 'AdsBot-Google-Mobile', 'AdsBot-Google', 'Google-Site-Verification'],
+            // allow: ['/'],
+            // },
+        ]
 
     }
 }
