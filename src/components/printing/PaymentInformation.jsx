@@ -28,7 +28,7 @@ export default function PaymentInformation({ booking, locales, mode, setupTables
                 <InfoDisplay
                     label={`${locales?.Lcz_Collected}:`}
                     value={formatAmount(
-                        booking?.financial?.payments ? booking?.financial?.payments.reduce((prev, curr) => prev + curr.amount, 0) : 0,
+                        (booking?.financial?.collected + booking?.financial?.refunds) ?? 0,
                         booking?.currency?.symbol
                     )}
                 />
