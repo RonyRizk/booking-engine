@@ -22,10 +22,10 @@ export default function BookingCHM({ booking, lang, locales, bookingDetailsUrl, 
         }
     }
     return (
-        <EmailContainer lang={lang}>
-            <PropertyHeader property={property} />
+        <EmailContainer lang={lang} connectedMpo={property?.mpo}>
+            <PropertyHeader property={property} useMpoLogo />
             <EmailText color={operation === "CANCEL" ? "red" : undefined}><b>{getOperationName()} {booking.channel_booking_nbr}</b></EmailText>
-            <BookingInfoSection.BookingDetails >
+            <BookingInfoSection.BookingDetails>
                 {channelName && <EmailText style={{ margin: "0" }}>
                     <b>{locales?.Lcz_ChannelName}:</b> {channelName}
                 </EmailText>}

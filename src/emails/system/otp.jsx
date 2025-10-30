@@ -4,11 +4,11 @@ import EmailText from '../components/EmailText'
 import SystemHeader from './SystemHeader'
 import { Container } from '@react-email/components'
 
-export default function OTPEmail({ otp, name, geo, lang, variant, property }) {
+export default function OTPEmail({ otp, name, geo, lang, variant, property, connectedMpo }) {
     const showGeoInfo = geo?.query || geo?.country || geo?.city || geo?.org
     return (
-        <EmailContainer lang={lang}>
-            <SystemHeader name={""} />
+        <EmailContainer lang={lang} connectedMpo={connectedMpo}>
+            <SystemHeader name={""} connectedMpo={connectedMpo} />
             {variant === "action" && <EmailText>Dear {name},</EmailText>}
             {variant === "action" ? <EmailText>
                 <b>{otp}</b> is your One-Time Password (OTP) verification code.

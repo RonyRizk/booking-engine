@@ -6,6 +6,7 @@ import { OTPEmailSchema } from '../../schemas';
 import { logApiError } from '@/logger';
 // import { extractSearchParamsInsensitive, getSystemData, verifyToken } from '@/lib/middleware';
 import { ApiError } from '@/lib/services/api.service';
+import { getConnectedMpo } from '@/lib/middleware';
 
 // Force dynamic rendering to prevent static generation errors
 export const dynamic = 'force-dynamic';
@@ -14,8 +15,9 @@ export async function POST(req) {
     let requestBody = null;
     try {
         requestBody = await req.json();
-        // const token = verifyToken(req)
         const { otp, geo, name } = OTPEmailSchema.parse(requestBody)
+        const mpo = await getConnectedMpo(req)
+        // const token = verifyToken(req)
         // const { aname, lang } = BaseSchema.parse(extractSearchParamsInsensitive(req))
         // const { property } = await getSystemData({ aName: aname, language: lang, withProperty: true }, token);
         const emailHTML = await render(<OTPEmail
@@ -23,6 +25,7 @@ export async function POST(req) {
             // property={property}
             name={name}
             geo={geo}
+            connectedMpo={mpo}
         // lang={lang}
         />);
         return new Response(emailHTML);

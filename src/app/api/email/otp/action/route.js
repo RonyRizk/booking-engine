@@ -4,6 +4,7 @@ import { ZodError } from 'zod';
 import { OTPEmailSchema } from '../../schemas';
 import { logApiError } from '@/logger';
 import { ApiError } from '@/lib/services/api.service';
+import { getConnectedMpo } from '@/lib/middleware';
 // import { extractSearchParamsInsensitive, getSystemData, verifyToken } from '@/lib/middleware';
 
 // Force dynamic rendering to prevent static generation errors
@@ -15,16 +16,18 @@ export async function POST(req) {
 
     try {
         requestBody = await req.json();
-        // const token = verifyToken(req)
         const { otp, geo, name } = OTPEmailSchema.parse(requestBody)
+        const mpo = await getConnectedMpo(req)
+        // const token = verifyToken(req)
         // const { aname, lang } = BaseSchema.parse(extractSearchParamsInsensitive(req))
         // const { property } = await getSystemData({ aName: aname, language: lang, withProperty: true }, token);
         const emailHTML = await render(<OTPEmail
             otp={otp}
-            // property={property}
             variant="action"
             name={name}
             geo={geo}
+            connectedMpo={mpo}
+        // property={property}
         // lang={lang}
         />);
 

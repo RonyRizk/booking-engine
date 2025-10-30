@@ -42,6 +42,11 @@ export class CommonServices extends Token {
         return data.My_Result
     }
 
+    async getExposedMpo() {
+        const data = await this.apiService.makePostRequest(`/Get_Exposed_Mpo`, {});
+        return data.My_Result
+    }
+
     _transformArrayToObject(data) {
         let object = {};
         for (const d of data) {

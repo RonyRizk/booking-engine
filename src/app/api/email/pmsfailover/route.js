@@ -1,22 +1,13 @@
 import { render } from '@react-email/components';
-import { getBookingData, verifyToken, extractSearchParamsInsensitive } from '@/lib/middleware';
+import { getBookingData, verifyToken, extractSearchParamsInsensitive, getConnectedMpo } from '@/lib/middleware';
 import PMSFailover from '@/emails/system/PMSFailover';
-import { ZodError, z } from 'zod';
+import { ZodError } from 'zod';
 import { logApiError } from '@/logger';
 import { ApiError } from '@/lib/services/api.service';
+import { PMSFailoverQuerySchema, PMSFailoverSchema } from '../schemas';
 
 // Force dynamic rendering to prevent static generation errors
 export const dynamic = 'force-dynamic';
-
-const PMSFailoverSchema = z.object({
-    reason: z.string().min(1, "Reason is required")
-});
-
-const PMSFailoverQuerySchema = z.object({
-    id: z.string().min(3, "Booking ID must be at least 3 characters"),
-    aname: z.string().min(3, "Property name must be at least 3 characters"), 
-    lang: z.string().length(2, "Language must be 2 characters").default('en')
-});
 
 export async function POST(req) {
     let requestBody = null;
@@ -24,12 +15,13 @@ export async function POST(req) {
         const token = verifyToken(req);
         const queryParams = extractSearchParamsInsensitive(req);
         const { id: bookingNumber, aname: aName, lang: language } = PMSFailoverQuerySchema.parse(queryParams);
-        
+
         requestBody = await req.json();
         const { reason } = PMSFailoverSchema.parse(requestBody);
+        const mpo = await getConnectedMpo(req)
 
         const data = await getBookingData({ bookingNumber, aName, language }, token);
-        const emailHTML = await render(<PMSFailover {...data} reason={reason} lang={language} />);
+        const emailHTML = await render(<PMSFailover connectedMpo={mpo} {...data} reason={reason} lang={language} />);
         return new Response(emailHTML);
     } catch (error) {
         logApiError(error, req, {
@@ -37,7 +29,7 @@ export async function POST(req) {
             validationTarget: 'PMSFailoverSchema|PMSFailoverQuerySchema',
             step: error instanceof ZodError ? 'validation' : 'processing'
         });
-        
+
         if (error instanceof ZodError) {
             return Response.json({
                 error: 'Validation failed',

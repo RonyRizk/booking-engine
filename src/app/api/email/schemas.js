@@ -25,4 +25,21 @@ const OTPEmailSchema = z.object({
     geo: z.optional(z.any()),
     name: z.string().nonempty()
 })
-export { BaseSchema, BookingSchema, BookingCHMSchema, AutoEmailSchema, LanguageSchema, OTPEmailSchema }
+
+const VerifyEmailSchema = z.object({
+    url: z.string().url(),
+    name: z.string().min(3),
+    lang: LanguageSchema
+})
+
+const PMSFailoverSchema = z.object({
+    reason: z.string().min(1, "Reason is required")
+});
+
+const PMSFailoverQuerySchema = z.object({
+    id: z.string().min(3, "Booking ID must be at least 3 characters"),
+    aname: z.string().min(3, "Property name must be at least 3 characters"),
+    lang: z.string().length(2, "Language must be 2 characters").default('en')
+});
+
+export { BaseSchema, BookingSchema, BookingCHMSchema, AutoEmailSchema, LanguageSchema, OTPEmailSchema, VerifyEmailSchema, PMSFailoverQuerySchema, PMSFailoverSchema }

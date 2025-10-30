@@ -13,11 +13,12 @@ export default function PMSFailover({
     locales,
     property,
     reason,
+    connectedMpo
 }) {
     const _baseProps = { booking, locales }
     return (
-        <EmailContainer lang={lang}>
-            <SystemHeader name={property.name} />
+        <EmailContainer lang={lang} connectedMpo={connectedMpo}>
+            <SystemHeader name={property.name} connectedMpo={connectedMpo} />
             <EmailText color='red' variant='title'>PMS delivery failure: Booking#{booking.booking_nbr}</EmailText>
             <EmailText variant='subtitle'>
                 We will keep retrying during the next 24 hours.

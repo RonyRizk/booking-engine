@@ -5,10 +5,10 @@ import EmailText from '../components/EmailText'
 import EmailButton from '../components/EmailButton'
 import EmailLink from '../components/EmailLink'
 
-export default function VerifyEmail({ name, lang, url }) {
+export default function VerifyEmail({ name, lang, url, connectedMpo }) {
     return (
-        <EmailContainer lang={lang}>
-            <SystemHeader name={name} />
+        <EmailContainer lang={lang} connectedMpo={connectedMpo}>
+            <SystemHeader name={name} connectedMpo={connectedMpo} />
             <EmailText>
                 Please verify your email so you can login to igloorooms extranet. If you were not trying to login, we strongly advise you to change your Admin password immediately.
             </EmailText>

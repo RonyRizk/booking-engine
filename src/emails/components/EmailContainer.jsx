@@ -1,7 +1,7 @@
 import { Body, Container, Head, Html, Link, Text } from '@react-email/components'
 
 
-export default function EmailContainer({ style, lang, ...props }) {
+export default function EmailContainer({ style, lang, connectedMpo, ...props }) {
     return (
         <Html dir={lang === "ar" ? "rtl" : "ltr"}>
             <Head>
@@ -25,11 +25,16 @@ export default function EmailContainer({ style, lang, ...props }) {
                         {props.children}
                     </div>
                     <div style={styles.footer}>
-                        <Link style={styles.footerLink} href="https://info.igloorooms.com">
+                        {connectedMpo ? connectedMpo.website ? <Link style={styles.footerLink} href="https://info.igloorooms.com">
                             <Text style={styles.footerText}>
-                                © {new Date().getFullYear()} igloorooms LLC
+                                © {new Date().getFullYear()} {connectedMpo?.name || "igloorooms LLC"}
                             </Text>
-                        </Link>
+                        </Link> : <Text style={styles.footerText}>
+                            © {new Date().getFullYear()} {connectedMpo?.name || "igloorooms LLC"}
+                        </Text> : <Text style={styles.footerText}>
+                            © {new Date().getFullYear()} igloorooms LLC
+                        </Text>}
+
                     </div>
                 </Container>
             </Body>
