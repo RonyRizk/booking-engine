@@ -48,7 +48,7 @@ export default function BookingEmail({
         }
     };
     return (
-        <EmailContainer lang={lang}>
+        <EmailContainer lang={lang} connectedMpo={property.mpo}>
             <BookingHeader
                 bookingEmail={bookingEmail}
                 totalPersons={totalPersons}

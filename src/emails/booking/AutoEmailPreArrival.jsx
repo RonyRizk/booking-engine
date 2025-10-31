@@ -11,7 +11,7 @@ export default function AutoEmailPreArrival({ booking, setupTables, lang, locale
     const duration = property?.extra_info?.find(e => e.key === "EMAIL_PRE_ARRIVAL_DAYS_BEFORE_CHECK_IN")?.value ?? "";
     const description = property?.extra_info?.find(e => e.key === "EMAIL_PRE_ARRIVAL_CUSTOM_MESSAGE")?.value ?? "";
     return (
-        <EmailContainer lang={lang}>
+        <EmailContainer lang={lang} connectedMpo={property.mpo}>
             <PropertyHeader property={property} />
             <EmailText>
                 {preTableEntries.ENTRY_01.replace('[GUEST_NAME]', formatGuestName(booking.guest))}

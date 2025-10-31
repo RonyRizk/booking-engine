@@ -10,7 +10,7 @@ export default function AutoEmailPostDeparture({ booking, setupTables, lang, loc
     const postTableEntries = setupTables["_POST_DEPARTURE_EMAIL"]
     const description = property?.extra_info?.find(e => e.key === "EMAIL_POST_DEPARTURE_CUSTOM_MESSAGE")?.value ?? "";
     return (
-        <EmailContainer lang={lang}>
+        <EmailContainer lang={lang} connectedMpo={property.mpo}>
             <PropertyHeader property={property} />
             <EmailText>
                 {postTableEntries.ENTRY_01.replace('[GUEST_NAME]', formatGuestName(booking.guest))}

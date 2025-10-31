@@ -24,7 +24,7 @@ export default function BookingCancellationEmail({
     const phone = `+${property?.country?.phone_prefix?.replace("+", "") + "-" || ""}${property?.phone}`;
 
     return (
-        <EmailContainer lang={lang}>
+        <EmailContainer lang={lang} connectedMpo={property.mpo}>
             <BookingHeader
                 bookingEmail={bookingEmail}
                 totalPersons={totalPersons}

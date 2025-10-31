@@ -12,7 +12,7 @@ export default function AutoEmailDuringStay({ booking, setupTables, lang, locale
     const preTableEntries = setupTables["_PRE_ARRIVAL_EMAIL"]
     const description = property?.extra_info?.find(e => e.key === "EMAIL_DURING_THE_STAY_CUSTOM_MESSAGE")?.value ?? "";
     return (
-        <EmailContainer lang={lang}>
+        <EmailContainer lang={lang} connectedMpo={property.mpo}>
             <PropertyHeader property={property} />
             <EmailText>
                 {preTableEntries.ENTRY_01.replace('[GUEST_NAME]', formatGuestName(booking.guest))}
