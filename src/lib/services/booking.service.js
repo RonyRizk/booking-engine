@@ -72,4 +72,26 @@ export class BookingService extends Token {
         });
         return data.My_Result;
     }
+
+    /**
+        * Marks a payment as having its receipt issued.
+        *
+        * @async
+        * @function markPaymentAsReceiptIssued
+        * @param {Object} params - The request payload.
+        * @param {string|number} params.payment_id - The ID of the payment to update.
+        * @param {string} params.receipt_nbr - The receipt number that was issued.
+        * @returns {Promise<Object>} Resolves to the API result (`My_Result`).
+        * @throws Will throw an error if the token is missing or if the API responds with an exception message.
+        *
+        * @example
+        * await bookingService.markPaymentAsReceiptIssued({
+        *   payment_id: 12345,
+        *   receipt_nbr: "RCPT-2025-009"
+        * });
+    */
+    async markPaymentAsReceiptIssued(params) {
+        const data = await this.apiService.makePostRequest(`/Mark_Payment_As_Receipt_Issued`, params);
+        return data.My_Result;
+    }
 }

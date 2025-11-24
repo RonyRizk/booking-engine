@@ -2,6 +2,7 @@ import { format, parse } from "date-fns";
 import { CommonServices } from "./common.service";
 import { Token } from "../token";
 import { BookingService } from "./booking.service";
+import { errorLogger } from "@/logger";
 
 
 export class PrintingService extends Token {
@@ -32,6 +33,20 @@ export class PrintingService extends Token {
         ])
         this._bedPreferences = beddingPreference;
         return { booking, property, countries, locales, beddingPreference, setupTables, statement, error: null }
+    }
+
+    async checkReceipt({ booking, receiptNumber, paymentId }) {
+        const payment = booking.financial.payments.find(p => p.id.toString() === paymentId);
+        if (!payment) {
+            errorLogger.log(`payment ${paymentId} for booking ${booking.booking_nbr} doesn't exist`)
+            return;
+        }
+        if (!payment.is_receipt_issued) {
+            await this.bookingService.markPaymentAsReceiptIssued({
+                payment_id: paymentId,
+                receipt_nbr: receiptNumber
+            })
+        }
     }
 
     //Helpers

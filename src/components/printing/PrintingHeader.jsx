@@ -2,8 +2,40 @@
 import InfoDisplay from "@/components/InfoDisplay";
 import { format, parse } from "date-fns";
 import { formatTime } from "@/lib/utils";
+import CompanyInfo from "./CompanyInfo";
+import PropertyInfo from "./PropertyInfo";
+import PrintInfo from "./PrintInfo";
+import GuestInformation from "./GuestInformation";
 
-export default function PrintingHeader({ booking, property, locales, mode }) {
+export default function PrintingHeader({ booking, property, locales, receiptNumber, mode, guestCountryName, totalPersons, printingService, privateNote }) {
+    if (mode === "receipt") {
+        return (
+            <header className="p-4 sm:px-6 lg:px-8 text-gray-800  text-sm max-w-4xl mx-auto">
+                <h3 className="text-3xl font-bold mb-4">Receipt</h3>
+                <nav className="flex gap-4 flex-col-reverse sm:flex-row sm:justify-between sm:w-full">
+                    <div className="space-y-4">
+                        <PrintInfo receiptNumber={receiptNumber} mode={mode} booking={booking} />
+                        {mode === "receipt" && <GuestInformation
+                            booking={booking}
+                            guestCountryName={guestCountryName}
+                            totalPersons={totalPersons}
+                            locales={locales}
+                            printingService={printingService}
+                            mode={mode}
+                            privateNote={privateNote}
+                        />}
+                    </div>
+                    <div className="space-y-2.5">
+                        <CompanyInfo company={property.company} />
+
+                        <PropertyInfo property={property} />
+
+                    </div>
+                </nav>
+            </header>
+        )
+    }
+
     return (
         <header className="px-4 pt-4 sm:px-6 lg:px-8 text-gray-800 py-0 text-sm max-w-4xl mx-auto">
             <nav className="flex flex-col-reverse md:flex-row md:justify-between md:w-full">
@@ -73,4 +105,5 @@ export default function PrintingHeader({ booking, property, locales, mode }) {
             </section>
         </header>
     );
+
 }

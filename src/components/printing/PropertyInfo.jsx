@@ -1,0 +1,16 @@
+/* eslint-disable @next/next/no-img-element */
+import React from 'react'
+
+export default function PropertyInfo({ property }) {
+    return (
+        <div>
+            <p className='font-bold'>{property.name}</p>
+            <p className='font-light'>{[property?.city.name || null, property?.country.name || null].filter(f => f !== null).join(', ')}</p>
+            <img
+                src={property.space_theme.logo}
+                alt="logo"
+                className="aspect-1 h-10"
+            />
+        </div>
+    )
+}

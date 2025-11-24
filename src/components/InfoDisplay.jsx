@@ -11,7 +11,7 @@ const InfoDisplay = ({ label, value, className, asHtml, inline }) => {
         }, className)
         }>
             {label && <p className={`font-bold text-gray-900 whitespace-nowrap   ${inline ? "inline mr-1" : ""}`}>{label}</p>}
-            {asHtml ? <p dangerouslySetInnerHTML={{ __html: value }} className={inline ? "inline" : ""}></p> : <p className={inline ? "inline" : ""}>{value}</p>}
+            {asHtml ? <p dangerouslySetInnerHTML={{ __html: value }} className={inline ? "inline font-light" : "font-light"}></p> : <p className={inline ? "inline font-light" : "font-light"}>{value}</p>}
         </div>
     );
 };

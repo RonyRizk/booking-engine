@@ -2,22 +2,43 @@ import InfoDisplay from "@/components/InfoDisplay";
 import { formatAmount } from "@/lib/utils";
 import { format } from "date-fns";
 
-export default function PaymentInformation({ booking, locales, mode, setupTables }) {
+export default function PaymentInformation({ booking, locales, paymentId, mode, setupTables }) {
 
     function getPaymentDescription(setupTables, paymentTypeCode, paymentMethodCode, designation) {
         const type = setupTables?._PAY_TYPE?.[paymentTypeCode];
         const method = setupTables?._PAY_METHOD?.[paymentMethodCode];
 
+        if (mode === "receipt" && method) {
+            return method
+        }
         if (type && method) {
             return `${type}: ${method}`;
         }
-
         if (type) return type;
         if (method) return method;
         if (designation) return designation
         return "_";
     }
-
+    if (mode === "receipt") {
+        const payment = booking.financial?.payments?.find(p => p.id.toString() === paymentId);
+        if (!payment) {
+            return;
+        }
+        return <section className="py-4 space-y-2.5 border-gray-300 border-y border-b-0">
+            <InfoDisplay
+                label={`Payment received:`}
+                value={formatAmount(payment.amount, payment.currency.symbol)}
+            />
+            <InfoDisplay
+                label={`Method:`}
+                value={getPaymentDescription(setupTables, payment.payment_type?.code, payment.payment_method?.code, payment?.designation)}
+            />
+            <InfoDisplay
+                label={`Reference:`}
+                value={payment.reference}
+            />
+        </section>
+    }
     return (
         <section className="py-4 space-y-2.5 border-gray-300 border-y border-b-0">
             <div className="">

@@ -1,44 +1,61 @@
 import "../globals.css";
 import { v4 } from "uuid";
-import { getExposedProperty } from "../../lib/actions"
+import { getExposedProperty } from "../../lib/actions";
 
 export async function generateMetadata({ params }, parent) {
+  const parentMetadata = await parent;
   const domain = decodeURIComponent(params.domain).split('.');
   const result = await getExposedProperty({ perma_link: domain[0], aName: "" });
-  const previousImages = (await parent).openGraph?.images || [];
-  const logo = result?.space_theme?.favicon
-  let title = "igloorooms"
+  const previousImages = parentMetadata.openGraph?.images || [];
+  const logo = result?.space_theme?.favicon;
+  let title = "igloorooms";
   if (result?.name) {
-    title = `${result?.name}, ${(result?.country?.name) ?? ""} - Book direct`
+    title = `${result?.name}, ${(result?.country?.name) ?? ""} - Book direct`;
   }
+
+  const galleryImages = result?.images ?? [];
+  const propertyName = result?.name ?? 'igloorooms';
+  const imageAlt = (img) => (img.tooltip ? `${propertyName} - ${img.tooltip}` : propertyName);
+  const structuredImages = galleryImages.flatMap((img) => ([
+    {
+      url: img.url,
+      width: 1800,
+      height: 1600,
+      alt: imageAlt(img),
+      type: 'image/png',
+    },
+    {
+      url: img.url,
+      width: 800,
+      height: 600,
+      alt: imageAlt(img),
+      type: 'image/png',
+    },
+  ]));
+
+  const logoImage = logo
+    ? [{ url: logo, alt: propertyName, width: 512, height: 512, type: 'image/png' }]
+    : [];
+
   return {
     title,
-    images: result?.images?.map((img) => (
-      {
-        url: img.url,
-        width: 1800,
-        height: 1600,
-        alt: img.tooltip ? `${result?.name} - ${img.tooltip}` : result?.name,
-
-      },
-
-      {
-        url: img.url,
-        width: 800,
-        height: 600,
-      }
-    )),
+    images: structuredImages,
     icons: {
       icon: logo,
     },
     description: `${result?.name}, ${result?.country?.name} prices and availability`,
     openGraph: {
       title,
-      images: [...(result?.images?.map(i => i.url) ?? []), logo, ...previousImages],
+      images: [
+        ...structuredImages,
+        ...logoImage,
+        ...previousImages,
+      ].filter(Boolean),
     },
   };
 }
-export default async function layout({ children, params }) {
+
+export default async function layout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <head>

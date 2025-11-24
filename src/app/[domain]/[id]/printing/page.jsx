@@ -11,9 +11,27 @@ import PickupInformation from "@/components/printing/PickupInformation";
 import PaymentInformation from "@/components/printing/PaymentInformation";
 // import ChannelServices from "@/components/printing/ChannelServices";
 import ExtraServices from "@/components/printing/ExtraServices";
-
+/**
+ * Printing page for booking confirmation/invoice documents.
+ *
+ * @param {Object} props
+ * @param {Object} props.searchParams - URL search parameters controlling rendering behavior.
+ * @param {("printing"|"invoice"|"receipt"|"proforma"|"creditnote")} [props.searchParams.mode="printing"]
+ *   The output mode for the document:
+ *   - `printing`: Standard print layout  
+ *   - `invoice`: Invoice document  
+ *   - `receipt`: Payment receipt  
+ *   - `proforma`: Pro-forma invoice  
+ *   - `creditnote`: Credit note
+ * @param {string} props.searchParams.id - Booking number associated with the document.
+ * @param {string} [props.searchParams.lang="en"] - Language code for localization.
+ * @param {string} [props.searchParams.token] - Access token for secure printing API requests.
+ *
+ * @param {Object} props.params - Route parameters from Next.js dynamic segments.
+ * @param {string} props.params.id - Property identifier from the URL.
+ */
 export default async function Printing({ searchParams, params }) {
-  const { mode = "printing", id, lang = "en", token } = searchParams;
+  const { mode = "printing", id, lang = "en", token, pid, rnb } = searchParams;
   const printingService = new PrintingService(token);
   let data = {}
   try {
@@ -31,6 +49,9 @@ export default async function Printing({ searchParams, params }) {
   if (!booking) {
     return null;
   }
+  if (mode === "receipt") {
+    printingService.checkReceipt({ booking, receiptNumber: rnb, paymentId: pid })
+  }
 
   const totalPersons = printingService.calculateTotalPersons(booking);
   const currency = booking?.currency.symbol;
@@ -40,10 +61,16 @@ export default async function Printing({ searchParams, params }) {
 
   return (
     <>
-      <PrintingHeader booking={booking} property={property} locales={locales} mode={mode} />
+      <PrintingHeader
+        receiptNumber={rnb}
+        guestCountryName={guestCountryName}
+        totalPersons={totalPersons}
+        printingService={printingService}
+        privateNote={privateNote}
+        booking={booking} property={property} locales={locales} mode={mode} />
       <main className="p-4 sm:px-6 lg:px-8 text-gray-800 py-0 text-sm max-w-4xl mx-auto" dir="ltr">
         <section>
-          <GuestInformation
+          {mode !== "receipt" && <GuestInformation
             booking={booking}
             guestCountryName={guestCountryName}
             totalPersons={totalPersons}
@@ -51,9 +78,9 @@ export default async function Printing({ searchParams, params }) {
             printingService={printingService}
             mode={mode}
             privateNote={privateNote}
-          />
+          />}
 
-          <section className="pt-4">
+          {mode !== "receipt" && <section className="pt-4">
             <AccommodationHeader
               locales={locales}
               booking={booking}
@@ -77,13 +104,15 @@ export default async function Printing({ searchParams, params }) {
                 />
               ))}
             </div>
-          </section>
+          </section>}
         </section>
 
         {/* {!booking?.is_direct && <ChannelServices booking={booking} locales={locales} />} */}
-        <PickupInformation booking={booking} locales={locales} />
-        <ExtraServices booking={booking} locales={locales} />
-        <PaymentInformation setupTables={setupTables} mode={mode} booking={booking} locales={locales} />
+        {mode !== "receipt" && <>
+          <PickupInformation booking={booking} locales={locales} />
+          <ExtraServices booking={booking} locales={locales} />
+        </>}
+        <PaymentInformation paymentId={pid} setupTables={setupTables} mode={mode} booking={booking} locales={locales} />
       </main>
     </>
   );
