@@ -30,7 +30,7 @@ export class PrintingService extends Token {
             this.bookingService.getBedPreference(),
             this.commonService.getSetupEntriesByTBLNameMulti(['_PAY_TYPE', '_PAY_TYPE_GROUP', '_PAY_METHOD'], 'en'),
             includePenaltyStatement ? this.bookingService.getPenaltyStatement() : Promise.resolve(null),
-            ["invoice", "creditnote"].includes(mode.toLowerCase().trim()) ? this.bookingService.getBookingInvoiceInfo({ booking_nbr: bookingNumber }) : Promise.resolve(null),
+            (mode && ["invoice", "creditnote"].includes(mode?.toLowerCase()?.trim())) ? this.bookingService.getBookingInvoiceInfo({ booking_nbr: bookingNumber }) : Promise.resolve(null),
         ])
         this._bedPreferences = beddingPreference;
         return { booking, property, countries, locales, beddingPreference, setupTables, statement, invoiceInfo, error: null }

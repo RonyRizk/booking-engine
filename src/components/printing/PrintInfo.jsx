@@ -2,6 +2,7 @@ import React from 'react'
 import InfoDisplay from '../InfoDisplay'
 import moment from 'moment'
 
+
 export default function PrintInfo({ booking, mode, receiptNumber, documentId, selectedDocument }) {
     const getBookingNumbers = () => {
         let str = []
@@ -20,7 +21,7 @@ export default function PrintInfo({ booking, mode, receiptNumber, documentId, se
             </>}
             {mode === "receipt" && <InfoDisplay className={"grid grid-cols-2"} label={"Receipt no."} value={receiptNumber} />}
             <InfoDisplay className={"grid grid-cols-2"} label={"Date of issue"} value={
-                mode === "receipt" ? moment().format('MMMM, DD YYYY') : moment(selectedDocument.date, 'YYYY-MM-DD').format('MMMM, DD YYYY')
+                mode === "receipt" ? moment().locale('en').format('MMMM, DD YYYY') : moment(selectedDocument.date, 'YYYY-MM-DD').locale('en').format('MMMM, DD YYYY')
             } />
             <InfoDisplay className={"grid grid-cols-2"} label={"Booking number"} value={getBookingNumbers()} />
         </div>

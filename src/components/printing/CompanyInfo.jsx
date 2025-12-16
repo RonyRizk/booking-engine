@@ -58,7 +58,7 @@ export default function CompanyInfo({ company }) {
             return null
         }
         return (
-            <p className='font-light'>
+            <p className='font-regular'>
                 {location.join(" ")}
             </p>
         );
@@ -67,7 +67,7 @@ export default function CompanyInfo({ company }) {
     return (
         <div className='flex flex-col items-end'>
             {company.name && <p className='font-bold'>{company.name}</p>}
-            {company.address && <p className='font-light'>{company.address}</p>}
+            {company.address && <p className='font-regular'>{company.address}</p>}
             {renderLocation()}
             {company.phone &&
                 <InfoDisplay label={"Phone:"} value={`${company.country.phone_prefix ?? ""} ${company.phone}`} />

@@ -97,6 +97,7 @@ export default async function Printing({ searchParams, params }) {
           {mode === "creditnote" && <p className="text-lg font-semibold text-gray-900">CREDITED ITEMS</p>}
           {mode !== "receipt" && <section className="pt-4">
             {!hasRoomsInDocument && isInvoicableMode ? null : <AccommodationHeader
+              mode={mode}
               locales={locales}
               booking={booking}
               totalNights={totalNights}
