@@ -1,4 +1,4 @@
-import { getExposedProperty } from '@/lib/actions';
+import { getExposedProperty } from '../../../lib/actions';
 import React from 'react'
 
 export async function generateMetadata({ params }, parent) {

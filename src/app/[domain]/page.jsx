@@ -1,8 +1,8 @@
 import React from "react";
 import IrBookingEngine from "../../components/BookingEngine"
-import { getExposedProperty } from "@/lib/actions";
+import { getExposedProperty } from "../../lib/actions";
 import { redirect } from "next/navigation";
-import { logger } from "@/logger";
+import { logger } from "../../logger";
 
 
 export default async function SiteHomePage({ params, searchParams }) {

@@ -37,7 +37,7 @@ export default function RoomDetails({
         {haveMultipleRooms && room.unit && <p>({locales.Lcz_UnitNbr?.replace('%1', room.unit.name) ?? `unit ${room.roomtype.id}`})</p>}
         <p>{room.rateplan.short_name || room.rateplan.name}</p>
       </div>
-      <div className="flex gap-2.5 flex-col md:flex-row md:justify-between mb-2.5 md:gap-10 md:flex-wrap">
+      <div className="flex gap-2.5 flex-col sm:flex-row sm:justify-between mb-2.5 sm:gap-10 sm:flex-wrap">
         <div className="flex-1">
           <div className="flex items-center gap-4">
             <InfoDisplay
@@ -117,7 +117,7 @@ export default function RoomDetails({
           )}
         </div>
 
-        <div className="text-end flex flex-col md:items-end">
+        <div className="text-end flex flex-col sm:items-end">
           <InfoDisplay
             label={`${locales?.Lcz_Total}:`}
             value={formatAmount(room.total, currency)}

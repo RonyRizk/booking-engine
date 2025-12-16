@@ -1,5 +1,5 @@
-import { logger } from "@/logger";
-import { getExposedProperty } from "@/lib/actions";
+import { logger } from "../../../../logger";
+import { getExposedProperty } from "../../../../lib/actions";
 import { redirect } from "next/navigation";
 
 

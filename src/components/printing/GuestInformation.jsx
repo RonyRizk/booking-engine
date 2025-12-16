@@ -1,12 +1,33 @@
 import InfoDisplay from "@/components/InfoDisplay";
 
-export default function GuestInformation({ booking, guestCountryName, totalPersons, locales, printingService, mode, privateNote }) {
+export default function GuestInformation({ booking, selectedDocument, guestCountryName, totalPersons, locales, printingService, mode, privateNote }) {
+    const isInvoicableMode = ["invoice", "creditnote"].includes(mode)
+    if (isInvoicableMode && selectedDocument?.target?.code === "002") {
+        return <section className={"justify-start flex flex-col"}>
+            <h3 className="font-bold">Bill to</h3>
+            <div>
+                <InfoDisplay
+                    label={``}
+                    value={booking?.company_name}
+                />
+                <InfoDisplay
+                    label={``}
+                    value={booking?.company_tax_nbr}
+                />
+            </div>
+        </section>
+    }
+    const formattedGuestName = printingService.formatGuestName(booking?.guest)
     return (
-        <section className={mode === "receipt" ? "justify-start flex" : "py-4 border-y border-gray-300 justify-start flex"}>
+        <section className={mode === "printing" ? "py-4 border-y border-gray-300 justify-start flex" : "justify-start flex"}>
             <div className="flex-1">
-                {mode === "receipt" && <div>
-                    <h3 className="font-bold">From</h3>
+                {mode !== "printing" && <div>
+                    <h3 className="font-bold">{isInvoicableMode ? "Bill to" : "From"}</h3>
                 </div>}
+                {isInvoicableMode && selectedDocument?.billed_to_name && <InfoDisplay
+                    label={``}
+                    value={selectedDocument?.billed_to_name}
+                />}
                 {/* <InfoDisplay
                     label={`${locales?.Lcz_BookedBy}:`}
                     value={`${printingService.formatGuestName(
@@ -15,9 +36,8 @@ export default function GuestInformation({ booking, guestCountryName, totalPerso
                 /> */}
                 <InfoDisplay
                     label={``}
-                    value={`${printingService.formatGuestName(
-                        booking?.guest
-                    )}`}
+                    asHtml
+                    value={isInvoicableMode && selectedDocument?.billed_to_name ? `<span style="font-weight:bold">for</span> ${formattedGuestName}` : formattedGuestName}
                 />
                 {/* <InfoDisplay label={`${locales?.Lcz_Email}:`} value={booking?.guest?.email} /> */}
                 <InfoDisplay label={``} value={booking?.guest?.email} />
@@ -44,11 +64,11 @@ export default function GuestInformation({ booking, guestCountryName, totalPerso
                         <InfoDisplay inline={true} label={`Guest Notes:`} value={booking?.guest?.notes} />
                     </div>
                 )}
-                {mode !== "receipt" && <InfoDisplay
+                {mode === "printing" && <InfoDisplay
                     label={`${locales?.Lcz_ArrivalTime}:`}
                     value={booking?.arrival?.description}
                 />}
-                {mode !== "invoice" && (
+                {mode === "printing" && (
                     <>
                         {booking.remark && booking.is_direct && (
                             <div>
@@ -76,7 +96,7 @@ export default function GuestInformation({ booking, guestCountryName, totalPerso
                     </>
                 )}
             </div>
-            {mode !== "receipt" && <p className="text-gray-900 text-lg font-semibold">
+            {mode === "printing" && <p className="text-gray-900 text-lg font-semibold">
                 {booking.status.description}
             </p>}
         </section>

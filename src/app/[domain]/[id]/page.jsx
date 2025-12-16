@@ -1,7 +1,7 @@
-import { logger } from "@/logger";
-import { getExposedProperty } from "@/lib/actions";
+import { logger } from "../../../logger";
+import { getExposedProperty } from "../../../lib/actions";
 import { redirect } from "next/navigation";
-import { constructURL } from "@/lib/utils";
+import { constructURL } from "../../../lib/utils";
 
 
 export default async function Page({ searchParams, params }) {

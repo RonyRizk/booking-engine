@@ -1,7 +1,7 @@
-import { getExposedProperty } from "@/lib/actions";
+import { getExposedProperty } from "../../../lib/actions";
 import { redirect } from "next/navigation";
-import { logger } from "@/logger";
-import IrBookingListing from "@/components/BookingListing";
+import { logger } from "../../../logger";
+import IrBookingListing from "../../../components/BookingListing";
 
 
 export default async function SiteHomePage({ params, searchParams }) {

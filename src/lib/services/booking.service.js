@@ -43,6 +43,27 @@ export class BookingService extends Token {
         });
         return data.My_Result;
     }
+
+    /**
+     * Fetches invoice information for a specific booking.
+     *
+     * @async
+     * @function getBookingInvoiceInfo
+     * @param {Object} props - The request payload.
+     * @param {string} props.booking_nbr - The booking number to retrieve invoice info for.
+     * @returns {Promise<Object>} Resolves to the booking invoice info (`My_Result`).
+     * @throws Will throw an error if the token is missing or if the API returns an exception message.
+     *
+     * @example
+     * const service = new BookingService(baseUrl);
+     * const invoiceInfo = await service.getBookingInvoiceInfo({
+     *   booking_nbr: "45436185167"
+     * });
+     */
+    async getBookingInvoiceInfo(props) {
+        const data = await this.apiService.makePostRequest(`/Get_Booking_Invoice_Info`, props);
+        return data.My_Result;
+    }
     async getExposedBooking({ booking_nbr, language, withExtras = true }) {
         const data = await this.apiService.makePostRequest(`/Get_Exposed_Booking`, {
             booking_nbr,

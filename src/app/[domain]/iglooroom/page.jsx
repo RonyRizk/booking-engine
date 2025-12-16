@@ -1,4 +1,4 @@
-import IrLogo from '@/components/IrLogo'
+import IrLogo from '../../../components/IrLogo'
 import Link from 'next/link'
 import React from 'react'
 

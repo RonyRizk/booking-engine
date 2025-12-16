@@ -2,7 +2,7 @@ import InfoDisplay from "@/components/InfoDisplay";
 import { format } from "date-fns";
 import { formatAmount, formatTime } from "@/lib/utils";
 
-export default function PickupInformation({ booking, locales }) {
+export default function PickupInformation({ booking, locales, mode, selectedDocument }) {
     if (!booking.pickup_info) return null;
 
     return (
@@ -11,7 +11,7 @@ export default function PickupInformation({ booking, locales }) {
                 {locales?.Lcz_PickupYes.replace("%1", booking.pickup_info.selected_option.location.description)}
             </p>
             <div>
-                <div className="flex items-center gap-1.5 md:gap-4 flex-wrap ">
+                <div className="flex items-center gap-1.5 sm:gap-4 flex-wrap ">
                     <InfoDisplay
                         label={`${locales?.Lcz_ArrivalDate}:`}
                         value={format(
@@ -31,7 +31,7 @@ export default function PickupInformation({ booking, locales }) {
                         value={booking?.pickup_info.details}
                     />
                 </div>
-                <div className="flex items-center mt-1.5 md:mt-0 gap-1.5 md:gap-4 flex-wrap">
+                <div className="flex items-center mt-1.5 sm:mt-0 gap-1.5 sm:gap-4 flex-wrap">
                     <p className="car_name">
                         {booking.pickup_info.selected_option.vehicle.description}
                         <span> - </span>
