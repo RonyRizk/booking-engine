@@ -3,7 +3,7 @@ import React from 'react'
 
 export default function PropertyInfo({ property }) {
     return (
-        <div>
+        <div className='flex flex-col items-end'>
             <p className='font-bold'>{property.name}</p>
             <p className='font-regular'>{[property?.city.name || null, property?.country.name || null].filter(f => f !== null).join(', ')}</p>
             <img
