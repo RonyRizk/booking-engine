@@ -37,7 +37,7 @@ export class PrintingService extends Token {
     }
 
     async checkReceipt({ booking, receiptNumber, paymentId }) {
-        const payment = booking.financial.payments.find(p => p.id.toString() === paymentId);
+        const payment = booking.financial.payments.find(p => p.system_id?.toString() === paymentId);
         if (!payment) {
             errorLogger.log(`payment ${paymentId} for booking ${booking.booking_nbr} doesn't exist`)
             return;

@@ -20,7 +20,7 @@ export default function PaymentInformation({ selectedDocumentsItemsKeys, booking
         return "_";
     }
     if (mode === "receipt") {
-        const payment = booking.financial?.payments?.find(p => p.id.toString() === paymentId);
+        const payment = booking.financial?.payments?.find(p => p.system_id?.toString() === paymentId);
         if (!payment) {
             return;
         }
@@ -40,12 +40,12 @@ export default function PaymentInformation({ selectedDocumentsItemsKeys, booking
         </section>
     }
     const CancellationPenalty = () => {
-        const canShowCancellationPolicy = invoicableMode && selectedDocument?.items?.find(d => d?.type === "PAYMENT");
-        if (!canShowCancellationPolicy) {
-            return null
-        }
         const cancellationPenalty = booking.financial?.payments?.find(p => p?.payment_type?.code === "013");
         if (!cancellationPenalty) {
+            return null
+        }
+        const canShowCancellationPolicy = invoicableMode && selectedDocument?.items?.find(d => d?.type === "PAYMENT" && d.key === cancellationPenalty?.system_id);
+        if (!canShowCancellationPolicy) {
             return null
         }
         return <section className="py-4 space-y-2.5 border-gray-300 border-y border-b-0">
