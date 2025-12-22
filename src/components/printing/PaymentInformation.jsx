@@ -93,10 +93,34 @@ export default function PaymentInformation({ selectedDocumentsItemsKeys, booking
             />
         </section>
     }
+    const CreditCardInfo = () => {
+        if (booking.is_direct) {
+            if (!booking.guest.cci) {
+                return;
+            }
+            return (<div className="border-b pb-2.5">
+                <p class="text-lg font-semibold mb-4 text-gray-900">Card Details</p>
+                <InfoDisplay label={"Name: "} value={booking.guest.cci.holder_name}></InfoDisplay>
+                <InfoDisplay label={"Number: "} value={booking.guest.cci.nbr}></InfoDisplay>
+                <InfoDisplay label={"Expiry: "} value={`${booking.guest.cci.expiry_month}/${booking.guest.cci.expiry_year}`}></InfoDisplay>
+            </div>)
+        }
+        if (!booking.ota_guarante) {
+            return null
+        }
+        const { ota_guarante } = booking
+        return (<div className="border-b pb-2.5">
+            <p class="text-lg font-semibold mb-4 text-gray-900">Card Details</p>
+            <InfoDisplay value={ota_guarante.card_type + `${ota_guarante.is_virtual ? ' (virtual)' : ''}`} label={`Type:`} />
+            <InfoDisplay value={ota_guarante.cardholder_name} label={`Name:`} />
+            <InfoDisplay value={ota_guarante.card_number} label={`Number:`} />
+        </div>)
+    }
     return (
         <>
             <CancellationPenalty />
             {mode !== "creditnote" && <section className="py-4 space-y-2.5 border-gray-300 border-y border-b-0">
+                {mode === "printing" && <CreditCardInfo />}
                 <div className="">
                     <InfoDisplay
                         label={`${locales?.Lcz_Balance}:`}
