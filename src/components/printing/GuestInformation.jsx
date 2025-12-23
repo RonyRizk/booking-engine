@@ -72,20 +72,25 @@ export default function GuestInformation({ booking, selectedDocument, guestCount
                     <>
                         {booking.remark && booking.is_direct && (
                             <div>
-                                <InfoDisplay inline={true} label={`${locales?.Lcz_GuestRemark ?? "Guest Notes"}:`} value={booking.remark} />
+                                <InfoDisplay inline={true} asHtml={true} label={`Channel ${locales?.Lcz_Notes ?? "Notes"}:`} value={booking.remark} />
                             </div>
                         )}
                         {booking.ota_notes && !booking.is_direct && (
-                            <div className="flex items-start gap-1 flex-grow">
-                                <p className="font-medium text-gray-900">Channel {locales?.Lcz_Notes ?? "Notes"}:</p>
-                                <div>
-                                    {booking.ota_notes?.map((notes) => (
-                                        <p key={`ota_note_${notes.statement}`} className="text-gray-600">
-                                            {notes.statement}
-                                        </p>
-                                    ))}
-                                </div>
-                            </div>
+                            <InfoDisplay inline={true} label={`${locales?.Lcz_GuestRemark ?? "Guest Notes"}:`} value={booking.ota_notes?.map((notes) => (
+                                <span key={`ota_note_${notes.statement}`} className="text-gray-600">
+                                    {notes.statement}
+                                </span>
+                            ))} />
+                            // <div className="flex items-start gap-1 flex-grow">
+                            //     <p className="font-medium text-gray-900"></p>
+                            //     <div>
+                            //         {booking.ota_notes?.map((notes) => (
+                            //             <p key={`ota_note_${notes.statement}`} className="text-gray-600">
+                            //                 {notes.statement}
+                            //             </p>
+                            //         ))}
+                            //     </div>
+                            // </div>
                         )}
                         {privateNote && mode === "printing" && (
                             <div>

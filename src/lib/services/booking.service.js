@@ -115,4 +115,10 @@ export class BookingService extends Token {
         const data = await this.apiService.makePostRequest(`/Mark_Payment_As_Receipt_Issued`, params);
         return data.My_Result;
     }
+    async getPCICardInfoURL(BOOK_NBR) {
+        const data = await this.apiService.makePostRequest(`/Get_PCI_Card_Info_URL`, {
+            BOOK_NBR,
+        });
+        return data?.My_Result;
+    }
 }

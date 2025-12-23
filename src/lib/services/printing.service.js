@@ -50,6 +50,10 @@ export class PrintingService extends Token {
         }
     }
 
+    async getPCICardInfoURL(bookingNumber) {
+        return await this.bookingService.getPCICardInfoURL(bookingNumber)
+    }
+
     //Helpers
 
     formatGuestName({ first_name, last_name }) {
