@@ -82,9 +82,9 @@ export class ApiService {
             if (data.ExceptionMsg && data.ExceptionMsg !== '') {
                 throw new ApiError(data.ExceptionMsg, 200, 'EXCEPTION_MSG');
             }
-
             return data;
         } catch (error) {
+            // console.log(error)
             if (error instanceof ApiError) {
                 throw error;
             }

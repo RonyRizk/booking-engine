@@ -59,16 +59,16 @@ const apiErrorFormat = printf(({ level, message, timestamp, ...meta }) => {
     })}`
 });
 
-const logger = winston.createLogger({
-    level: "info",
-    format: combine(timestamp(), json()),
-    transports: [
-        new winston.transports.File({
-            filename: "logs/next-app.log",
-        }),
-        new winston.transports.Console()
-    ],
-});
+// const logger = winston.createLogger({
+//     level: "info",
+//     format: combine(timestamp(), json()),
+//     transports: [
+//         new winston.transports.File({
+//             filename: "logs/next-app.log",
+//         }),
+//         new winston.transports.Console()
+//     ],
+// });
 
 const errorLogger = winston.createLogger({
     level: "error",
@@ -93,18 +93,18 @@ const apiErrorLogger = winston.createLogger({
         })
     ],
 });
-const apiInfoLogger = winston.createLogger({
-    level: "info",
-    format: combine(timestamp(), apiInfoFormat),
-    transports: [
-        new winston.transports.File({
-            filename: "logs/next-api-info.log",
-        }),
-        new winston.transports.Console({
-            format: combine(timestamp(), json()) // Console uses JSON for readability
-        })
-    ],
-});
+// const apiInfoLogger = winston.createLogger({
+//     level: "info",
+//     format: combine(timestamp(), apiInfoFormat),
+//     transports: [
+//         new winston.transports.File({
+//             filename: "logs/next-api-info.log",
+//         }),
+//         new winston.transports.Console({
+//             format: combine(timestamp(), json()) // Console uses JSON for readability
+//         })
+//     ],
+// });
 
 // Helper function to extract request context
 const getRequestContext = (req) => {
@@ -133,24 +133,32 @@ const logApiError = (error, req, additionalContext = {}) => {
         ...additionalContext
     });
 };
-const logApiInfo = (req, additionalContext = {}) => {
-    const requestContext = getRequestContext(req);
-    apiInfoLogger.info({
-        ...requestContext,
-        ...additionalContext
-    });
-};
+// const logApiInfo = (req, additionalContext = {}) => {
+//     const requestContext = getRequestContext(req);
+//     apiInfoLogger.info({
+//         ...requestContext,
+//         ...additionalContext
+//     });
+// };
 
-const originalConsoleError = console.error;
-console.error = (...args) => {
-    originalConsoleError(...args);
-    errorLogger.error(...args);
-};
+// const originalConsoleError = console.error;
+// console.error = (...args) => {
+//     originalConsoleError(...args);
+//     errorLogger.error(...args);
+// };
 
-const originalConsole = console.log;
-console.log = (...args) => {
-    originalConsole(...args);
-    logger.info(...args);
-};
+// const originalConsole = console.log;
+// console.log = (...args) => {
+//     originalConsole(...args);
+//     logger.info(...args);
+// };
 
-export { logger, errorLogger, apiErrorLogger, apiInfoLogger, logApiError, getRequestContext, logApiInfo };
+export {
+    // logger,
+    errorLogger,
+    apiErrorLogger,
+    // apiInfoLogger,
+    logApiError,
+    getRequestContext,
+    // logApiInfo
+};

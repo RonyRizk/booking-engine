@@ -1,7 +1,8 @@
-import { logger } from "../../../logger";
+// import { logger } from "../../../logger";
 import { getExposedProperty } from "../../../lib/actions";
 import { redirect } from "next/navigation";
 import { constructURL } from "../../../lib/utils";
+import { errorLogger } from "@/logger";
 
 
 export default async function Page({ searchParams, params }) {
@@ -17,14 +18,15 @@ export default async function Page({ searchParams, params }) {
       perma_link = property.perma_link;
     }
   } catch (error) {
-    console.log(error)
-    logger.info(error)
+    // console.log(error)
+    // logger.info(error)
+    errorLogger.log(error)
   }
   if (perma_link) {
     redirect(constructURL(`https://${perma_link}.bookingmystay.com`, searchParams))
   }
   if (!property) {
-    logger.info("[id]:property was not found");
+    // logger.info("[id]:property was not found");
     if (isBookingMyStayDomain(params.domain)) {
       return redirect(constructURL(`https://${params.domain}`, searchParams))
     } else {

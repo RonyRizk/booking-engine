@@ -11,6 +11,7 @@ import PickupInformation from "../../../../components/printing/PickupInformation
 import PaymentInformation from "../../../../components/printing/PaymentInformation";
 // import ChannelServices from "../../../../components/printing/ChannelServices";
 import ExtraServices from "../../../../components/printing/ExtraServices";
+import { errorLogger } from "@/logger";
 /**
  * Printing page for booking confirmation/invoice documents.
  *
@@ -44,6 +45,7 @@ export default async function Printing({ searchParams, params }) {
         mode
       });
   } catch (error) {
+    errorLogger.log(error)
     return redirect("https://x.igloorooms.com/manage/acbookinglist.aspx")
   }
   const { booking, property, setupTables, countries, locales: defaultLocales, invoiceInfo } = data
