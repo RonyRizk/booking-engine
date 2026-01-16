@@ -31,15 +31,20 @@ export default function BookingEmail({
                 if (!method) {
                     return;
                 }
+
                 let selectedLocalizable = method.localizables?.find(
                     (l) => l.language.code.toLowerCase() === lang
                 );
-                if (!selectedLocalizable) {
-                    selectedLocalizable = method.localizables?.find(
-                        (l) => l.language.code.toLowerCase() === "en"
-                    );
+                let enSelectedLocalizable = method.localizables?.find(
+                    (l) => l.language.code.toLowerCase() === "en"
+                );
+                if (!selectedLocalizable?.description) {
+                    return enSelectedLocalizable?.description?.replace(
+                        /<p>/g,
+                        '<p style="margin:0;padding:0;">'
+                    )
                 }
-                return selectedLocalizable.description.replace(
+                return selectedLocalizable?.description?.replace(
                     /<p>/g,
                     '<p style="margin:0;padding:0;">'
                 );
