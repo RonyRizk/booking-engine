@@ -109,6 +109,9 @@ const printingService = new PrintingService()
 // Guest Phone
 const GuestPhone = ({ booking, locales }) => {
   const phone = printingService.formatPhoneNumber(booking.guest, booking.is_direct)
+  if (!phone) {
+    return null
+  }
   return (
     <EmailText style={{ margin: 0 }}>
       <b>{`${locales?.Lcz_Phone}:`}</b> {phone}

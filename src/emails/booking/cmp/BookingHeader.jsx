@@ -50,6 +50,7 @@ export default function BookingHeader({
                         {/* <BookingInfoSection.LocationInfo property={property} locales={locales} /> */}
                     </BookingInfoSection.DirectBookingOnly>
                 </BookingInfoSection.NonCancelledOnly>
+                <EmailText></EmailText>
                 <BookingInfoSection.GuestInfo {..._baseProps} />
                 <BookingInfoSection.NonDirectOnly booking={booking}>
                     <BookingInfoSection.BookedOnDate {..._baseProps} />

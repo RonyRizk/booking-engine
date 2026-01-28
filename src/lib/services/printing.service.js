@@ -66,6 +66,9 @@ export class PrintingService extends Token {
         // if (!is_direct) {
         //     return mobile;
         // }
+        if (!mobile_without_prefix) {
+            return ""
+        }
         if (!country_phone_prefix) {
             return mobile_without_prefix;
         }
