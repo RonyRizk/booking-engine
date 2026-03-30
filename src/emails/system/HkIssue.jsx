@@ -12,7 +12,7 @@ export default function HkIssue({
     return (
         <EmailContainer lang={lang} connectedMpo={connectedMpo}>
             <SystemHeader name={property?.name} connectedMpo={connectedMpo} />
-            <EmailText><b>Unit:</b> {issue.unit_name}</EmailText>
+            <EmailText><b>Unit:</b> {issue.unit?.name}</EmailText>
             {/* <EmailText>
                 <b>Date:</b> {issue.date}
             </EmailText> */}
