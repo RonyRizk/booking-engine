@@ -68,7 +68,7 @@ export default function BookingEmail({
             <EmailText variant="subtitle">{locales?.Lcz_Booking_details}</EmailText>
             <BookingDetails booking={booking} lang={lang} property={property} locales={locales} currency={currency} />
             <EmailText variant="subtitle">{locales?.Lcz_PaymentDetails}</EmailText>
-            <EmailText>{locales?.Lcz_YourBookingIsGuaranteed}</EmailText>
+            <EmailText>{property.is_upon_request && booking?.status?.code === "001" ? (locales?.Lcz_YourBookingIsNotGuaranteed) : locales?.Lcz_YourBookingIsGuaranteed}</EmailText>
             <div
                 style={styles.paymentMessage}
                 dangerouslySetInnerHTML={{ __html: getPaymentMessage() }}

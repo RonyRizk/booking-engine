@@ -9,7 +9,7 @@ const BookingSchema =
     BaseSchema.extend({
         id: z.string().min(3),
     })
-
+const HkIssueSchema = z.object({ unit_id: z.string().nonempty(), lang: LanguageSchema, property_id: z.string().nonempty() })
 const BookingCHMSchema = z.object({
     ota_name: z.optional(z.string().min(3)).nullable(),
     ota_url: z.optional(z.string()).nullable(),
@@ -42,4 +42,4 @@ const PMSFailoverQuerySchema = z.object({
     lang: z.string().length(2, "Language must be 2 characters").default('en')
 });
 
-export { BaseSchema, BookingSchema, BookingCHMSchema, AutoEmailSchema, LanguageSchema, OTPEmailSchema, VerifyEmailSchema, PMSFailoverQuerySchema, PMSFailoverSchema }
+export { BaseSchema, HkIssueSchema, BookingSchema, BookingCHMSchema, AutoEmailSchema, LanguageSchema, OTPEmailSchema, VerifyEmailSchema, PMSFailoverQuerySchema, PMSFailoverSchema }
