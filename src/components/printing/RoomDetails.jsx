@@ -34,7 +34,7 @@ export default function RoomDetails({
     <section>
       <div className="flex items-center gap-2.5 font-bold text-base mb-1.5">
         <p>{room.roomtype.name}</p>
-        {haveMultipleRooms && room.unit && <p>({locales.Lcz_UnitNbr?.replace('%1', room.unit.name) ?? `unit ${room.roomtype.id}`})</p>}
+        {haveMultipleRooms && room.unit && <p>({locales.Lcz_UnitNbr?.replace('%1', room.unit.name)})</p>}
         <p>{room.rateplan.short_name || room.rateplan.name}</p>
       </div>
       <div className="flex gap-2.5 flex-col sm:flex-row sm:justify-between mb-2.5 sm:gap-10 sm:flex-wrap">
