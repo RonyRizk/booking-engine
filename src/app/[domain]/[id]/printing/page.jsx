@@ -12,6 +12,7 @@ import PaymentInformation from "../../../../components/printing/PaymentInformati
 // import ChannelServices from "../../../../components/printing/ChannelServices";
 import ExtraServices from "../../../../components/printing/ExtraServices";
 import { errorLogger } from "@/logger";
+import { FiscalDocumentFooter } from "./cl/components/fiscal-document-footer";
 /**
  * Printing page for booking confirmation/invoice documents.
  *
@@ -141,7 +142,7 @@ export default async function Printing({ searchParams, params }) {
           <ExtraServices isInvoicableMode={isInvoicableMode} mode={mode} selectedDocumentsItemsKeys={selectedDocumentsItemsKeys} booking={booking} locales={locales} />
         </>}
         <PaymentInformation printingService={printingService} selectedDocument={selectedDocument} selectedDocumentsItemsKeys={selectedDocumentsItemsKeys} paymentId={pid} setupTables={setupTables} mode={mode} booking={booking} locales={locales} />
-
+        {mode !== "printing" && <div className="pb-4"><FiscalDocumentFooter property={property} /></div>}
       </main>
     </>
   );
