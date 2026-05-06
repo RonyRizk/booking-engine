@@ -237,7 +237,7 @@ export function FiscalDocumentTable({
             {money(totals.total)}
           </p>
           <p className="text-[0.65rem] uppercase tracking-wide text-slate-600 font-medium mt-0.5">
-            Total Due
+            Grand Total
           </p>
         </PrintTableCell>
       </PrintTableRow>

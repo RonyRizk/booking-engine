@@ -5,6 +5,7 @@ import { format } from "date-fns";
 
 export default async function PaymentInformation({ printingService, selectedDocumentsItemsKeys, booking, locales, paymentId, mode, setupTables, selectedDocument }) {
     const invoicableMode = ["invoice", "creditnote"].includes(mode)
+    const payments = (booking.financial?.payments ?? []).filter(p => !p.is_city_ledger);
     function getPaymentDescription(setupTables, paymentTypeCode, paymentMethodCode, designation) {
         const type = setupTables?._PAY_TYPE?.[paymentTypeCode];
         const method = setupTables?._PAY_METHOD?.[paymentMethodCode];
@@ -21,7 +22,7 @@ export default async function PaymentInformation({ printingService, selectedDocu
         return "_";
     }
     if (mode === "receipt") {
-        const payment = booking.financial?.payments?.find(p => p.system_id?.toString() === paymentId);
+        const payment = payments.find(p => p.system_id?.toString() === paymentId);
         if (!payment) {
             return;
         }
@@ -41,7 +42,7 @@ export default async function PaymentInformation({ printingService, selectedDocu
         </section>
     }
     const CancellationPenalty = () => {
-        const cancellationPenalty = booking.financial?.payments?.find(p => p?.payment_type?.code === "013");
+        const cancellationPenalty = payments.find(p => p?.payment_type?.code === "013");
         if (!cancellationPenalty) {
             return null
         }
@@ -130,7 +131,7 @@ export default async function PaymentInformation({ printingService, selectedDocu
                         />
                     </div>
                 )} */}
-                {booking.financial?.payments && !invoicableMode && (
+                {payments.length > 0 && !invoicableMode && (
                     <section className="space-y-2.5 py-4">
                         <h1 className="font-medium uppercase">{mode === "printing" ? "Guest Folio" : `${locales?.Lcz_Payments} History`} </h1>
                         <div className="overflow-x-auto">
@@ -152,7 +153,7 @@ export default async function PaymentInformation({ printingService, selectedDocu
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-gray-200">
-                                    {booking.financial?.payments?.map((p) => {
+                                    {payments.map((p) => {
                                         if (!["001", "010"].includes(p.payment_type.code) && mode !== "printing") {
                                             return null
                                         }

@@ -21,9 +21,11 @@ export class CityLedgerService extends Token {
     const data = await this.apiService.makePostRequest("/Get_Exposed_Agent", { id });
     return data.My_Result
   }
-  async fetchCL({ AGENCY_ID, START_ROW = 0, END_ROW = 1000, SEARCH_QUERY }) {
-    const payload = { AGENCY_ID, START_ROW, END_ROW };
+  async fetchCL({ AGENCY_ID, START_ROW = 0, END_ROW = 1000, SEARCH_QUERY, FROM_DATE, TO_DATE, IS_HOLD, IS_LOCKED }) {
+    const payload = { AGENCY_ID, START_ROW, END_ROW, IS_LOCKED, IS_HOLD };
     if (SEARCH_QUERY !== undefined) payload.SEARCH_QUERY = SEARCH_QUERY;
+    if (FROM_DATE !== undefined) payload.FROM_DATE = FROM_DATE;
+    if (TO_DATE !== undefined) payload.TO_DATE = TO_DATE;
     return this.apiService.makePostRequest('/Fetch_CL', payload);
   }
 

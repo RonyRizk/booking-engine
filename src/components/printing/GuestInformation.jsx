@@ -35,12 +35,12 @@ export default function GuestInformation({ booking, selectedDocument, guestCount
                     )} - ${totalPersons} ${totalPersons > 1 ? locales?.Lcz_Persons : locales?.Lcz_Person}`}
                 /> */}
                 <InfoDisplay
-                    label={``}
+                    label={isInvoicableMode && selectedDocument?.billed_to_name ? "" : `Name:`}
                     asHtml
                     value={isInvoicableMode && selectedDocument?.billed_to_name ? `<span style="font-weight:bold">for</span> ${formattedGuestName}` : formattedGuestName}
                 />
                 {/* <InfoDisplay label={`${locales?.Lcz_Email}:`} value={booking?.guest?.email} /> */}
-                <InfoDisplay label={``} value={booking?.guest?.email} />
+                <InfoDisplay label={`Email:`} value={booking?.guest?.email} />
                 {/* <InfoDisplay
                     label={`${locales?.Lcz_Phone}:`}
                     value={printingService.formatPhoneNumber(
@@ -49,7 +49,7 @@ export default function GuestInformation({ booking, selectedDocument, guestCount
                     )}
                 /> */}
                 <InfoDisplay
-                    label={``}
+                    label={`Phone:`}
                     value={printingService.formatPhoneNumber(
                         booking?.guest,
                         booking?.is_direct
@@ -57,7 +57,7 @@ export default function GuestInformation({ booking, selectedDocument, guestCount
                 />
                 {guestCountryName && (
                     // <InfoDisplay label={`${locales?.Lcz_Country}:`} value={guestCountryName} />
-                    <InfoDisplay label={``} value={guestCountryName} />
+                    <InfoDisplay label={`Country:`} value={guestCountryName} />
                 )}
                 {mode === "printing" && booking?.guest?.notes && (
                     <div>

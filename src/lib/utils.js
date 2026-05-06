@@ -37,7 +37,10 @@ export function formatAmount(amount, currency = 'USD', withIntl = false) {
     if (withIntl) {
         return new Intl.NumberFormat('en-US', { style: 'currency', currency: currency }).format(amount);
     }
-    return `${currency} ${amount?.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    if (!amount) {
+        return null;
+    }
+    return `${amount < 0 ? "- " : ""}${currency} ${Math.abs(amount)?.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 }
 export function calculateDaysBetweenDates(from_date, to_date) {
     const startDate = parse(from_date, 'yyyy-MM-dd', new Date());
@@ -70,3 +73,7 @@ export function extractAndRemoveScriptTags(htmlContent) {
 export function cn(...inputs) {
     return twMerge(clsx(inputs))
 }
+
+export const isAgentMode = (agent) => {
+    return agent && agent?.payment_mode?.code !== '002';
+};

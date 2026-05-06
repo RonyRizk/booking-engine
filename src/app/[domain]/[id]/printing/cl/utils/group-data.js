@@ -96,6 +96,7 @@ export const groupData = (rows) => {
         TO_DATE: last.TO_DATE ?? '',
         ROOM_CATEGORY_ID: first.ROOM_CATEGORY_ID ?? 0,
         ROOM_TYPE_ID: first.ROOM_TYPE_ID ?? 0,
+        RATE_PLAN_ID: first.RATE_PLAN_ID ?? 0,
       });
     }
 

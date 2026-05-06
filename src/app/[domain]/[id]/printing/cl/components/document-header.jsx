@@ -21,6 +21,7 @@ const DOCUMENT_TITLES = {
   creditnote: 'Credit Note',
   debitnote: 'Debit Note',
   statement: 'Account Statement',
+  proforma: 'Proforma Invoice',
 };
 
 const DOC_NUMBER_LABELS = {
@@ -29,6 +30,7 @@ const DOC_NUMBER_LABELS = {
   creditnote: 'Credit note no.',
   debitnote: 'Debit note no.',
   statement: null,
+  proforma: 'Proforma no.',
 };
 
 export function DocumentHeader({ isDraft, documentType = 'invoice', property, documentNumber, originalDocNumber, agent, className }) {
@@ -42,12 +44,12 @@ export function DocumentHeader({ isDraft, documentType = 'invoice', property, do
         <div className="space-y-4">
           <div className="w-fit">
             {docLabel && documentNumber && (
-              <InfoDisplay className="grid grid-cols-2" label={docLabel} value={documentNumber} />
+              <InfoDisplay className="" label={docLabel + ":"} value={documentNumber} />
             )}
             {['creditnote', 'debitnote'].includes(documentType) && originalDocNumber && (
-              <InfoDisplay className="grid grid-cols-2" label="Original invoice no." value={originalDocNumber} />
+              <InfoDisplay className="" label="Original invoice no.:" value={originalDocNumber} />
             )}
-            <InfoDisplay className="grid grid-cols-2" label="Date of issue" value={today} />
+            <InfoDisplay className="" label="Date of issue:" value={today} />
           </div>
           {agent && (
             <section className="justify-start flex flex-col">

@@ -1,13 +1,16 @@
 import { redirect } from "next/navigation";
 import { CityLedgerService } from "@/lib/services/city-ledger.service";
+import { BookingService } from "@/lib/services/booking.service";
 import { InvoicePreview } from "./components/invoice-preview";
 import { ReceiptPreview } from "./components/receipt-preview";
 import { CreditNotePreview } from "./components/credit-note-preview";
 import { DebitNotePreview } from "./components/debit-note-preview";
 import { StatementPreview } from "./components/statement-preview";
+import { ProformaPreview } from "./components/proforma-preview";
 import "./cl-printing.css";
 import { CommonServices } from "@/lib/services/common.service";
 import { FdTypes } from "@/lib/enums";
+import { convertBookingToCL } from "./utils/booking-to-cl";
 
 const DEFAULT_BASE_URL = "https://gateway.igloorooms.com/IR";
 const VALID_MODES = new Set([
@@ -17,6 +20,7 @@ const VALID_MODES = new Set([
     "debitnote",
     "statement",
     "draft",
+    "proforma",
 ]);
 const FD_TYPES = [FdTypes.CreditNote, FdTypes.DebitNote, FdTypes.Invoice];
 const FALLBACK_URL = "https://x.igloorooms.com/manage/acbookinglist.aspx";
@@ -64,6 +68,52 @@ const FETCHERS = {
             transactions: clResult?.My_Result?.My_Cl_tx ?? [],
             document: docs?.My_Rows?.[0] ?? null,
         })),
+
+    proforma: async (
+        cl,
+        _property,
+        { agentId, fromDate, toDate, bookingId, token, lang },
+    ) => {
+        const commonService = new CommonServices(DEFAULT_BASE_URL);
+        commonService.setToken(token);
+        if (bookingId) {
+            const bookingService = new BookingService(DEFAULT_BASE_URL);
+            bookingService.setToken(token);
+            const [clResult, booking, setupEntries] = await Promise.all([
+                cl.fetchCL({
+                    AGENCY_ID: agentId,
+                    SEARCH_QUERY: bookingId,
+                    FROM_DATE: null,
+                    TO_DATE: null,
+                }),
+                bookingService.getExposedBooking({
+                    booking_nbr: bookingId,
+                    language: lang,
+                    is_get_financial_snapshot: true,
+                    extras: [
+                        {
+                            key: "payment_code",
+                            value: "",
+                        },
+                    ],
+                }),
+                commonService.getSetupEntriesByTBLNameMulti(["_SVC_CATEGORY"], "en"),
+            ]);
+            const clTxs = clResult?.My_Result?.My_Cl_tx ?? [];
+            return {
+                transactions: convertBookingToCL({ booking, agentId, clTxs, setupEntries }),
+            };
+        }
+        const clResult = await cl.fetchCL({
+            AGENCY_ID: agentId,
+            FROM_DATE: fromDate,
+            TO_DATE: toDate,
+            IS_HOLD: false,
+            IS_LOCKED: false
+        });
+
+        return { transactions: clResult?.My_Result?.My_Cl_tx ?? [] };
+    },
 
     statement: (cl, property, { agentId, fromDate, toDate }) => {
         const currencyId = property?.currency?.id;
@@ -115,6 +165,7 @@ export default async function CityLedgerPrintingPages({
         from: fromDate,
         to: toDate,
         ref: externalRef,
+        id: bookingId,
         lang = "en",
     } = searchParams;
 
@@ -165,6 +216,9 @@ export default async function CityLedgerPrintingPages({
             fromDate,
             toDate,
             externalRef,
+            bookingId,
+            token,
+            lang,
         });
     } catch (error) {
         console.log(error);
@@ -197,6 +251,9 @@ export default async function CityLedgerPrintingPages({
                     fromDate={fromDate}
                     toDate={toDate}
                 />
+            )}
+            {normalizedMode === "proforma" && (
+                <ProformaPreview {...sharedProps} documentNumber={documentNumber} />
             )}
         </div>
     );

@@ -9,7 +9,7 @@ import { FiscalDocumentFooter } from './fiscal-document-footer';
 export function ReceiptSection({ title, children }) {
   return (
     <section>
-      <h4 className="text-[0.65rem] uppercase tracking-widest text-slate-600 font-semibold border-b border-slate-200 pb-1.5 mb-3">
+      <h4 className=" uppercase tracking-widest text-slate-800 font-semibold border-b border-slate-200 pb-1.5 mb-3">
         {title}
       </h4>
       <div className="flex flex-col gap-2">{children}</div>
@@ -19,11 +19,11 @@ export function ReceiptSection({ title, children }) {
 
 export function ReceiptRow({ label, value }) {
   return (
-    <div className="flex  text-sm gap-4">
-      <span className="text-slate-600 text-[0.8rem]">
-        {label}<span className="ml-0.5">:</span>
+    <div className="flex text-sm gap-1">
+      <span className="text-slate-600 ">
+        {label}:
       </span>
-      <span className="text-slate-900 font-medium text-right text-[0.8rem]">{value ?? '—'}</span>
+      <span className="text-slate-900 font-medium text-right">{value ?? '—'}</span>
     </div>
   );
 }

@@ -5,6 +5,8 @@ export const ClTxTypeCode = {
   CreditNote: 'CN',
   DebitNote: 'DN',
   StandardChargeDebit: 'DB',
+  Discount: 'DSC',
+  CancellationPenalty: 'CPN',
 };
 
 export const FdTypes = {

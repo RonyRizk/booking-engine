@@ -93,9 +93,9 @@ export default function PrintingHeader({ booking, property, locales, documentId,
                             className="size-6 aspect-1 ml-2"
                         />
                     </div>
-                    {booking.agent && <div className="flex flex-col sm:items-end">
+                    {/* {booking.agent && <div className="flex flex-col sm:items-end">
                         <InfoDisplay label={`Agent:`} value={booking.agent.name} />
-                    </div>}
+                    </div>} */}
                     <div className="flex flex-col sm:items-end">
                         <InfoDisplay label={``} value={property?.registered_name} />
                         {mode === "invoice" && property?.tax_nbr && (
