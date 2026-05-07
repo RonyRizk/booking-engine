@@ -4,9 +4,9 @@ import { formatAmount } from "@/lib/utils";
 
 export default function RoomPriceSummary({ room, booking, property, locales, currency }) {
     return (
-        <div className="text-end flex flex-col sm:items-end">
+        <div className="text-end flex flex-col sm:items-end shrink-0">
             <InfoDisplay
-                label={`${locales?.Lcz_Total}:`}
+                label={`Subtotal:`}
                 value={formatAmount(room.total, currency)}
             />
             <TaxAmount
@@ -18,16 +18,10 @@ export default function RoomPriceSummary({ room, booking, property, locales, cur
             />
             <div>
                 <InfoDisplay
-                    label={`${locales?.Lcz_GrandTotal}:`}
+                    label={`${locales?.Lcz_Total}:`}
                     value={formatAmount(room.gross_total, currency)}
                 />
             </div>
-            {booking.is_direct && (
-                <InfoDisplay
-                    label={`${locales?.Lcz_DueUponBooking}:`}
-                    value={formatAmount(Number(room.gross_guarantee), currency)}
-                />
-            )}
         </div>
     );
 }

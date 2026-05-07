@@ -16,7 +16,7 @@ export default function PrintingModeHeader({ booking, property, locales, mode, a
                         alt="logo"
                         className="aspect-1 h-14 hidden mb-2.5 sm:block"
                     />
-                    <PropertyAddressBlock property={property} locales={locales} />
+                    {/* <PropertyAddressBlock property={property} locales={locales} /> */}
                 </div>
                 <div>
                     <BookingNumberDisplay booking={booking} locales={locales} />

@@ -37,9 +37,9 @@ function RoomCard({ room, booking, property, locales, currency, idx, totalRooms,
 
   return (
     <section>
-      <RoomHeader room={room} locales={locales} haveMultipleRooms={haveMultipleRooms} />
-      <div className="flex gap-2.5 flex-col sm:flex-row sm:justify-between mb-2.5 sm:gap-10 sm:flex-wrap">
+      <div className="flex gap-2.5 flex-col sm:flex-row sm:justify-between mb-2.5 sm:gap-10 sm:items-start">
         <div className="flex-1">
+          <RoomHeader room={room} locales={locales} haveMultipleRooms={haveMultipleRooms} />
           <RoomGuestOccupancy
             room={room}
             booking={booking}
@@ -51,6 +51,12 @@ function RoomCard({ room, booking, property, locales, currency, idx, totalRooms,
           <SmokingPreference room={room} booking={booking} property={property} locales={locales} />
           {!booking.is_direct && <OtaRoomMeta room={room} locales={locales} />}
           {booking.is_direct && <DirectBookingPolicies room={room} />}
+          {booking.is_direct && (
+            <InfoDisplay
+              label={`Guarantee amount:`}
+              value={formatAmount(Number(room.gross_guarantee), currency)}
+            />
+          )}
         </div>
         <RoomPriceSummary
           room={room}
@@ -141,7 +147,7 @@ function Folio({ title, rooms, services, pickupInfo, svcCategory, booking, prope
       {hasServices && (
         <>
           {(hasRooms || hasPickup) && <hr className="border-gray-200 my-3" />}
-          <p className="text-base font-semibold text-gray-900 mb-2.5">{locales?.Lcz_ExtraServices}</p>
+          <p className="text-base font-semibold text-gray-900 mb-2.5">Extras</p>
           <ul>
             {services.map((service, idx) => (
               <li
@@ -188,10 +194,10 @@ function formatCLDate(dateStr) {
 function CityLedgerTable({ transactions, currency }) {
   if (!transactions?.length) return null;
 
-  const total = transactions.reduce((sum, tx) => {
-    const isCredit = CREDIT_TYPES.has(tx.CL_TX_TYPE_CODE);
-    return sum + (isCredit ? -(tx.TOTAL_AMOUNT ?? 0) : (tx.TOTAL_AMOUNT ?? 0));
-  }, 0);
+  // const total = transactions.reduce((sum, tx) => {
+  //   const isCredit = CREDIT_TYPES.has(tx.CL_TX_TYPE_CODE);
+  //   return sum + (isCredit ? -(tx.TOTAL_AMOUNT ?? 0) : (tx.TOTAL_AMOUNT ?? 0));
+  // }, 0);
 
   return (
     <section className="py-4 border-gray-300 border-y border-b-0">
@@ -310,7 +316,7 @@ export default function BookingPreview({
                 value={formatAmount(guestCollected, currency)}
               />
             </div>
-            <div className="flex flex-col gap-1.5 flex-1">
+            <div className="flex flex-col items-end gap-1.5 flex-1">
               <InfoDisplay
                 label="Grand total:"
                 value={formatAmount(booking.financial?.gross_total ?? 0, currency)}
@@ -337,7 +343,7 @@ export default function BookingPreview({
               {/* Agent folio: rooms → pickup → services */}
               <Folio
                 svcCategory={svcCategory}
-                title={`${booking.agent.name} Folio`}
+                title={`${booking.agent.name} Services`}
                 rooms={agentRooms}
                 services={agentServices}
                 pickupInfo={booking.pickup_info ?? null}
@@ -347,12 +353,14 @@ export default function BookingPreview({
                 currency={currency}
                 printingService={printingService}
               />
+              {/* City Ledger — agent mode only */}
+              <CityLedgerTable transactions={clTransactions} currency={currency} />
               <hr className="border-black my-4" />
               {/* Guest folio: rooms → services */}
               <Folio
                 svcCategory={svcCategory}
                 noBorderTop
-                title="Guest Folio"
+                title="Guest Services"
                 rooms={guestRooms}
                 services={guestServices}
                 pickupInfo={null}
@@ -419,11 +427,6 @@ export default function BookingPreview({
           <CreditCardInfo booking={booking} printingService={printingService} />
           <GuestFolioTable payments={payments} setupTables={setupTables} locales={locales} mode={MODE} />
         </section>
-
-        {/* City Ledger — agent mode only */}
-        {agentMode && (
-          <CityLedgerTable transactions={clTransactions} currency={currency} />
-        )}
 
       </main>
     </>
