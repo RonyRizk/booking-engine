@@ -1,6 +1,6 @@
 import InfoDisplay from "@/components/InfoDisplay";
 
-export default function RoomGuestOccupancy({ room, booking, locales, mode, printingService }) {
+export default function RoomGuestOccupancy({ room, booking, locales, mode, bedPreferences, printingService }) {
     return (
         <div className="flex items-center gap-4">
             <InfoDisplay
@@ -20,6 +20,7 @@ export default function RoomGuestOccupancy({ room, booking, locales, mode, print
                     value={`(${printingService.getBedLabel({
                         language: booking.language,
                         bed_preference: room.bed_preference,
+                        bed_preferences: bedPreferences,
                     })})`}
                 />
             )}

@@ -23,7 +23,7 @@ import { FiscalDocumentFooter } from "./cl/components/fiscal-document-footer";
  *   - `printing`: Standard print layout  
  *   - `invoice`: Invoice document  
  *   - `receipt`: Payment receipt  
- *   - `proforma`: Pro-forma invoice  
+ *   - `proforma`: Pro forma invoice  
  *   - `creditnote`: Credit note
  * @param {string} props.searchParams.id - Booking number associated with the document.
  * @param {string} [props.searchParams.lang="en"] - Language code for localization.
@@ -49,7 +49,7 @@ export default async function Printing({ searchParams, params }) {
     errorLogger.log(error)
     return redirect("https://x.igloorooms.com/manage/acbookinglist.aspx")
   }
-  const { booking, property, setupTables, countries, locales: defaultLocales, invoiceInfo } = data
+  const { booking, property, setupTables, countries, locales: defaultLocales, invoiceInfo, beddingPreference } = data
   const { entries: locales } = defaultLocales;
 
   if (!booking) {
@@ -125,6 +125,7 @@ export default async function Printing({ searchParams, params }) {
                     mode={mode}
                     selectedDocument={selectedDocument}
                     printingService={printingService}
+                    bed_preferences={beddingPreference}
                     idx={idx}
                   />
                 )

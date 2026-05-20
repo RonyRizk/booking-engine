@@ -1,6 +1,11 @@
 
 import winston from "winston";
 const { combine, timestamp, json, printf } = winston.format;
+import 'winston-daily-rotate-file';
+
+const MAX_SIZE = '200m' // rotate when file hits 200mb
+const MAX_FILES = '2d'  // delete files older than 2 days
+
 const apiInfoFormat = printf(({ level, message, timestamp, ...meta }) => {
     return JSON.stringify({
         timestamp,
@@ -74,8 +79,12 @@ const errorLogger = winston.createLogger({
     level: "error",
     format: combine(timestamp(), json()),
     transports: [
-        new winston.transports.File({
-            filename: "logs/next-errors.log",
+        new winston.transports.DailyRotateFile({
+            filename: "logs/next-errors-%DATE%.log",
+            datePattern: "YYYY-MM-DD",
+            maxSize: MAX_SIZE,
+            maxFiles: MAX_FILES,
+            zippedArchive: true,
         }),
         new winston.transports.Console()
     ],
@@ -85,11 +94,15 @@ const apiErrorLogger = winston.createLogger({
     level: "error",
     format: combine(timestamp(), apiErrorFormat),
     transports: [
-        new winston.transports.File({
-            filename: "logs/next-api-errors.log",
+        new winston.transports.DailyRotateFile({
+            filename: "logs/next-api-errors-%DATE%.log",
+            datePattern: "YYYY-MM-DD",
+            maxSize: MAX_SIZE,
+            maxFiles: MAX_FILES,
+            zippedArchive: true,
         }),
         new winston.transports.Console({
-            format: combine(timestamp(), json()) // Console uses JSON for readability
+            format: combine(timestamp(), json())
         })
     ],
 });

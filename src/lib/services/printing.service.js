@@ -92,8 +92,8 @@ export class PrintingService extends Token {
         }
         return `${dayMonth} ${dayOfWeekAbbr}`;
     }
-    getBedLabel({ language, bed_preference }) {
-        const bed = this._bedPreferences.find(p => p.CODE_NAME === bed_preference.toString());
+    getBedLabel({ language, bed_preference, bed_preferences = this._bedPreferences }) {
+        const bed = bed_preferences.find(p => p.CODE_NAME === bed_preference.toString());
         if (!bed) {
             throw new Error(`bed with code ${bed_preference} not found`);
         }

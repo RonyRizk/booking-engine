@@ -69,10 +69,10 @@ export default async function FiscalDocumentsPage({ params, searchParams }) {
 
     const printingService = new PrintingService(token);
 
-    let property, booking, setupTables, invoiceInfo, countries, localesRaw, agent;
+    let property, booking, bedPreferences, setupTables, invoiceInfo, countries, localesRaw, agent;
     let clTransactions = [];
     try {
-        [property, booking, setupTables, invoiceInfo, countries, localesRaw] = await Promise.all([
+        [property, booking, bedPreferences, setupTables, invoiceInfo, countries, localesRaw] = await Promise.all([
             commonService.getExposedProperty(params.id, lang),
             bookingService.getExposedBooking({
                 is_get_financial_snapshot: true,
@@ -83,6 +83,7 @@ export default async function FiscalDocumentsPage({ params, searchParams }) {
                     }
                 ], language: lang,
             }),
+            bookingService.getBedPreference(),
             commonService.getSetupEntriesByTBLNameMulti(['_PAY_TYPE', '_PAY_TYPE_GROUP', '_PAY_METHOD', "_SVC_CATEGORY"], 'en'),
             (mode && ["invoice", "creditnote"].includes(mode?.toLowerCase()?.trim())) ? bookingService.getBookingInvoiceInfo({ booking_nbr }) : Promise.resolve(null),
             commonService.getCountries(lang),
@@ -103,7 +104,6 @@ export default async function FiscalDocumentsPage({ params, searchParams }) {
         console.error("fd/page fetch error:", error);
         return <span>Something went wrong. Please try again.</span>;
     }
-
     if (!booking) {
         redirect(FALLBACK_URL);
     }
@@ -118,7 +118,7 @@ export default async function FiscalDocumentsPage({ params, searchParams }) {
     const sharedProps = {
         booking, property, documentNumber, invoiceInfo, setupTables,
         locales, guestCountryName, totalPersons, printingService, privateNote,
-        mode: normalizedMode, pid, rnb, agent, clTransactions
+        mode: normalizedMode, pid, rnb, agent, clTransactions, bedPreferences
     };
     return (
         <div className="min-h-screen bg-white">

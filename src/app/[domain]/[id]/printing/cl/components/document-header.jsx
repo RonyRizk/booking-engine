@@ -21,7 +21,7 @@ const DOCUMENT_TITLES = {
   creditnote: 'Credit Note',
   debitnote: 'Debit Note',
   statement: 'Account Statement',
-  proforma: 'Proforma Invoice',
+  proforma: 'Pro forma Invoice',
 };
 
 const DOC_NUMBER_LABELS = {
@@ -30,7 +30,7 @@ const DOC_NUMBER_LABELS = {
   creditnote: 'Credit note no.',
   debitnote: 'Debit note no.',
   statement: null,
-  proforma: 'Proforma no.',
+  proforma: 'Pro forma no.',
 };
 
 export function DocumentHeader({ isDraft, documentType = 'invoice', property, documentNumber, originalDocNumber, agent, className }) {

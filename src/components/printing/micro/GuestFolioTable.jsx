@@ -32,7 +32,7 @@ export default function GuestFolioTable({ payments, setupTables, locales, mode }
                             }
                             return (
                                 <PaymentTableRow
-                                    key={p.id}
+                                    key={p.system_id}
                                     payment={p}
                                     setupTables={setupTables}
                                     mode={mode}

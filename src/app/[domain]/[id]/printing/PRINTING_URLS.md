@@ -29,7 +29,7 @@ http://localhost:5863/a35/printing/fd?id={bookingNbr}&documentId={invoiceNbr}&mo
 **Printing**
 
 ```
-http://localhost:5863/A35/printing?id=76541885387&mode=printing&token={token}
+http://localhost:5863/A35/printing/fd?id=76541885387&mode=printing&token={token}
 ```
 
 ---
@@ -74,7 +74,7 @@ http://localhost:5863/a35/printing/cl?docNo=DBN-2&ref=INV-19&aid=227&mode=debitn
 http://localhost:5863/a35/printing/cl?docNo=RCT-7&aid=227&mode=receipt&token={token}
 ```
 
-**Proforma**
+**Pro forma**
 
 ```
 http://localhost:5863/a35/printing/cl?docNo=a11919192&aid=227&mode=proforma&&from=2026-05-23&to=2026-05-23&id=76541885387&token={token}

@@ -11,6 +11,7 @@ export default function RoomDetails({
   mode,
   printingService,
   idx,
+  bed_preferences,
 }) {
   const getSmokingLabel = () => {
     if (booking.is_direct) {
@@ -58,6 +59,7 @@ export default function RoomDetails({
                 value={`(${printingService.getBedLabel({
                   language: booking.language,
                   bed_preference: room.bed_preference,
+                  bed_preferences
                 })})`}
               />
             )}

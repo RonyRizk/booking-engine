@@ -31,7 +31,7 @@ const MODE = "printing";
 
 // ─── Room ─────────────────────────────────────────────────────────────────────
 
-function RoomCard({ room, booking, property, locales, currency, idx, totalRooms, printingService }) {
+function RoomCard({ room, booking, property, bedPreferences, locales, currency, idx, totalRooms, printingService }) {
   const haveMultipleRooms =
     property?.roomtypes?.find(rt => rt.id === room?.roomtype?.id)?.physicalrooms?.length > 1 ?? false;
 
@@ -41,6 +41,7 @@ function RoomCard({ room, booking, property, locales, currency, idx, totalRooms,
         <div className="flex-1">
           <RoomHeader room={room} locales={locales} haveMultipleRooms={haveMultipleRooms} />
           <RoomGuestOccupancy
+            bedPreferences={bedPreferences}
             room={room}
             booking={booking}
             locales={locales}
@@ -100,11 +101,12 @@ function ExtraServiceItem({ service, currency, svcCategory }) {
 // A self-contained block: accommodation → pickup (optional) → extra services.
 // Dividers are only inserted between subsections that actually render.
 
-function Folio({ title, rooms, services, pickupInfo, svcCategory, booking, property, locales, currency, printingService, noBorderTop = false }) {
+function Folio({ title, rooms, bedPreferences, services, pickupInfo, svcCategory, booking, property, locales, currency, printingService, noBorderTop = false }) {
   const hasRooms = rooms.length > 0;
   const hasPickup = !!pickupInfo;
   const hasServices = services.length > 0;
 
+  if (!hasRooms && !hasPickup && !hasServices) return null;
 
   return (
     <div className={cn("py-4", !noBorderTop && "border-t border-gray-300")}>
@@ -117,6 +119,7 @@ function Folio({ title, rooms, services, pickupInfo, svcCategory, booking, prope
         <div>
           {rooms.map((room, idx) => (
             <RoomCard
+              bedPreferences={bedPreferences}
               key={`room_${room.id}`}
               room={room}
               booking={booking}
@@ -260,6 +263,7 @@ export default function BookingPreview({
   privateNote,
   setupTables,
   clTransactions = [],
+  bedPreferences,
 }) {
   const currency = booking?.currency?.symbol;
   const totalNights = calculateDaysBetweenDates(booking.from_date, booking.to_date);
@@ -276,6 +280,10 @@ export default function BookingPreview({
   const guestServices = agentMode
     ? (booking.extra_services ?? []).filter(s => s.agent === null)
     : (booking.extra_services ?? []);
+
+  const hasAgentFolioData = agentRooms.length > 0 || agentServices.length > 0 || !!booking.pickup_info;
+  const hasGuestFolioData = guestRooms.length > 0 || guestServices.length > 0;
+  const hasAnythingBeforeGuestFolio = hasAgentFolioData || clTransactions.length > 0;
 
   return (
     <>
@@ -342,6 +350,7 @@ export default function BookingPreview({
             <>
               {/* Agent folio: rooms → pickup → services */}
               <Folio
+                bedPreferences={bedPreferences}
                 svcCategory={svcCategory}
                 title={`${booking.agent.name} Services`}
                 rooms={agentRooms}
@@ -355,9 +364,10 @@ export default function BookingPreview({
               />
               {/* City Ledger — agent mode only */}
               <CityLedgerTable transactions={clTransactions} currency={currency} />
-              <hr className="border-black my-4" />
+              {hasGuestFolioData && hasAnythingBeforeGuestFolio && <hr className="border-black my-4" />}
               {/* Guest folio: rooms → services */}
               <Folio
+                bedPreferences={bedPreferences}
                 svcCategory={svcCategory}
                 noBorderTop
                 title="Guest Services"
@@ -383,6 +393,7 @@ export default function BookingPreview({
                     property={property}
                     locales={locales}
                     currency={currency}
+                    bedPreferences={bedPreferences}
                     printingService={printingService}
                     idx={idx}
                     totalRooms={booking.rooms.length}

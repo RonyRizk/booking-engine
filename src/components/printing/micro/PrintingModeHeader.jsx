@@ -16,6 +16,7 @@ export default function PrintingModeHeader({ booking, property, locales, mode, a
                         alt="logo"
                         className="aspect-1 h-14 hidden mb-2.5 sm:block"
                     />
+                    <p className="property_name">{property?.name}</p>
                     {/* <PropertyAddressBlock property={property} locales={locales} /> */}
                 </div>
                 <div>
@@ -27,7 +28,7 @@ export default function PrintingModeHeader({ booking, property, locales, mode, a
             </nav>
             <section className="pb-4">
                 <div className="flex items-center w-full justify-between flex-wrap">
-                    <p className="property_name">{property?.name}</p>
+
                     {mode === "invoice" && (
                         <div>
                             <InfoDisplay
