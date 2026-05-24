@@ -66,10 +66,14 @@ export const verifyToken = (req) => {
  */
 export const getSystemData = async (
     { aName, language = "en", withProperty = true },
-    token
+    token,
+    headers = {}
 ) => {
     const commonService = new CommonServices(baseUrl);
     commonService.setToken(token);
+    if (Object.keys(headers).length > 0) {
+        commonService.setDefaultHeaders(headers);
+    }
     let property = null;
     let locales = null;
     if (withProperty) {
@@ -110,8 +114,11 @@ export const getSystemData = async (
 *   phone: string|null
 * }>} A promise resolving to an object containing booking, property, and display data.
 */
-export const getBookingData = async (params, token) => {
+export const getBookingData = async (params, token, headers = {}) => {
     const printingService = new PrintingService(token);
+    if (Object.keys(headers).length > 0) {
+        printingService.setDefaultHeaders(headers);
+    }
     const { booking, property, countries, locales: defaultLocales, statement, error } =
         await printingService.getPrintingData({ ...params, baseUrl, tables: sections });
     const { entries: locales } = defaultLocales
@@ -170,7 +177,7 @@ export function extractSearchParamsInsensitive(
  * @param {Request} req - The incoming request with headers.
  * @returns {Promise<{id:number,name:string,logo_url:string,bg_img_url:string}|null>} The MPO object or `null`.
  */
-export async function getConnectedMpo(req) {
+export async function getConnectedMpo(req, headers = {}) {
     const connectedUserType = parseConnectedUserTypeHeader(req);
     if (!connectedUserType) {
         return null
@@ -179,6 +186,9 @@ export async function getConnectedMpo(req) {
     const token = verifyToken(req);
     const commonService = new CommonServices(baseUrl);
     commonService.setToken(token);
+    if (Object.keys(headers).length > 0) {
+        commonService.setDefaultHeaders(headers);
+    }
     switch (connectedUserType) {
         case "5":
             const property = await commonService.getExposedProperty();

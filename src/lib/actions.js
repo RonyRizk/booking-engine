@@ -1,6 +1,8 @@
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 
+
+
 let anchor = {
     token: null
 };
@@ -31,13 +33,16 @@ export async function getExposedProperty({ aName, perma_link }) {
             },
             {
                 headers: {
-                    Authorization: anchor.token
-                }
+                    Authorization: anchor.token,
+                    'X-ClientId': "BE"
+                },
+                responseType: 'json'
             }
         );
+
         return data.My_Result;
     } catch (error) {
-        console.error('Error in getExposedProperty:', error);
+
         throw error;
     }
 }
@@ -72,11 +77,17 @@ async function fetchToken() {
     try {
         const { data: tokenData } = await axios.post(
             `https://gateway.igloorooms.com/IRBE/Get_BE_Token`,
-            {}
+            {},
+            {
+                headers: {
+                    'X-ClientId': "BE"
+                },
+                responseType: 'json'
+            }
         );
         return tokenData.My_Result;
     } catch (error) {
-        console.error('Error fetching token:', error);
+
         throw error;
     }
 }

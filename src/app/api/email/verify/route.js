@@ -13,7 +13,7 @@ export async function POST(req) {
     try {
         requestBody = await req.json()
         const { url, name, lang } = VerifyEmailSchema.parse(requestBody)
-        const mpo = await getConnectedMpo(req)
+        const mpo = await getConnectedMpo(req, { 'X-ClientId': 'EMAIL' })
         const emailHTML = await render(<VerifyEmail
             url={url}
             name={name}

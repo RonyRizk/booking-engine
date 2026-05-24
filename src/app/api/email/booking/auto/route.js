@@ -18,8 +18,9 @@ export async function GET(req) {
 
         const commonService = new CommonServices("https://gateway.igloorooms.com/IRBE")
         commonService.setToken(token)
+        commonService.setDefaultHeaders({ 'X-ClientId': 'EMAIL' })
         const [data, tables] = await Promise.all(
-            [getBookingData({ bookingNumber: id, aName: aname, language: lang }, token),
+            [getBookingData({ bookingNumber: id, aName: aname, language: lang }, token, { 'X-ClientId': 'EMAIL' }),
             commonService.getSetupEntriesByTBLNameMulti([
                 '_PRE_ARRIVAL_EMAIL',
                 '_DURING_THE_STAY_EMAIL',

@@ -13,6 +13,9 @@ export class CommonServices extends Token {
     setBaseUrl(url) {
         this.apiService.setBaseUrl(url);
     }
+    setDefaultHeaders(headers) {
+        this.apiService.setDefaultHeaders(headers);
+    }
     getToken() {
         return this.token;
     }

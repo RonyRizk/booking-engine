@@ -13,6 +13,9 @@ export class BookingService extends Token {
     setBaseUrl(url) {
         this.apiService.setBaseUrl(url);
     }
+    setDefaultHeaders(headers) {
+        this.apiService.setDefaultHeaders(headers);
+    }
     /**
      * Fetches the penalty statement for a specific booking.
      *

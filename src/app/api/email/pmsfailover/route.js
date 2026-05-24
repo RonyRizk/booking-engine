@@ -18,9 +18,9 @@ export async function POST(req) {
 
         requestBody = await req.json();
         const { reason } = PMSFailoverSchema.parse(requestBody);
-        const mpo = await getConnectedMpo(req)
+        const mpo = await getConnectedMpo(req, { 'X-ClientId': 'EMAIL' })
 
-        const data = await getBookingData({ bookingNumber, aName, language }, token);
+        const data = await getBookingData({ bookingNumber, aName, language }, token, { 'X-ClientId': 'EMAIL' });
         const emailHTML = await render(<PMSFailover connectedMpo={mpo} {...data} reason={reason} lang={language} />);
         return new Response(emailHTML);
     } catch (error) {

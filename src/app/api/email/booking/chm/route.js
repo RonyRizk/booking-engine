@@ -16,7 +16,7 @@ export async function POST(req) {
         const token = verifyToken(req)
         const { id, aname, lang } = BookingSchema.parse(extractSearchParamsInsensitive(req))
         const { ota_name, ota_url, operation, booking_details_url } = BookingCHMSchema.parse(requestBody)
-        const data = await getBookingData({ bookingNumber: id, aName: aname, language: lang }, token);
+        const data = await getBookingData({ bookingNumber: id, aName: aname, language: lang }, token, { 'X-ClientId': 'EMAIL' });
         const emailHTML = await render(<BookingCHM {...data} operation={operation} bookingDetailsUrl={booking_details_url} channelName={ota_name} url={ota_url} lang={lang} />);
         return new Response(emailHTML);
     } catch (error) {

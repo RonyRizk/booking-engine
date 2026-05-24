@@ -17,7 +17,7 @@ export async function POST(req) {
     try {
         requestBody = await req.json();
         const { otp, geo, name } = OTPEmailSchema.parse(requestBody)
-        const mpo = await getConnectedMpo(req)
+        const mpo = await getConnectedMpo(req, { 'X-ClientId': 'EMAIL' })
         // const token = verifyToken(req)
         // const { aname, lang } = BaseSchema.parse(extractSearchParamsInsensitive(req))
         // const { property } = await getSystemData({ aName: aname, language: lang, withProperty: true }, token);

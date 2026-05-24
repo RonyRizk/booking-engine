@@ -16,7 +16,7 @@ export async function GET(req) {
         const token = verifyToken(req)
         const { id, aname, lang } = BookingSchema.parse(extractSearchParamsInsensitive(req))
 
-        const data = await getBookingData({ bookingNumber: id, aName: aname, language: lang, includePenaltyStatement: true }, token);
+        const data = await getBookingData({ bookingNumber: id, aName: aname, language: lang, includePenaltyStatement: true }, token, { 'X-ClientId': 'EMAIL' });
         const emailHTML = await render(<BookingCancellationEmail {...data} lang={lang} />);
         return new Response(emailHTML);
     } catch (error) {

@@ -18,7 +18,8 @@ export async function GET(req) {
         const { property_id, lang, unit_id } = HkIssueSchema.parse(extractSearchParamsInsensitive(req))
         const housekeepingService = new HousekeepingService("https://gateway.igloorooms.com/IR");
         housekeepingService.setToken(token)
-        const [data, connectedMpo] = await Promise.all([housekeepingService.getHKIssues({ property_id, lang, unit_id }), getConnectedMpo(req)]);
+        housekeepingService.setDefaultHeaders({ 'X-ClientId': 'EMAIL' })
+        const [data, connectedMpo] = await Promise.all([housekeepingService.getHKIssues({ property_id, lang, unit_id }), getConnectedMpo(req, { 'X-ClientId': 'EMAIL' })]);
         if ((data ?? []).length <= 0) {
             return Response.json({ message: 'No housekeeping issues found for this unit' }, { status: 404 })
         }

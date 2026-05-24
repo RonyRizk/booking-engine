@@ -17,6 +17,11 @@ export class PrintingService extends Token {
         this.bookingService.setToken(token)
     }
 
+    setDefaultHeaders(headers) {
+        this.commonService.setDefaultHeaders(headers);
+        this.bookingService.setDefaultHeaders(headers);
+    }
+
     async getPrintingData({ bookingNumber, aName, language = "en", baseUrl, tables, includePenaltyStatement, mode }) {
         if (baseUrl) {
             this.commonService.setBaseUrl(baseUrl);

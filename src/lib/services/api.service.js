@@ -1,12 +1,13 @@
 import axios from "axios";
 
 export class ApiError extends Error {
-    constructor(message, statusCode = null, errorCode = null, originalError = null) {
+    constructor(message, statusCode = null, errorCode = null, originalError = null, requestHeaders = null) {
         super(message);
         this.name = 'ApiError';
         this.statusCode = statusCode;
         this.errorCode = errorCode;
         this.originalError = originalError;
+        this.requestHeaders = requestHeaders;
         this.timestamp = new Date().toISOString();
 
         // Maintain proper stack trace
@@ -42,6 +43,7 @@ export class ApiError extends Error {
             message: this.message,
             statusCode: this.statusCode,
             errorCode: this.errorCode,
+            requestHeaders: this.requestHeaders,
             timestamp: this.timestamp,
             stack: this.stack
         };
@@ -52,6 +54,7 @@ export class ApiService {
     constructor(baseUrl, token = null) {
         axios.defaults.baseURL = baseUrl;
         this.token = token;
+        this.defaultHeaders = {};
     }
     setBaseUrl(url) {
         axios.defaults.baseURL = url;
@@ -66,6 +69,10 @@ export class ApiService {
         return this.token;
     }
 
+    setDefaultHeaders(headers) {
+        this.defaultHeaders = headers;
+    }
+
     async makePostRequest(endpoint, payload, customHeaders = {}) {
         const token = this.getToken();
         if (!token) {
@@ -76,6 +83,7 @@ export class ApiService {
                 headers: {
                     Authorization: token,
                     'Content-Type': 'application/json',
+                    ...this.defaultHeaders,
                     ...customHeaders
                 }
             });
@@ -91,27 +99,11 @@ export class ApiService {
             if (error.response) {
                 const { status, data: responseData, statusText } = error.response;
                 const errorMessage = responseData?.message || responseData?.error || statusText || 'Request failed';
-
-                throw new ApiError(
-                    `Request failed with status ${status}: ${errorMessage}`,
-                    status,
-                    'HTTP_ERROR',
-                    error
-                );
+                throw new ApiError(`Request failed with status ${status}: ${errorMessage}`, status, 'HTTP_ERROR', error, error.config?.headers);
             } else if (error.request) {
-                throw new ApiError(
-                    'No response received from server',
-                    null,
-                    'NETWORK_ERROR',
-                    error
-                );
+                throw new ApiError('No response received from server', null, 'NETWORK_ERROR', error, error.config?.headers);
             } else {
-                throw new ApiError(
-                    error.message || 'Unknown error occurred',
-                    null,
-                    'UNKNOWN_ERROR',
-                    error
-                );
+                throw new ApiError(error.message || 'Unknown error occurred', null, 'UNKNOWN_ERROR', error, error.config?.headers);
             }
         }
     }

@@ -13,6 +13,9 @@ export class HousekeepingService extends Token {
     setBaseUrl(url) {
         this.apiService.setBaseUrl(url);
     }
+    setDefaultHeaders(headers) {
+        this.apiService.setDefaultHeaders(headers);
+    }
     async getHKIssues(params) {
         const data = await this.apiService.makePostRequest(`/Get_HK_Issues`, params);
         return data.My_Result;
