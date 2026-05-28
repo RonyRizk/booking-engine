@@ -1,10 +1,10 @@
 import InfoDisplay from "@/components/InfoDisplay";
 
 export default function GuestInformation({ booking, selectedDocument, guestCountryName, totalPersons, locales, printingService, mode, privateNote }) {
-    const isInvoicableMode = ["invoice", "creditnote"].includes(mode)
+    const isInvoicableMode = ["invoice", "creditnote", "proforma"].includes(mode)
     if (isInvoicableMode && selectedDocument?.target?.code === "002") {
         return <section className={"justify-start flex flex-col"}>
-            <h3 className="font-bold">Bill to</h3>
+            <h3 className="text-slate-800 font-bold text-base">Bill to</h3>
             <div>
                 <InfoDisplay
                     label={``}
@@ -22,7 +22,7 @@ export default function GuestInformation({ booking, selectedDocument, guestCount
         <section className={mode === "printing" ? "py-4 border-y border-gray-300 justify-start flex" : "justify-start flex"}>
             <div className="flex-1">
                 {mode !== "printing" && <div>
-                    <h3 className="font-bold">{isInvoicableMode ? "Bill to" : "From"}</h3>
+                    <h3 className="text-slate-800 font-bold text-base">{isInvoicableMode ? "Bill to" : "From"}</h3>
                 </div>}
                 {isInvoicableMode && selectedDocument?.billed_to_name && <InfoDisplay
                     label={``}

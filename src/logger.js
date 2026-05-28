@@ -136,6 +136,14 @@ const getRequestContext = (req) => {
     };
 };
 
+const logError = (error, additionalContext = {}) => {
+    errorLogger.error({
+        message: error.message || 'Error',
+        error: error instanceof Error ? error : new Error(String(error)),
+        ...additionalContext
+    });
+};
+
 const logApiError = (error, req, additionalContext = {}) => {
     const requestContext = getRequestContext(req);
 
@@ -172,6 +180,7 @@ export {
     apiErrorLogger,
     // apiInfoLogger,
     logApiError,
+    logError,
     getRequestContext,
     // logApiInfo
 };

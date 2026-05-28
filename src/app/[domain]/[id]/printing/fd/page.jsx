@@ -13,7 +13,7 @@
  * @param {object} props.params                    - Next.js route segments.
  * @param {string} props.params.id                 - Property aname used to resolve the property.
  * @param {object} props.searchParams              - URL search parameters.
- * @param {("invoice"|"receipt"|"creditnote"|"printing")} props.searchParams.mode - Document mode (required).
+ * @param {("invoice"|"receipt"|"creditnote"|"printing","proforma")} props.searchParams.mode - Document mode (required).
  * @param {string} props.searchParams.bookingNbr   - Booking number (required).
  * @param {string} [props.searchParams.docNo]      - Document number shown in the header.
  * @param {string} [props.searchParams.lang="en"]  - Language code for localised values.
@@ -22,7 +22,7 @@
 import { redirect } from "next/navigation";
 import "../cl/cl-printing.css";
 import { CreditNotePreview } from "./components/credit-note-preview";
-import { InvoicePreview } from "./components/invoice-preview";
+import { InvoicePreview, ProformaPreview } from "./components/invoice-preview";
 import { ReceiptPreview } from "./components/receipt-preview";
 import { BookingService } from "@/lib/services/booking.service";
 import { CommonServices } from "@/lib/services/common.service";
@@ -31,7 +31,7 @@ import BookingPreview from "./components/booking-preview";
 import { CityLedgerService } from "@/lib/services/city-ledger.service";
 
 const DEFAULT_BASE_URL = "https://gateway.igloorooms.com/IR";
-const VALID_MODES = new Set(["invoice", "receipt", "creditnote", "printing"]);
+const VALID_MODES = new Set(["invoice", "receipt", "creditnote", "printing", "proforma"]);
 const FALLBACK_URL = "https://x.igloorooms.com/manage/acbookinglist.aspx";
 
 export default async function FiscalDocumentsPage({ params, searchParams }) {
@@ -43,6 +43,8 @@ export default async function FiscalDocumentsPage({ params, searchParams }) {
         token,
         pid,
         rnb,
+        ids,
+        bill_to,
     } = searchParams;
 
     const normalizedMode = mode?.toLowerCase()?.trim();
@@ -115,11 +117,14 @@ export default async function FiscalDocumentsPage({ params, searchParams }) {
     const guestCountryName = printingService.getUserCountry(countries, booking?.guest?.country_id);
     const privateNote = booking?.extras?.find((k) => k.key === "private_note");
 
+    const proformaIds = ids ? ids.split("-") : null;
+
     const sharedProps = {
         booking, property, documentNumber, invoiceInfo, setupTables,
         locales, guestCountryName, totalPersons, printingService, privateNote,
         mode: normalizedMode, pid, rnb, agent, clTransactions, bedPreferences
     };
+
     return (
         <div className="min-h-screen bg-white">
             {normalizedMode === "invoice" && <InvoicePreview {...sharedProps} />}
@@ -127,6 +132,9 @@ export default async function FiscalDocumentsPage({ params, searchParams }) {
             {normalizedMode === "receipt" && <ReceiptPreview {...sharedProps} />}
             {normalizedMode === "creditnote" && (
                 <CreditNotePreview {...sharedProps} />
+            )}
+            {normalizedMode === "proforma" && (
+                <ProformaPreview {...sharedProps} ids={proformaIds} billTo={bill_to} />
             )}
         </div>
     );

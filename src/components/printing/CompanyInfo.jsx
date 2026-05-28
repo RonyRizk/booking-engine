@@ -42,16 +42,16 @@ export default function CompanyInfo({ company }) {
         if (!postal && !city && !country) return null;
         const location = []
         if (postal) {
-            location.push(postal)
+            location.push(postal.trim())
         }
         if (city) {
-            location.push(city)
+            location.push(" " + city.trim())
         }
         if (country) {
             if (postal || city) {
-                location.push(`,${country.name}`);
+                location.push(`, ${country.name}`);
             } else {
-                location.push(company.name);
+                location.push(" " + company.name);
             }
         }
         if (location.length === 0) {
@@ -59,7 +59,7 @@ export default function CompanyInfo({ company }) {
         }
         return (
             <p className='font-regular'>
-                {location.join(" ")}
+                {location.join("")}
             </p>
         );
     };

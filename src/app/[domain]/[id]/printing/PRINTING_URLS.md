@@ -2,22 +2,42 @@
 
 ## `/printing/fd` — Booking Fiscal Document
 
-Modes: `invoice` · `receipt` · `creditnote` · `printing`
+Modes: `invoice` · `receipt` · `creditnote` · `printing` · `proforma`
 
-| Param        | Required | Description                              |
-| ------------ | -------- | ---------------------------------------- |
-| `mode`       | yes      | Document mode (see list above)           |
-| `id`         | yes      | Booking number                           |
-| `token`      | yes      | Auth token                               |
-| `documentId` | no       | Document number shown in header          |
-| `lang`       | no       | Language code (default: `en`)            |
-| `pid`        | no       | Payment `system_id` — used for `receipt` |
-| `rnb`        | no       | Receipt number — used for `receipt`      |
+| Param        | Required | Description                                                 |
+| ------------ | -------- | ----------------------------------------------------------- |
+| `mode`       | yes      | Document mode (see list above)                              |
+| `id`         | yes      | Booking number                                              |
+| `token`      | yes      | Auth token                                                  |
+| `documentId` | no       | Document number shown in header                             |
+| `lang`       | no       | Language code (default: `en`)                               |
+| `pid`        | no       | Payment `system_id` — used for `receipt`                    |
+| `rnb`        | no       | Receipt number — used for `receipt`                         |
+| `ids`        | no       | List of `system_id` separated by `-` — used for `proforma`  |
+| `bill_to`    | no       | `company` or `empty` or `custom name` - used for `proforma` |
 
 **Invoice**
 
 ```
-http://localhost:5863/a35/printing/fd?id=74046077780&documentId=INV-65&mode=invoice&token=e{token}
+http://localhost:5863/a35/printing/fd?id=74046077780&documentId=INV-65&mode=invoice&token={token}
+```
+
+**Proforma**
+
+```
+http://localhost:5863/a35/printing/fd?id=23384312112&documentId=2020132&mode=proforma&ids=109639219-530&token={token}
+```
+
+##### Custom guest
+
+```
+http://localhost:5863/a35/printing/fd?id=23384312112&documentId=2020132&mode=proforma&ids=109639219-530&bill_to=Jhon&token={token}
+```
+
+##### Company
+
+```
+http://localhost:5863/a35/printing/fd?id=23384312112&documentId=2020132&mode=proforma&ids=109639219-530&bill_to=company&token={token}
 ```
 
 **Credit Note**

@@ -9,7 +9,7 @@ import { FiscalDocumentFooter } from './fiscal-document-footer';
 export function ReceiptSection({ title, children }) {
   return (
     <section>
-      <h4 className=" uppercase tracking-widest text-slate-800 font-semibold border-b border-slate-200 pb-1.5 mb-3">
+      <h4 className="text-slate-800 font-bold text-base border-b border-slate-200 pb-1.5 mb-3">
         {title}
       </h4>
       <div className="flex flex-col gap-2">{children}</div>
@@ -34,7 +34,7 @@ export function ReceiptPreview({ property, clEntry, document, paymentMethods, do
   if (!clEntry) return null;
 
   const currency = property?.currency?.symbol ?? '$';
-  const fmt = v => (v != null ? formatAmount(v, currency) : '—');
+  const fmt = v => (v != null ? formatAmount(v, currency) : formatAmount(0, currency));
   const getPaymentLabel = code => {
     if (!code) return '—';
     return paymentMethods?.find(e => e.CODE_NAME === code)?.CODE_VALUE_EN ?? code;

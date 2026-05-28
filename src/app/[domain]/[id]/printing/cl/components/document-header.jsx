@@ -30,11 +30,11 @@ const DOC_NUMBER_LABELS = {
   creditnote: 'Credit note no.',
   debitnote: 'Debit note no.',
   statement: null,
-  proforma: 'Pro forma no.',
+  proforma: 'Reference',
 };
 
 export function DocumentHeader({ isDraft, documentType = 'invoice', property, documentNumber, originalDocNumber, agent, className }) {
-  const today = moment().locale('en').format('MMMM, DD YYYY');
+  const today = moment().locale('en').format('MMMM DD, YYYY');
   const docLabel = DOC_NUMBER_LABELS[documentType];
 
   return (

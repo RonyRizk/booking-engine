@@ -33,12 +33,9 @@ export function formatTime(hour, minute) {
     const parsedTime = parse(timeString, 'HH:mm', new Date());
     return format(parsedTime, 'hh:mm a');
 }
-export function formatAmount(amount, currency = 'USD', withIntl = false) {
+export function formatAmount(amount = 0, currency = 'USD', withIntl = false) {
     if (withIntl) {
         return new Intl.NumberFormat('en-US', { style: 'currency', currency: currency }).format(amount);
-    }
-    if (!amount) {
-        return null;
     }
     return `${amount < 0 ? "- " : ""}${currency} ${Math.abs(amount)?.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 }
@@ -77,3 +74,7 @@ export function cn(...inputs) {
 export const isAgentMode = (agent) => {
     return agent && agent?.payment_mode?.code !== '002';
 };
+
+export const haveCityTax = (property) => {
+    return property.taxes?.findIndex(t => t.name === "City tax") !== -1
+}

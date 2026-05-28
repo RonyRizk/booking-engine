@@ -36,7 +36,7 @@ export async function getExposedProperty({ aName, perma_link }) {
                     Authorization: anchor.token,
                     'X-ClientId': "BE"
                 },
-                responseType: 'json'
+
             }
         );
 
@@ -82,7 +82,7 @@ async function fetchToken() {
                 headers: {
                     'X-ClientId': "BE"
                 },
-                responseType: 'json'
+
             }
         );
         return tokenData.My_Result;

@@ -9,7 +9,7 @@
  */
 
 import { Fragment } from "react";
-import { formatAmount } from "@/lib/utils";
+import { formatAmount, haveCityTax } from "@/lib/utils";
 import { format, parse } from "date-fns";
 import { groupData } from "../utils/group-data";
 import {
@@ -247,7 +247,7 @@ export function FiscalDocumentTable({
   // ── Render ─────────────────────────────────────────────────────────────────
 
   const grouped = groupData(transactions);
-  const withCityTax = property?.taxes?.[1]?.pct > 0;
+  const withCityTax = transactions?.some(t => t.CITY_TAX_PERCENT > 0);
 
   return (
     <section>

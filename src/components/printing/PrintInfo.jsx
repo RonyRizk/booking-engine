@@ -14,16 +14,16 @@ export default function PrintInfo({ booking, mode, receiptNumber, documentId, se
     }
     return (
         <div className='w-fit'>
-            {mode === "invoice" && <InfoDisplay className={""} label={"Invoice no.:"} value={documentId} />}
+            {["invoice", "proforma"].includes(mode) && <InfoDisplay className={""} label={mode === "invoice" ? "Invoice no.:" : "Reference:"} value={documentId} />}
             {mode === "creditnote" && <>
                 <InfoDisplay className={""} label={"Credit note no.:"} value={selectedDocument?.credit_note?.nbr} />
                 <InfoDisplay className={""} label={"Original invoice no.:"} value={documentId} />
             </>}
             {mode === "receipt" && <InfoDisplay className={""} label={"Receipt no.:"} value={receiptNumber} />}
             <InfoDisplay className={""} label={"Date of issue:"} value={
-                mode === "receipt" ? moment().locale('en').format('MMMM, DD YYYY') : moment(selectedDocument.date, 'YYYY-MM-DD').locale('en').format('MMMM, DD YYYY')
+                ["receipt", 'proforma'].includes(mode) ? moment().locale('en').format('MMMM DD, YYYY') : moment(selectedDocument.date, 'YYYY-MM-DD').locale('en').format('MMMM, DD YYYY')
             } />
-            <InfoDisplay className={""} label={"Booking number"} value={"#" + getBookingNumbers()} />
+            <InfoDisplay className={""} label={"Booking"} value={"#" + getBookingNumbers()} />
         </div>
     )
 }

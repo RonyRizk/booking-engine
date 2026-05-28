@@ -305,7 +305,7 @@ function BookingPaymentSection({ booking, selectedDocument, currencySymbol, inve
           <ReceiptRow label="Balance" value={formatAmount(financial?.due_amount, symbol)} />
           <ReceiptRow
             label="Collected"
-            value={formatAmount((financial?.collected + financial?.refunds) ?? 0, symbol)}
+            value={formatAmount((Number(financial?.collected) + Number(financial?.refunds)) ?? 0, symbol)}
           />
         </ReceiptSection>
       )}
@@ -324,6 +324,59 @@ function BookingPaymentSection({ booking, selectedDocument, currencySymbol, inve
         </ReceiptSection>
       )}
     </div>
+  );
+}
+
+// ─── ProformaPreview ──────────────────────────────────────────────────────────
+
+export function ProformaPreview({
+  booking,
+  property,
+  locales,
+  guestCountryName,
+  totalPersons,
+  printingService,
+  privateNote,
+  documentNumber,
+  mode,
+  ids,
+  billTo,
+}) {
+  const currencySymbol = property?.currency?.symbol ?? booking?.currency?.symbol ?? "$";
+  const itemKeys = ids?.length ? new Set(ids) : null;
+
+  const selectedDocument = billTo
+    ? billTo.toLowerCase() === "company"
+      ? { target: { code: "002" } }
+      : { target: { code: "001" }, billed_to_name: billTo }
+    : null;
+
+  return (
+    <PrintDocument>
+      <PrintingHeader
+        className="p-0 sm:px-0 pb-8 w-full lg:px-0 max-w-full print:m-0 print:px-0"
+        selectedDocument={selectedDocument}
+        guestCountryName={guestCountryName}
+        documentId={documentNumber}
+        totalPersons={totalPersons}
+        printingService={printingService}
+        privateNote={privateNote}
+        booking={booking}
+        property={property}
+        locales={locales}
+        mode={mode}
+      />
+      <BookingFiscalTable
+        booking={booking}
+        currencySymbol={currencySymbol}
+        itemKeys={itemKeys}
+      />
+      <BookingPaymentSection
+        booking={booking}
+        currencySymbol={currencySymbol}
+      />
+      <FiscalDocumentFooter property={property} />
+    </PrintDocument>
   );
 }
 
