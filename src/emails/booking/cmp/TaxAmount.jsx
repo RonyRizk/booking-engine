@@ -25,13 +25,13 @@ export default function TaxAmount({ room, booking, property, locales, currency }
             if (d.is_exlusive) {
                 return <EmailText style={styles.taxRow} key={key}>
                     <i>
-                        {locales?.Lcz_Excluding} {`${d.pct}%`} {d.name} <br />{formatAmount(amount, currency)}
+                        {locales?.Lcz_Excluding} {`${Number(d.pct).toFixed(2)}%`} {d.name} <br />{formatAmount(amount, currency)}
                     </i>
                 </EmailText>
             }
             return (
                 <EmailText style={styles.taxRow} key={key}>
-                    <i>{locales?.Lcz_Including} {d.name} {`${d.pct}%`} <br />{formatAmount(amount, currency)}</i>
+                    <i>{locales?.Lcz_Including} {d.name} {`${Number(d.pct).toFixed(2)}%`} <br />{formatAmount(amount, currency)}</i>
                 </EmailText>
 
 

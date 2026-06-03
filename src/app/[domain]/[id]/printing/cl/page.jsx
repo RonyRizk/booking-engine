@@ -48,16 +48,16 @@ const FETCHERS = {
             cl.getPaymentMethods(),
             cl.getFiscalDocuments({ AGENCY_ID: agentId, DOC_NUMBER: documentNumber }),
         ]).then(([clResult, paymentMethods, docs]) => ({
-            clEntry: clResult?.My_Result?.My_Cl_tx?.[0] ?? null,
+            clEntry: clResult?.My_Result?.My_Cl_tx?.find(tx => tx.DOC_NUMBER === documentNumber) ?? null,
             paymentMethods,
-            document: docs?.My_Rows?.[0] ?? null,
+            document: docs?.My_Rows?.find(doc => doc.DOC_NUMBER === documentNumber) ?? null,
         })),
 
     creditnote: (cl, _property, { agentId, documentNumber }) =>
         cl
             .getFiscalDocuments({ AGENCY_ID: agentId, DOC_NUMBER: documentNumber })
             .then((docs) => {
-                return { document: docs?.My_Rows?.[0] ?? null };
+                return { document: docs?.My_Rows?.find(doc => doc.DOC_NUMBER === documentNumber) ?? null };
             }),
 
     debitnote: (cl, _property, { agentId, documentNumber }) =>
@@ -66,7 +66,7 @@ const FETCHERS = {
             cl.getFiscalDocuments({ AGENCY_ID: agentId, DOC_NUMBER: documentNumber }),
         ]).then(([clResult, docs]) => ({
             transactions: clResult?.My_Result?.My_Cl_tx ?? [],
-            document: docs?.My_Rows?.[0] ?? null,
+            document: docs?.My_Rows?.find(doc => doc.DOC_NUMBER === documentNumber) ?? null,
         })),
 
     proforma: async (
