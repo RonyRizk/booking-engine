@@ -9,7 +9,7 @@
  */
 
 import { Fragment } from "react";
-import { formatAmount, haveCityTax } from "@/lib/utils";
+import { cn, formatAmount, haveCityTax } from "@/lib/utils";
 import { format, parse } from "date-fns";
 import { groupData } from "../utils/group-data";
 import {
@@ -68,44 +68,48 @@ export function FiscalDocumentTable({
 
   // ── Row renderers ──────────────────────────────────────────────────────────
 
-  function TxRow({ tx, indent = 0, withCityTax }) {
+  function TxRow({ tx, indent = 0, withCityTax, isLast }) {
     return (
       <PrintTableRow>
-        <PrintTableCell muted nowrap indent={indent} className={"border-r"}>
+        <PrintTableCell muted nowrap indent={indent} className={cn("border-r ",
+          { "border-b-black": isLast }
+        )}>
           {formatEntryDate(tx.SERVICE_DATE)}
         </PrintTableCell>
-        <PrintTableCell className="w-full border-r whitespace-normal break-words text-[0.8rem]">
+        <PrintTableCell className={cn("w-full border-r whitespace-normal break-words text-[0.8rem]", { "border-b-black": isLast })}>
           {tx.DESCRIPTION}
         </PrintTableCell>
-        <PrintTableCell numeric bold className={"border-r"}>
+        <PrintTableCell numeric bold className={cn("border-r",
+          { "border-b-black": isLast }
+        )}>
           {money(tx.NET_AMOUNT)}
         </PrintTableCell>
-        <PrintTableCell numeric muted className=" border-l-slate-200">
+        <PrintTableCell numeric muted className={cn(" border-l-slate-200", { "border-b-black": isLast })}>
           {tx.VAT_PERCENT != null ? `${tx.VAT_PERCENT}%` : "—"}
         </PrintTableCell>
-        <PrintTableCell numeric muted className={"border-r"}>
+        <PrintTableCell numeric muted className={cn("border-r", { "border-b-black": isLast })}>
           {money(tx.VAT_AMOUNT)}
         </PrintTableCell>
         {withCityTax && (
           <>
-            <PrintTableCell numeric muted className=" border-l-slate-200">
-              {tx.CITY_TAX_PERCENT != null ? `${tx.CITY_TAX_PERCENT}%` : "—"}
+            <PrintTableCell numeric muted className={cn(" border-l-slate-200", { "border-b-black": isLast })}>
+              {tx.CITY_TAX_PERCENT ? `${tx.CITY_TAX_PERCENT}%` : ""}
             </PrintTableCell>
-            <PrintTableCell numeric muted className={"border-r"}>
-              {tx.CITY_TAX_PERCENT != null || tx.CITY_TAX_AMOUNT != null
+            <PrintTableCell numeric muted className={cn("border-r", { "border-b-black": isLast })}>
+              {(tx.CITY_TAX_PERCENT || tx.CITY_TAX_AMOUNT)
                 ? money(tx.CITY_TAX_AMOUNT)
-                : "—"}
+                : ""}
             </PrintTableCell>
           </>
         )}
-        <PrintTableCell numeric bold>
+        <PrintTableCell numeric bold className={cn({ "border-b-black": isLast })}>
           {money(tx.TOTAL_AMOUNT)}
         </PrintTableCell>
       </PrintTableRow>
     );
   }
 
-  function UnitGroup({ group, withCityTax }) {
+  function UnitGroup({ group, withCityTax, showLast }) {
     const roomName = prIdDict.get(group.PR_ID)?.name ?? "";
     const roomTypeName = roomTypesDict.get(group.ROOM_CATEGORY_ID)?.name ?? "";
     const rateplanName = rateplanDict.get(group.RATE_PLAN_ID)?.short_name ?? "";
@@ -134,6 +138,7 @@ export function FiscalDocumentTable({
         </PrintTableRow>
         {group.subRows.map((tx, idx) => (
           <TxRow
+            isLast={idx === group.subRows.length - 1 && showLast}
             key={`tx-${tx.CL_TX_ID ?? idx}-2-${idx}`}
             tx={{ ...tx, DESCRIPTION: description }}
             indent={2}
@@ -147,21 +152,23 @@ export function FiscalDocumentTable({
   function BookingGroup({ group, withCityTax }) {
     return (
       <Fragment>
-        {group.subRows.length > 1 && (
+        {group.subRows.length >= 1 && (
           <PrintTableRow variant="booking">
             <PrintTableCell
               colSpan={withCityTax ? 8 : 6}
               bold
-              className="py-2 px-3 text-[0.8rem] text-slate-700"
+              className="py-2 px-3 text-[0.8rem]  text-slate-700"
             >
               Booking #{group.BOOK_NBR}
             </PrintTableCell>
           </PrintTableRow>
         )}
         {group.subRows.map((item, i) => {
+          const isLast = i === group.subRows.length - 1
           if ("subRows" in item && !("BOOK_NBR" in item))
             return (
               <UnitGroup
+                showLast={isLast}
                 key={`unit-${item.PR_ID ?? i}`}
                 group={item}
                 withCityTax={withCityTax}
@@ -169,6 +176,7 @@ export function FiscalDocumentTable({
             );
           return (
             <TxRow
+              isLast={isLast}
               tx={item}
               key={`tx-${item.CL_TX_ID ?? i}-${1}-${i}`}
               indent={1}
@@ -191,6 +199,7 @@ export function FiscalDocumentTable({
       );
     return (
       <TxRow
+        isLast={true}
         key={`tx-${item.CL_TX_ID ?? i}-0-${i}`}
         tx={item}
         indent={0}

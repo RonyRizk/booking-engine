@@ -19,7 +19,7 @@ export function InvoicePreview({ property, isDraft, transactions, documentNumber
         currencySymbol={property?.currency?.symbol ?? '$'}
         property={property}
       />
-      <FiscalDocumentFooter property={property} />
+      {!isDraft && <FiscalDocumentFooter property={property} />}
     </PrintDocument>
   );
 }

@@ -18,7 +18,7 @@ export function ProformaPreview({ property, transactions, documentNumber, agent 
         currencySymbol={property?.currency?.symbol ?? '$'}
         property={property}
       />
-      <FiscalDocumentFooter property={property} />
+      {/* <FiscalDocumentFooter property={property} /> */}
     </PrintDocument>
   );
 }

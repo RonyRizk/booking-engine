@@ -76,6 +76,12 @@ Modes: `invoice` · `receipt` · `creditnote` · `debitnote` · `statement` · `
 http://localhost:5863/a35/printing/cl?docNo=INV-19&aid=227&mode=invoice&token={token}
 ```
 
+**Draft**
+
+```
+http://localhost:5863/a35/printing/cl?docNo=2606031959-8&aid=227&mode=draft&token={token}
+```
+
 **Credit Note**
 
 ```
