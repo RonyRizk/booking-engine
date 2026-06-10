@@ -54,21 +54,28 @@ export function FiscalDocumentTable({
 }) {
   const { prIdDict, roomTypesDict, rateplanDict } = buildLookups(property);
 
-  const applySign = (value) => (invertAmounts ? -(value ?? 0) : (value ?? 0));
-  const money = (value) => formatAmount(applySign(value), currencySymbol);
+  const rowSign = (tx) => (tx?.CREDIT > 0 ? -1 : 1);
+  const applySign = (value, sign = 1) =>
+    (invertAmounts ? -1 : 1) * sign * (value ?? 0);
+  const money = (value, sign = 1) =>
+    formatAmount(applySign(value, sign), currencySymbol);
 
   const totals = transactions.reduce(
-    (acc, tx) => ({
-      net: acc.net + (tx.NET_AMOUNT ?? 0),
-      tax: acc.tax + (tx.TAX_AMOUNT ?? 0),
-      total: acc.total + (tx.TOTAL_AMOUNT ?? 0),
-    }),
+    (acc, tx) => {
+      const sign = rowSign(tx);
+      return {
+        net: acc.net + sign * (tx.NET_AMOUNT ?? 0),
+        tax: acc.tax + sign * (tx.TAX_AMOUNT ?? 0),
+        total: acc.total + sign * (tx.TOTAL_AMOUNT ?? 0),
+      };
+    },
     { net: 0, tax: 0, total: 0 },
   );
 
   // ── Row renderers ──────────────────────────────────────────────────────────
 
   function TxRow({ tx, indent = 0, withCityTax, isLast }) {
+    const sign = rowSign(tx);
     return (
       <PrintTableRow>
         <PrintTableCell muted nowrap indent={indent} className={cn("border-r ",
@@ -82,13 +89,13 @@ export function FiscalDocumentTable({
         <PrintTableCell numeric bold className={cn("border-r",
           { "border-b-black": isLast }
         )}>
-          {money(tx.NET_AMOUNT)}
+          {money(tx.NET_AMOUNT, sign)}
         </PrintTableCell>
         <PrintTableCell numeric muted className={cn(" border-l-slate-200", { "border-b-black": isLast })}>
           {tx.VAT_PERCENT != null ? `${tx.VAT_PERCENT}%` : "—"}
         </PrintTableCell>
         <PrintTableCell numeric muted className={cn("border-r", { "border-b-black": isLast })}>
-          {money(tx.VAT_AMOUNT)}
+          {money(tx.VAT_AMOUNT, sign)}
         </PrintTableCell>
         {withCityTax && (
           <>
@@ -97,13 +104,13 @@ export function FiscalDocumentTable({
             </PrintTableCell>
             <PrintTableCell numeric muted className={cn("border-r", { "border-b-black": isLast })}>
               {(tx.CITY_TAX_PERCENT || tx.CITY_TAX_AMOUNT)
-                ? money(tx.CITY_TAX_AMOUNT)
+                ? money(tx.CITY_TAX_AMOUNT, sign)
                 : ""}
             </PrintTableCell>
           </>
         )}
         <PrintTableCell numeric bold className={cn({ "border-b-black": isLast })}>
-          {money(tx.TOTAL_AMOUNT)}
+          {money(tx.TOTAL_AMOUNT, sign)}
         </PrintTableCell>
       </PrintTableRow>
     );

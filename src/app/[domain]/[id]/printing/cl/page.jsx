@@ -84,6 +84,8 @@ const FETCHERS = {
     ) => {
         const commonService = new CommonServices(DEFAULT_BASE_URL);
         commonService.setToken(token);
+        const invoicedClTxTypeCode = new Set([ClTxTypeCode.Adjustment, ClTxTypeCode.CancellationPenalty, ClTxTypeCode.Discount, ClTxTypeCode.StandardChargeDebit]);
+
         if (bookingId) {
             const bookingService = new BookingService(DEFAULT_BASE_URL);
             bookingService.setToken(token);
@@ -109,7 +111,6 @@ const FETCHERS = {
                 }),
                 commonService.getSetupEntriesByTBLNameMulti(["_SVC_CATEGORY"], "en"),
             ]);
-            const invoicedClTxTypeCode = new Set([ClTxTypeCode.Adjustment, ClTxTypeCode.CancellationPenalty, ClTxTypeCode.Discount, ClTxTypeCode.StandardChargeDebit]);
             const clTxs = (clResult?.My_Result?.My_Cl_tx ?? []).filter(tx => invoicedClTxTypeCode.has(tx.CL_TX_TYPE_CODE));
             return {
                 transactions: convertBookingToCL({ booking, agentId, clTxs, setupEntries }),
@@ -123,7 +124,7 @@ const FETCHERS = {
             IS_LOCKED: false
         });
 
-        return { transactions: clResult?.My_Result?.My_Cl_tx ?? [] };
+        return { transactions: (clResult?.My_Result?.My_Cl_tx ?? []).filter(tx => invoicedClTxTypeCode.has(tx.CL_TX_TYPE_CODE)) };
     },
 
     statement: (cl, property, { agentId, fromDate, toDate }) => {
