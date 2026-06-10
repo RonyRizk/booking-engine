@@ -11,9 +11,10 @@ import {
   PrintTableRow,
 } from './print-table';
 
-export function CreditNotePreview({ property, document, documentNumber, agent }) {
+export function CreditNotePreview({ property, document, documentNumber, agent, documentType = 'creditnote' }) {
   const currency = property?.currency?.symbol ?? document?.CURRENCY_CODE ?? '$';
   const fmt = (v) => (v != null ? formatAmount(v, currency) : '—');
+  const fallbackLabel = documentType === 'creditreceipt' ? 'Credit Receipt' : 'Credit Note';
 
   const vatTax = property?.taxes?.[0]?.pct > 0 ? property.taxes[0] : null;
   const cityTax = property?.taxes?.[1]?.pct > 0 ? property.taxes[1] : null;
@@ -27,7 +28,7 @@ export function CreditNotePreview({ property, document, documentNumber, agent })
   return (
     <PrintDocument>
       <DocumentHeader
-        documentType="creditnote"
+        documentType={documentType}
         property={property}
         documentNumber={documentNumber}
         originalDocNumber={document?.EXTERNAL_REF}
@@ -57,9 +58,9 @@ export function CreditNotePreview({ property, document, documentNumber, agent })
                     {document.ISSUE_DATE_DISPLAY ?? document.ISSUE_DATE ?? '—'}
                   </PrintTableCell>
                   <PrintTableCell className="w-full border-r whitespace-normal break-words text-[0.8rem]">
-                    {document.FD_TYPE_NAME ?? 'Credit Note'}
+                    {document.FD_TYPE_NAME ?? fallbackLabel}
                   </PrintTableCell>
-                  <PrintTableCell numeric bold className="border-r">{fmt(net)}</PrintTableCell>
+                  <PrintTableCell numeric bold className="border-r">{documentType === "creditreceipt" ? "-" : ""}{fmt(net)}</PrintTableCell>
                   <PrintTableCell numeric muted>
                     {vatPct != null ? `${vatPct}%` : '—'}
                   </PrintTableCell>
@@ -73,7 +74,7 @@ export function CreditNotePreview({ property, document, documentNumber, agent })
                   <PrintTableCell />
                   <PrintTableCell />
                   <PrintTableCell numeric className="py-4">
-                    <p className="text-[0.8rem] font-bold text-slate-900">{fmt(net)}</p>
+                    <p className="text-[0.8rem] font-bold text-slate-900">{documentType === "creditreceipt" ? "-" : ""}{fmt(net)}</p>
                     <p className="text-[0.65rem] uppercase tracking-wide text-slate-600 font-medium mt-0.5">Net Price</p>
                   </PrintTableCell>
                   <PrintTableCell numeric className="py-4 border-x border-x-slate-200" colSpan={2}>
@@ -83,7 +84,7 @@ export function CreditNotePreview({ property, document, documentNumber, agent })
                   {withCityTax && <PrintTableCell />}
                   {withCityTax && <PrintTableCell />}
                   <PrintTableCell numeric className="py-4">
-                    <p className="text-[0.85rem] font-bold text-slate-900">{fmt(total)}</p>
+                    <p className="text-[0.85rem] font-bold text-slate-900">{documentType === "creditreceipt" ? "-" : ""}{fmt(total)}</p>
                     <p className="text-[0.65rem] uppercase tracking-wide text-slate-600 font-medium mt-0.5">Total Credit</p>
                   </PrintTableCell>
                 </PrintTableRow>

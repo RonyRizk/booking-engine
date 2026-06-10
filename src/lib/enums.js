@@ -15,6 +15,7 @@ export const FdTypes = {
   CreditNote: 'CN',
   DebitNote: 'DN',
   Receipt: 'REC',
+  CreditReceipt: 'CREC',
 };
 
 export const ChargeSource = {

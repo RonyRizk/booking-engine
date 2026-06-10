@@ -9,7 +9,7 @@ import { StatementPreview } from "./components/statement-preview";
 import { ProformaPreview } from "./components/proforma-preview";
 import "./cl-printing.css";
 import { CommonServices } from "@/lib/services/common.service";
-import { FdTypes } from "@/lib/enums";
+import { ClTxTypeCode, FdTypes } from "@/lib/enums";
 import { convertBookingToCL } from "./utils/booking-to-cl";
 
 const DEFAULT_BASE_URL = "https://gateway.igloorooms.com/IR";
@@ -17,12 +17,13 @@ const VALID_MODES = new Set([
     "invoice",
     "receipt",
     "creditnote",
+    "creditreceipt",
     "debitnote",
     "statement",
     "draft",
     "proforma",
 ]);
-const FD_TYPES = [FdTypes.CreditNote, FdTypes.DebitNote, FdTypes.Invoice];
+const FD_TYPES = [FdTypes.CreditNote, FdTypes.DebitNote, FdTypes.Invoice, FdTypes.CreditReceipt, FdTypes.Receipt];
 const FALLBACK_URL = "https://x.igloorooms.com/manage/acbookinglist.aspx";
 
 /**
@@ -60,6 +61,13 @@ const FETCHERS = {
                 return { document: docs?.My_Rows?.find(doc => doc.DOC_NUMBER === documentNumber) ?? null };
             }),
 
+    creditreceipt: (cl, _property, { agentId, documentNumber }) =>
+        cl
+            .getFiscalDocuments({ AGENCY_ID: agentId, DOC_NUMBER: documentNumber })
+            .then((docs) => {
+                return { document: docs?.My_Rows?.find(doc => doc.DOC_NUMBER === documentNumber) ?? null };
+            }),
+
     debitnote: (cl, _property, { agentId, documentNumber }) =>
         Promise.all([
             cl.fetchCL({ AGENCY_ID: agentId, SEARCH_QUERY: documentNumber }),
@@ -85,6 +93,8 @@ const FETCHERS = {
                     SEARCH_QUERY: bookingId,
                     FROM_DATE: null,
                     TO_DATE: null,
+                    IS_LOCKED: false,
+                    IS_HOLD: false
                 }),
                 bookingService.getExposedBooking({
                     booking_nbr: bookingId,
@@ -99,7 +109,8 @@ const FETCHERS = {
                 }),
                 commonService.getSetupEntriesByTBLNameMulti(["_SVC_CATEGORY"], "en"),
             ]);
-            const clTxs = clResult?.My_Result?.My_Cl_tx ?? [];
+            const invoicedClTxTypeCode = new Set([ClTxTypeCode.Adjustment, ClTxTypeCode.CancellationPenalty, ClTxTypeCode.Discount, ClTxTypeCode.StandardChargeDebit]);
+            const clTxs = (clResult?.My_Result?.My_Cl_tx ?? []).filter(tx => invoicedClTxTypeCode.has(tx.CL_TX_TYPE_CODE));
             return {
                 transactions: convertBookingToCL({ booking, agentId, clTxs, setupEntries }),
             };
@@ -146,7 +157,7 @@ const FETCHERS = {
  * @param {string} props.params.id - Property aname / slug used to resolve the property.
  * @param {Object} props.searchParams - URL search parameters.
  * @param {string}  props.searchParams.token   - CL access token (required).
- * @param {("invoice"|"receipt"|"creditnote"|"debitnote"|"statement")} props.searchParams.mode - Document mode (required).
+ * @param {("invoice"|"receipt"|"creditnote"|"creditreceipt"|"debitnote"|"statement")} props.searchParams.mode - Document mode (required).
  * @param {string}  props.searchParams.aid   - Agent ID (required).
  * @param {string}  [props.searchParams.docNo] - Document number (invoice / receipt / credit-debit note).
  * @param {string}  [props.searchParams.from]  - Statement start date (YYYY-MM-DD).
@@ -241,6 +252,13 @@ export default async function CityLedgerPrintingPages({
             )}
             {normalizedMode === "creditnote" && (
                 <CreditNotePreview {...sharedProps} documentNumber={documentNumber} />
+            )}
+            {normalizedMode === "creditreceipt" && (
+                <CreditNotePreview
+                    {...sharedProps}
+                    documentNumber={documentNumber}
+                    documentType="creditreceipt"
+                />
             )}
             {normalizedMode === "debitnote" && (
                 <DebitNotePreview {...sharedProps} documentNumber={documentNumber} />

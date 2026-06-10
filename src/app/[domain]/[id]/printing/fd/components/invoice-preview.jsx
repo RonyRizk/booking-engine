@@ -1,5 +1,4 @@
 import { formatAmount } from "@/lib/utils";
-import { format, parse } from "date-fns";
 import { FiscalDocumentFooter } from "../../cl/components/fiscal-document-footer";
 import { PrintDocument } from "../../cl/components/print-document";
 import { ReceiptRow, ReceiptSection } from "../../cl/components/receipt-preview";
@@ -18,7 +17,7 @@ import PrintingHeader from "@/components/printing/PrintingHeader";
 function fmtDate(dateStr) {
   if (!dateStr) return "—";
   try {
-    return format(parse(dateStr, "yyyy-MM-dd", new Date()), "MMM dd, yyyy");
+    return moment(dateStr).format("MMM DD, YYYY");
   } catch {
     return dateStr;
   }
@@ -190,11 +189,11 @@ function BookingFiscalTable({ booking, currencySymbol, invertAmounts = false, it
           {money(cancellationAmount)}
         </PrintTableCell>
         <PrintTableCell numeric muted>—</PrintTableCell>
-        <PrintTableCell numeric muted className="border-r">-</PrintTableCell>
+        <PrintTableCell numeric muted className="border-r"></PrintTableCell>
         {withCityTax && (
           <>
             <PrintTableCell numeric muted>—</PrintTableCell>
-            <PrintTableCell numeric muted className="border-r">-</PrintTableCell>
+            <PrintTableCell numeric muted className="border-r"></PrintTableCell>
           </>
         )}
         <PrintTableCell numeric bold>
@@ -294,30 +293,33 @@ function BookingFiscalTable({ booking, currencySymbol, invertAmounts = false, it
 
 // ─── BookingPaymentSection ────────────────────────────────────────────────────
 
-function BookingPaymentSection({ booking, selectedDocument, currencySymbol, invertAmounts }) {
+function BookingPaymentSection({ booking, selectedDocument, currencySymbol, invertAmounts, mode }) {
   const financial = booking?.financial;
   const symbol = booking?.currency?.symbol ?? currencySymbol;
+  const isCreditReceipt = mode === "creditreceipt";
+  const originalDocLabel = isCreditReceipt ? "Original receipt" : "Original invoice";
+  const creditLabel = isCreditReceipt ? "Credit Receipt" : "Credit Note";
 
   return (
     <div className="mt-8 flex flex-col gap-6">
       {!invertAmounts && (
         <ReceiptSection title="Balance Summary">
-          <ReceiptRow label="Balance" value={formatAmount(financial?.due_amount, symbol)} />
+          <ReceiptRow label="Guest Balance" value={formatAmount(financial?.due_amount, symbol)} />
           <ReceiptRow
-            label="Collected"
+            label="Guest Collected"
             value={formatAmount((Number(financial?.collected) + Number(financial?.refunds)) ?? 0, symbol)}
           />
         </ReceiptSection>
       )}
 
       {invertAmounts && (
-        <ReceiptSection title="Effects on Original Invoice">
+        <ReceiptSection title={`Effects on ${originalDocLabel}`}>
           <ReceiptRow
-            label="Original invoice total"
+            label={`${originalDocLabel} total`}
             value={formatAmount(selectedDocument?.total_amount ?? 0, symbol)}
           />
           <ReceiptRow
-            label="Less: Credit Note"
+            label={`Less: ${creditLabel}`}
             value={formatAmount((selectedDocument?.total_amount ?? 0) * -1, symbol)}
           />
           <ReceiptRow label="Revised net amount" value={formatAmount(0, symbol)} />
@@ -431,6 +433,7 @@ export function InvoicePreview({
         selectedDocument={selectedDocument}
         currencySymbol={currencySymbol}
         invertAmounts={invertAmounts}
+        mode={mode}
       />
       <FiscalDocumentFooter property={property} />
     </PrintDocument>

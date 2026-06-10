@@ -4,7 +4,7 @@
  * Left  — title + document meta + Bill To (agent)
  * Right — company legal entity + property branding
  *
- * documentType: "invoice" | "receipt" | "creditnote" | "debitnote" | "statement"
+ * documentType: "invoice" | "receipt" | "creditnote" | "creditreceipt" | "debitnote" | "statement"
  */
 
 /* eslint-disable @next/next/no-img-element */
@@ -19,15 +19,17 @@ const DOCUMENT_TITLES = {
   invoice: 'Invoice',
   receipt: 'Receipt',
   creditnote: 'Credit Note',
+  creditreceipt: 'Credit Receipt',
   debitnote: 'Debit Note',
   statement: 'Account Statement',
-  proforma: 'Pro forma Invoice',
+  proforma: 'Proforma Invoice',
 };
 
 const DOC_NUMBER_LABELS = {
   invoice: 'Invoice no.',
   receipt: 'Receipt no.',
   creditnote: 'Credit note no.',
+  creditreceipt: 'Credit receipt no.',
   debitnote: 'Debit note no.',
   statement: null,
   proforma: 'Reference',
@@ -38,7 +40,7 @@ export function DocumentHeader({ isDraft, documentType = 'invoice', property, do
   const docLabel = DOC_NUMBER_LABELS[documentType];
 
   return (
-    <header className={cn('text-gray-800 text-sm w-full capitalize', className)}>
+    <header className={cn('text-gray-800 text-sm w-full', className)}>
       <h3 className="text-3xl font-bold mb-4">{DOCUMENT_TITLES[documentType] ?? documentType} {isDraft ? "draft" : ""}</h3>
       <nav className="flex gap-4 flex-col-reverse sm:flex-row sm:justify-between sm:w-full">
         <div className="space-y-4">
@@ -48,6 +50,9 @@ export function DocumentHeader({ isDraft, documentType = 'invoice', property, do
             )}
             {['creditnote', 'debitnote'].includes(documentType) && originalDocNumber && (
               <InfoDisplay className="" label="Original invoice no.:" value={originalDocNumber} />
+            )}
+            {documentType === 'creditreceipt' && originalDocNumber && (
+              <InfoDisplay className="" label="Original receipt no.:" value={originalDocNumber} />
             )}
             <InfoDisplay className="" label="Date of issue:" value={today} />
           </div>

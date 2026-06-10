@@ -1,5 +1,4 @@
 import { formatAmount } from '@/lib/utils';
-import { format, parse } from 'date-fns';
 import { DocumentHeader } from './document-header';
 import { PrintDocument, PrintDocumentState } from './print-document';
 import {
@@ -11,13 +10,15 @@ import {
   PrintTableRow,
 } from './print-table';
 import { FiscalDocumentFooter } from './fiscal-document-footer';
+import { FdTypes } from '@/lib/enums';
+import moment from 'moment';
 
-const DATE_DISPLAY = { year: 'numeric', month: 'short', day: '2-digit' };
+const DATE_DISPLAY = 'MMM DD, YYYY';
 
 function formatDocDate(dateStr) {
   if (!dateStr) return '—';
   try {
-    return format(parse(dateStr, 'yyyy-MM-dd', new Date()), 'MMM dd, yyyy');
+    return moment(dateStr, 'YYYY-MM-DD').format(DATE_DISPLAY);
   } catch {
     return dateStr;
   }
@@ -35,6 +36,46 @@ export function StatementPreview({ property, statement, fiscalDocuments, fromDat
   const fmt = v => (v != null ? formatAmount(v, currency) : '—');
 
   let running = STARTING_BALANCE;
+
+  const runningBalances = (() => {
+    let balance = STARTING_BALANCE;
+    const debitFdTypeCode = new Set([FdTypes.Invoice, FdTypes.DebitNote, FdTypes.Draft, FdTypes.CreditReceipt])
+    return fiscalDocuments.map(doc => {
+      if (debitFdTypeCode.has(doc.FD_TYPE_CODE)) {
+        balance += doc.DEBIT ?? 0;
+      } else {
+        balance -= Math.abs(doc.CREDIT ?? 0);
+      }
+      return balance;
+    })
+  })()
+
+  const getCredit = (doc) => {
+    const { FD_TYPE_CODE, DEBIT, CREDIT } = doc;
+    const value = CREDIT;
+
+    switch (FD_TYPE_CODE) {
+      case FdTypes.CreditReceipt:
+        return -DEBIT;
+
+      case FdTypes.Receipt:
+        return Math.abs(value);
+
+      default:
+        return value;
+    }
+  }
+  const getDebit = (doc) => {
+    const { FD_TYPE_CODE, DEBIT, } = doc;
+    const value = DEBIT;
+
+    switch (FD_TYPE_CODE) {
+      case FdTypes.CreditReceipt:
+        return null;
+      default:
+        return value;
+    }
+  }
 
   return (
     <PrintDocument wide>
@@ -59,7 +100,7 @@ export function StatementPreview({ property, statement, fiscalDocuments, fromDat
         <PrintTableBody>
           <PrintTableRow variant="balance">
             <PrintTableCell colSpan={3}>
-              Opening Balance — {new Date(fromDate).toLocaleDateString('en-US', DATE_DISPLAY)}
+              Opening Balance — {moment(fromDate, 'YYYY-MM-DD').format(DATE_DISPLAY)}
             </PrintTableCell>
             <PrintTableCell />
             <PrintTableCell />
@@ -67,7 +108,9 @@ export function StatementPreview({ property, statement, fiscalDocuments, fromDat
           </PrintTableRow>
 
           {fiscalDocuments.map((doc, i) => {
-            running += (doc.DEBIT ?? 0) - (doc.CREDIT ?? 0);
+            running = runningBalances[i];
+            const credit = getCredit(doc)
+            const debit = getDebit(doc)
             return (
               <PrintTableRow key={doc.FD_ID ?? i}>
                 <PrintTableCell nowrap>
@@ -76,10 +119,10 @@ export function StatementPreview({ property, statement, fiscalDocuments, fromDat
                 <PrintTableCell>{doc.DOC_NUMBER || '—'}</PrintTableCell>
                 <PrintTableCell>{doc.FD_TYPE_NAME || '—'}</PrintTableCell>
                 <PrintTableCell numeric muted>
-                  {doc.DEBIT ? fmt(doc.DEBIT) : '—'}
+                  {debit ? fmt(debit) : '—'}
                 </PrintTableCell>
                 <PrintTableCell numeric muted>
-                  {doc.CREDIT ? fmt(doc.CREDIT) : '—'}
+                  {credit ? fmt(credit) : '—'}
                 </PrintTableCell>
                 <PrintTableCell numeric bold>{fmt(running)}</PrintTableCell>
               </PrintTableRow>
@@ -96,11 +139,11 @@ export function StatementPreview({ property, statement, fiscalDocuments, fromDat
 
           <PrintTableRow variant="balance">
             <PrintTableCell colSpan={3}>
-              Closing Balance — {new Date(toDate).toLocaleDateString('en-US', DATE_DISPLAY)}
+              Closing Balance — {moment(toDate).format(DATE_DISPLAY)}
             </PrintTableCell>
             <PrintTableCell />
             <PrintTableCell />
-            <PrintTableCell numeric bold>{fmt(ENDING_BALANCE)}</PrintTableCell>
+            <PrintTableCell numeric bold>{fmt(runningBalances[runningBalances.length - 1])}</PrintTableCell>
           </PrintTableRow>
         </PrintTableBody>
       </PrintTable>

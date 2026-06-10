@@ -8,7 +8,7 @@ import PrintInfo from "./PrintInfo";
 import GuestInformation from "./GuestInformation";
 
 export default function PrintingHeader({ booking, property, locales, documentId, receiptNumber, mode, guestCountryName, totalPersons, printingService, className, privateNote, selectedDocument }) {
-    if (["receipt", "invoice", "creditnote", "proforma"].includes(mode.toLowerCase().toString())) {
+    if (["receipt", "invoice", "creditnote", "creditreceipt", "proforma"].includes(mode.toLowerCase().toString())) {
         const getTitle = () => {
             switch (mode) {
                 case "receipt":
@@ -17,8 +17,10 @@ export default function PrintingHeader({ booking, property, locales, documentId,
                     return "Invoice";
                 case "creditnote":
                     return "Credit Note";
+                case "creditreceipt":
+                    return "Credit Receipt";
                 case "proforma":
-                    return "Pro forma Invoice";
+                    return "Proforma Invoice";
                 default:
                     return "";
             }

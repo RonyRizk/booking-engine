@@ -5,15 +5,16 @@
  * document based on the `mode` search param.
  *
  * Supported modes:
- *   - invoice     — standard booking invoice
- *   - receipt     — payment receipt
- *   - creditnote  — credit note (negated amounts)
+ *   - invoice       — standard booking invoice
+ *   - receipt       — payment receipt
+ *   - creditnote    — credit note (negated amounts, references original invoice)
+ *   - creditreceipt — credit receipt (negated amounts, references original receipt)
  *
  * @param {object} props
  * @param {object} props.params                    - Next.js route segments.
  * @param {string} props.params.id                 - Property aname used to resolve the property.
  * @param {object} props.searchParams              - URL search parameters.
- * @param {("invoice"|"receipt"|"creditnote"|"printing","proforma")} props.searchParams.mode - Document mode (required).
+ * @param {("invoice"|"receipt"|"creditnote"|"creditreceipt"|"printing","proforma")} props.searchParams.mode - Document mode (required).
  * @param {string} props.searchParams.bookingNbr   - Booking number (required).
  * @param {string} [props.searchParams.docNo]      - Document number shown in the header.
  * @param {string} [props.searchParams.lang="en"]  - Language code for localised values.
@@ -31,7 +32,7 @@ import BookingPreview from "./components/booking-preview";
 import { CityLedgerService } from "@/lib/services/city-ledger.service";
 
 const DEFAULT_BASE_URL = "https://gateway.igloorooms.com/IR";
-const VALID_MODES = new Set(["invoice", "receipt", "creditnote", "printing", "proforma"]);
+const VALID_MODES = new Set(["invoice", "receipt", "creditnote", "creditreceipt", "printing", "proforma"]);
 const FALLBACK_URL = "https://x.igloorooms.com/manage/acbookinglist.aspx";
 
 export default async function FiscalDocumentsPage({ params, searchParams }) {
@@ -87,7 +88,7 @@ export default async function FiscalDocumentsPage({ params, searchParams }) {
             }),
             bookingService.getBedPreference(),
             commonService.getSetupEntriesByTBLNameMulti(['_PAY_TYPE', '_PAY_TYPE_GROUP', '_PAY_METHOD', "_SVC_CATEGORY"], 'en'),
-            (mode && ["invoice", "creditnote"].includes(mode?.toLowerCase()?.trim())) ? bookingService.getBookingInvoiceInfo({ booking_nbr }) : Promise.resolve(null),
+            (mode && ["invoice", "creditnote", "creditreceipt"].includes(mode?.toLowerCase()?.trim())) ? bookingService.getBookingInvoiceInfo({ booking_nbr }) : Promise.resolve(null),
             commonService.getCountries(lang),
             commonService.fetchLanguage(lang, ["_PRINT_FRONT", "_PMS_FRONT"]),
         ]);
@@ -130,7 +131,7 @@ export default async function FiscalDocumentsPage({ params, searchParams }) {
             {normalizedMode === "invoice" && <InvoicePreview {...sharedProps} />}
             {normalizedMode === "printing" && <BookingPreview {...sharedProps} />}
             {normalizedMode === "receipt" && <ReceiptPreview {...sharedProps} />}
-            {normalizedMode === "creditnote" && (
+            {(normalizedMode === "creditnote" || normalizedMode === "creditreceipt") && (
                 <CreditNotePreview {...sharedProps} />
             )}
             {normalizedMode === "proforma" && (
