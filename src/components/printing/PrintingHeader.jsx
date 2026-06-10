@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 import InfoDisplay from "@/components/InfoDisplay";
-import { format, parse } from "date-fns";
+import moment from "moment";
 import { cn, formatTime } from "@/lib/utils";
 import CompanyInfo from "./CompanyInfo";
 import PropertyInfo from "./PropertyInfo";
@@ -82,10 +82,7 @@ export default function PrintingHeader({ booking, property, locales, documentId,
                     {!booking.is_direct && <p className="sm:text-end text-xl">{booking.channel_booking_nbr}</p>}
                     <div className={"flex items-center sm:justify-end"}>
                         <p className="booked_on_date">
-                            {format(
-                                parse(booking?.booked_on.date, "yyyy-MM-dd", new Date()),
-                                "dd-MMM-yyyy"
-                            )}{" "}
+                            {moment(booking?.booked_on.date, "YYYY-MM-DD").locale("en").format("DD-MMM-YYYY")}{" "}
                             {formatTime(
                                 booking?.booked_on.hour.toString(),
                                 booking?.booked_on.minute.toString()

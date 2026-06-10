@@ -1,3 +1,4 @@
+import moment from "moment";
 import { formatAmount } from "@/lib/utils";
 import { FiscalDocumentFooter } from "../../cl/components/fiscal-document-footer";
 import { PrintDocument } from "../../cl/components/print-document";
@@ -17,7 +18,7 @@ import PrintingHeader from "@/components/printing/PrintingHeader";
 function fmtDate(dateStr) {
   if (!dateStr) return "—";
   try {
-    return moment(dateStr).format("MMM DD, YYYY");
+    return moment(dateStr).locale("en").format("MMM DD, YYYY");
   } catch {
     return dateStr;
   }

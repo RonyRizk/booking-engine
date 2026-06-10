@@ -1,4 +1,4 @@
-import { format, parse } from "date-fns";
+import moment from "moment";
 import { CommonServices } from "./common.service";
 import { Token } from "../token";
 import { BookingService } from "./booking.service";
@@ -80,16 +80,15 @@ export class PrintingService extends Token {
         return `+${country_phone_prefix?.replace('+', '')}-${mobile_without_prefix}`;
     }
     formatBookingDates(date) {
-        const parsedDate = parse(date, 'yyyy-MM-dd', new Date());
-        return format(parsedDate, 'dd-MMM-yyyy');
+        return moment(date, 'YYYY-MM-DD').locale('en').format('DD-MMM-YYYY');
     }
     getUserCountry(countries, country_id) {
         const country = countries.find(country => country.id === country_id);
         return country?.name;
     }
     formatDate(date) {
-        const dayMonth = format(date, 'dd/MM');
-        let dayOfWeekAbbr = format(date, 'EEE');
+        const dayMonth = moment(date).locale('en').format('DD/MM');
+        let dayOfWeekAbbr = moment(date).locale('en').format('ddd');
         if (['Thu', 'Sun', 'Sat'].includes(dayOfWeekAbbr)) {
             dayOfWeekAbbr = dayOfWeekAbbr.slice(0, 2);
         } else {

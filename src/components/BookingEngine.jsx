@@ -1,5 +1,5 @@
 "use client";
-import { addDays } from "date-fns";
+import moment from "moment";
 import { useEffect, useRef } from "react";
 
 export default function IrBookingEngine({
@@ -24,7 +24,7 @@ export default function IrBookingEngine({
   agent_code
 }) {
   if (nights) {
-    toDate = addDays(new Date(fromDate), nights);
+    toDate = moment(fromDate).add(nights, "days").toDate();
   }
   const bookingEngineRef = useRef(null);
   useEffect(() => {

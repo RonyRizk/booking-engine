@@ -10,7 +10,7 @@
 
 import { Fragment } from "react";
 import { cn, formatAmount, haveCityTax } from "@/lib/utils";
-import { format, parse } from "date-fns";
+import moment from "moment";
 import { groupData } from "../utils/group-data";
 import {
   PrintTable,
@@ -38,7 +38,7 @@ function buildLookups(property) {
 function formatEntryDate(dateStr) {
   if (!dateStr) return "—";
   try {
-    return format(parse(dateStr, "yyyy-MM-dd", new Date()), "MMM dd, yyyy");
+    return moment(dateStr, 'YYYY-MM-DD').locale('en').format('MMM DD, YYYY');
   } catch {
     return dateStr;
   }

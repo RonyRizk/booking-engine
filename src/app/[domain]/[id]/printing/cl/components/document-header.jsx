@@ -49,10 +49,10 @@ export function DocumentHeader({ isDraft, documentType = 'invoice', property, do
               <InfoDisplay className="" label={docLabel + ":"} value={documentNumber} />
             )}
             {['creditnote', 'debitnote'].includes(documentType) && originalDocNumber && (
-              <InfoDisplay className="" label="Original invoice no.:" value={originalDocNumber} />
+              <i><InfoDisplay className="" label="For original invoice no.:" value={originalDocNumber} /></i>
             )}
             {documentType === 'creditreceipt' && originalDocNumber && (
-              <InfoDisplay className="" label="Original receipt no.:" value={originalDocNumber} />
+              <i><InfoDisplay className="" label="For original receipt no.:" value={originalDocNumber} /></i>
             )}
             <InfoDisplay className="" label="Date of issue:" value={today} />
           </div>

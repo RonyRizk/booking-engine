@@ -17,11 +17,11 @@ export default function PrintInfo({ booking, mode, receiptNumber, documentId, se
             {["invoice", "proforma"].includes(mode) && <InfoDisplay className={""} label={mode === "invoice" ? "Invoice no.:" : "Reference:"} value={documentId} />}
             {mode === "creditnote" && <>
                 <InfoDisplay className={""} label={"Credit note no.:"} value={selectedDocument?.credit_note?.nbr} />
-                <InfoDisplay className={""} label={"Original invoice no.:"} value={documentId} />
+                <i><InfoDisplay className={""} label={"For original invoice no.:"} value={documentId} /></i>
             </>}
             {mode === "creditreceipt" && <>
                 <InfoDisplay className={""} label={"Credit receipt no.:"} value={selectedDocument?.credit_note?.nbr} />
-                <InfoDisplay className={""} label={"Original receipt no.:"} value={documentId} />
+                <i><InfoDisplay className={""} label={"For original receipt no.:"} value={documentId} /></i>
             </>}
             {mode === "receipt" && <InfoDisplay className={""} label={"Receipt no.:"} value={receiptNumber} />}
             <InfoDisplay className={""} label={"Date of issue:"} value={

@@ -1,7 +1,7 @@
 import InfoDisplay from "@/components/InfoDisplay";
 import CreditCardInfo from "@/components/printing/CreditCardInfo";
 import { formatAmount } from "@/lib/utils";
-import { format } from "date-fns";
+import moment from "moment";
 
 export default async function PaymentInformation({ printingService, selectedDocumentsItemsKeys, booking, locales, paymentId, mode, setupTables, selectedDocument }) {
     const invoicableMode = ["invoice", "creditnote"].includes(mode)
@@ -58,10 +58,7 @@ export default async function PaymentInformation({ printingService, selectedDocu
                         <span>(</span>
                         <InfoDisplay
                             label={``}
-                            value={format(
-                                new Date(cancellationPenalty?.date),
-                                "eeee, dd MMM yyyy"
-                            )}
+                            value={moment(cancellationPenalty?.date).locale("en").format("dddd, DD MMM YYYY")}
                         />
                         <span>)</span>
                     </div>
@@ -160,7 +157,7 @@ export default async function PaymentInformation({ printingService, selectedDocu
                                         return (
                                             <tr key={p.id}>
                                                 <td className="px-2 whitespace-nowrap py-1 font-medium text-gray-900 text-center">
-                                                    {format(new Date(p.date), 'dd-MMM-yyyy')}
+                                                    {moment(p.date).locale('en').format('DD-MMM-YYYY')}
                                                 </td>
                                                 <td className="px-2 py-1 whitespace-nowrap text-gray-700 text-end">
                                                     {formatAmount(p.amount, p.currency.symbol)}

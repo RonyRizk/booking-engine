@@ -1,6 +1,6 @@
 import InfoDisplay from "@/components/InfoDisplay";
 import { formatAmount } from "@/lib/utils";
-import { format } from "date-fns";
+import moment from "moment";
 
 export default function CancellationPenaltySection({ cancellationPenalty, booking }) {
     return (
@@ -17,7 +17,7 @@ export default function CancellationPenaltySection({ cancellationPenalty, bookin
                         <span>(</span>
                         <InfoDisplay
                             label={``}
-                            value={format(new Date(cancellationPenalty.date), "eeee, dd MMM yyyy")}
+                            value={moment(cancellationPenalty.date).locale("en").format("dddd, DD MMM YYYY")}
                         />
                         <span>)</span>
                     </div>

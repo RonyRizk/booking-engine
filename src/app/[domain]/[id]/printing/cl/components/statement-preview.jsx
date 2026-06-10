@@ -18,7 +18,7 @@ const DATE_DISPLAY = 'MMM DD, YYYY';
 function formatDocDate(dateStr) {
   if (!dateStr) return '—';
   try {
-    return moment(dateStr, 'YYYY-MM-DD').format(DATE_DISPLAY);
+    return moment(dateStr, 'YYYY-MM-DD').locale('en').format(DATE_DISPLAY);
   } catch {
     return dateStr;
   }
@@ -100,7 +100,7 @@ export function StatementPreview({ property, statement, fiscalDocuments, fromDat
         <PrintTableBody>
           <PrintTableRow variant="balance">
             <PrintTableCell colSpan={3}>
-              Opening Balance — {moment(fromDate, 'YYYY-MM-DD').format(DATE_DISPLAY)}
+              Opening Balance — {moment(fromDate, 'YYYY-MM-DD').locale('en').format(DATE_DISPLAY)}
             </PrintTableCell>
             <PrintTableCell />
             <PrintTableCell />
@@ -139,7 +139,7 @@ export function StatementPreview({ property, statement, fiscalDocuments, fromDat
 
           <PrintTableRow variant="balance">
             <PrintTableCell colSpan={3}>
-              Closing Balance — {moment(toDate).format(DATE_DISPLAY)}
+              Closing Balance — {moment(toDate, 'YYYY-MM-DD').locale('en').format(DATE_DISPLAY)}
             </PrintTableCell>
             <PrintTableCell />
             <PrintTableCell />

@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import { differenceInDays, format, parse } from "date-fns";
+import moment from "moment";
 import { twMerge } from "tailwind-merge";
 
 /**
@@ -30,8 +30,7 @@ export function constructURL(baseUrl, paramsObj) {
 }
 export function formatTime(hour, minute) {
     const timeString = `${hour}:${minute}`;
-    const parsedTime = parse(timeString, 'HH:mm', new Date());
-    return format(parsedTime, 'hh:mm a');
+    return moment(timeString, 'HH:mm').locale('en').format('hh:mm A');
 }
 export function formatAmount(amount = 0, currency = 'USD', withIntl = false) {
     if (withIntl) {
@@ -40,9 +39,7 @@ export function formatAmount(amount = 0, currency = 'USD', withIntl = false) {
     return `${amount < 0 ? "- " : ""}${currency} ${Math.abs(amount)?.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 }
 export function calculateDaysBetweenDates(from_date, to_date) {
-    const startDate = parse(from_date, 'yyyy-MM-dd', new Date());
-    const endDate = parse(to_date, 'yyyy-MM-dd', new Date());
-    const daysDiff = differenceInDays(endDate, startDate);
+    const daysDiff = moment(to_date, 'YYYY-MM-DD').diff(moment(from_date, 'YYYY-MM-DD'), 'days');
     return daysDiff || 1;
 }
 

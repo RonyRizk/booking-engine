@@ -1,5 +1,5 @@
 import InfoDisplay from "@/components/InfoDisplay";
-import { format } from "date-fns";
+import moment from "moment";
 import { formatAmount, formatTime } from "@/lib/utils";
 
 export default function PickupInformation({ booking, locales, mode, selectedDocument }) {
@@ -14,10 +14,7 @@ export default function PickupInformation({ booking, locales, mode, selectedDocu
                 <div className="flex items-center gap-1.5 sm:gap-4 flex-wrap ">
                     <InfoDisplay
                         label={`${locales?.Lcz_ArrivalDate}:`}
-                        value={format(
-                            new Date(booking?.pickup_info.date),
-                            "eeee, dd MMM yyyy"
-                        )}
+                        value={moment(booking?.pickup_info.date).locale("en").format("dddd, DD MMM YYYY")}
                     />
                     <InfoDisplay
                         label={`${locales?.Lcz_ArrivalTime}:`}

@@ -1,5 +1,5 @@
 import { calculateDaysBetweenDates, cn, formatAmount, isAgentMode } from "@/lib/utils";
-import { format, parse } from "date-fns";
+import moment from "moment";
 import InfoDisplay from "@/components/InfoDisplay";
 import CreditCardInfo from "@/components/printing/CreditCardInfo";
 import {
@@ -188,7 +188,7 @@ const TX_TYPE_LABELS = {
 function formatCLDate(dateStr) {
   if (!dateStr) return "—";
   try {
-    return format(parse(dateStr, "yyyy-MM-dd", new Date()), "dd MMM yyyy");
+    return moment(dateStr, "YYYY-MM-DD").locale("en").format("DD MMM YYYY");
   } catch {
     return dateStr;
   }
