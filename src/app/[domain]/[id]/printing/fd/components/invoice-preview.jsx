@@ -39,7 +39,7 @@ function BookingFiscalTable({ booking, currencySymbol, invertAmounts = false, it
   const rooms = (booking?.rooms ?? []).filter((room) => !itemKeys || inScope(room.system_id));
 
   // Pickup (booking-level)
-  const pickup = booking?.pickup_info ?? null;
+  const pickup = booking?.pickup_info ? itemKeys.has(booking?.pickup_info?.system_id) ? booking?.pickup_info : null : null;
 
   // Extra services scoped by service.system_id
   const extras = (booking?.extra_services ?? []).filter(
@@ -407,6 +407,7 @@ export function InvoicePreview({
   const itemKeys = new Set(
     selectedDocument ? selectedDocument.items.map((i) => i.key) : [],
   );
+  console.log(selectedDocument.items)
 
   return (
     <PrintDocument>
