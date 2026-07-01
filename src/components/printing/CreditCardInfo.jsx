@@ -19,17 +19,17 @@ export default async function CreditCardInfo({ booking, printingService }) {
         );
     }
 
-    try {
-        const url = await printingService.getPCICardInfoURL(booking.booking_nbr);
-        if (url) {
-            return (<section className="border-b pb-2.5">
-                <p className="text-lg font-semibold mb-4 text-gray-900">Card Details</p>
-                <iframe src={url} width="100%" className="h-60" title="Secure card details" />
-            </section>)
-        }
-    } catch (error) {
-        console.error(error);
-    }
+    // try {
+    //     const url = await printingService.getPCICardInfoURL(booking.booking_nbr);
+    //     if (url) {
+    //         return (<section className="border-b pb-2.5">
+    //             <p className="text-lg font-semibold mb-4 text-gray-900">Card Details</p>
+    //             <iframe src={url} width="100%" className="h-60" title="Secure card details" />
+    //         </section>)
+    //     }
+    // } catch (error) {
+    //     console.error(error);
+    // }
 
     const { ota_guarante: ota } = booking;
     if (!ota) {
