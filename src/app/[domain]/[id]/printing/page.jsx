@@ -80,6 +80,7 @@ export default async function Printing({ searchParams, params }) {
         selectedDocument={selectedDocument}
         documentId={documentId}
         receiptNumber={rnb}
+        pid={pid}
         guestCountryName={guestCountryName}
         totalPersons={totalPersons}
         printingService={printingService}

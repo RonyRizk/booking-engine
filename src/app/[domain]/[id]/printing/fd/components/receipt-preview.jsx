@@ -50,6 +50,7 @@ export function ReceiptPreview({ booking, property, documentNumber, pid, setupTa
         selectedDocument={null}
         documentId={documentNumber}
         receiptNumber={rnb}
+        pid={pid}
         guestCountryName={guestCountryName}
         totalPersons={totalPersons}
         printingService={printingService}

@@ -23,6 +23,7 @@
 import { redirect } from "next/navigation";
 import "../cl/cl-printing.css";
 import { CreditNotePreview } from "./components/credit-note-preview";
+import { CreditReceiptPreview } from "./components/credit-receipt-preview";
 import { InvoicePreview, ProformaPreview } from "./components/invoice-preview";
 import { ReceiptPreview } from "./components/receipt-preview";
 import { BookingService } from "@/lib/services/booking.service";
@@ -88,7 +89,7 @@ export default async function FiscalDocumentsPage({ params, searchParams }) {
             }),
             bookingService.getBedPreference(),
             commonService.getSetupEntriesByTBLNameMulti(['_PAY_TYPE', '_PAY_TYPE_GROUP', '_PAY_METHOD', "_SVC_CATEGORY"], 'en'),
-            (mode && ["invoice", "creditnote", "creditreceipt"].includes(mode?.toLowerCase()?.trim())) ? bookingService.getBookingInvoiceInfo({ booking_nbr }) : Promise.resolve(null),
+            (mode && ["invoice", "creditnote"].includes(mode?.toLowerCase()?.trim())) ? bookingService.getBookingInvoiceInfo({ booking_nbr }) : Promise.resolve(null),
             commonService.getCountries(lang),
             commonService.fetchLanguage(lang, ["_PRINT_FRONT", "_PMS_FRONT"]),
         ]);
@@ -131,8 +132,11 @@ export default async function FiscalDocumentsPage({ params, searchParams }) {
             {normalizedMode === "invoice" && <InvoicePreview {...sharedProps} />}
             {normalizedMode === "printing" && <BookingPreview {...sharedProps} />}
             {normalizedMode === "receipt" && <ReceiptPreview {...sharedProps} />}
-            {(normalizedMode === "creditnote" || normalizedMode === "creditreceipt") && (
+            {normalizedMode === "creditnote" && (
                 <CreditNotePreview {...sharedProps} />
+            )}
+            {normalizedMode === "creditreceipt" && (
+                <CreditReceiptPreview {...sharedProps} />
             )}
             {normalizedMode === "proforma" && (
                 <ProformaPreview {...sharedProps} ids={proformaIds} billTo={bill_to} />

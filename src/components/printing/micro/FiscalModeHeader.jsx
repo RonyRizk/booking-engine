@@ -18,6 +18,7 @@ export default function FiscalModeHeader({
     className,
     privateNote,
     selectedDocument,
+    pid,
 }) {
     return (
         <header className={cn("p-4 sm:px-6 lg:px-8 text-gray-800 text-sm max-w-4xl mx-auto", className)}>
@@ -30,6 +31,7 @@ export default function FiscalModeHeader({
                         documentId={documentId}
                         mode={mode}
                         booking={booking}
+                        pid={pid}
                     />
                     <GuestInformation
                         booking={booking}

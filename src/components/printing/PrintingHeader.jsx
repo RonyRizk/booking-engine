@@ -7,7 +7,7 @@ import PropertyInfo from "./PropertyInfo";
 import PrintInfo from "./PrintInfo";
 import GuestInformation from "./GuestInformation";
 
-export default function PrintingHeader({ booking, property, locales, documentId, receiptNumber, mode, guestCountryName, totalPersons, printingService, className, privateNote, selectedDocument }) {
+export default function PrintingHeader({ booking, property, locales, documentId, receiptNumber, mode, guestCountryName, totalPersons, printingService, className, privateNote, selectedDocument, pid }) {
     if (["receipt", "invoice", "creditnote", "creditreceipt", "proforma"].includes(mode.toLowerCase().toString())) {
         const getTitle = () => {
             switch (mode) {
@@ -30,7 +30,7 @@ export default function PrintingHeader({ booking, property, locales, documentId,
                 <h3 className="text-3xl font-bold mb-4">{getTitle()}</h3>
                 <nav className="flex gap-4 flex-col-reverse sm:flex-row sm:justify-between sm:w-full">
                     <div className="space-y-4">
-                        <PrintInfo selectedDocument={selectedDocument} receiptNumber={receiptNumber} documentId={documentId} mode={mode} booking={booking} />
+                        <PrintInfo selectedDocument={selectedDocument} receiptNumber={receiptNumber} documentId={documentId} mode={mode} booking={booking} pid={pid} />
                         <GuestInformation
                             booking={booking}
                             selectedDocument={selectedDocument}
