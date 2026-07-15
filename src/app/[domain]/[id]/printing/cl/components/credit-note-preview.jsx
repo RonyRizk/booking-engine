@@ -1,7 +1,7 @@
 import { formatAmount } from '@/lib/utils';
 import { DocumentHeader } from './document-header';
-import { FiscalDocumentFooter } from './fiscal-document-footer';
-import { PrintDocument } from './print-document';
+import { FiscalDocumentFooter } from '../../shared/fiscal-document-footer';
+import { PrintDocument } from '../../shared/print-document';
 import {
   PrintTable,
   PrintTableBody,
@@ -9,7 +9,7 @@ import {
   PrintTableHead,
   PrintTableHeaderCell,
   PrintTableRow,
-} from './print-table';
+} from '../../shared/print-table';
 
 export function CreditNotePreview({ property, document, documentNumber, agent, documentType = 'creditnote' }) {
   const currency = property?.currency?.symbol ?? document?.CURRENCY_CODE ?? '$';
@@ -53,7 +53,7 @@ export function CreditNotePreview({ property, document, documentNumber, agent, d
                   <PrintTableCell muted nowrap className="border-r">
                     {document.ISSUE_DATE_DISPLAY ?? document.ISSUE_DATE ?? '—'}
                   </PrintTableCell>
-                  <PrintTableCell className="w-full border-r whitespace-normal break-words text-[0.8rem]">
+                  <PrintTableCell className="w-full border-r whitespace-normal break-words">
                     {document.FD_TYPE_NAME ?? fallbackLabel}
                   </PrintTableCell>
                   {documentType !== "creditreceipt" && <>
@@ -72,16 +72,16 @@ export function CreditNotePreview({ property, document, documentNumber, agent, d
                   <PrintTableCell />
                   {documentType !== "creditreceipt" && <>
                     <PrintTableCell numeric className="py-4" >
-                      <p className="text-[0.8rem] font-bold text-slate-900">{fmt(net)}</p>
+                      <p className="text-sm font-bold text-slate-900">{fmt(net)}</p>
                       <p className="text-[0.65rem] uppercase tracking-wide text-slate-600 font-medium mt-0.5">Net Price</p>
                     </PrintTableCell>
                     <PrintTableCell numeric className="py-4 border-x border-x-slate-200" colSpan={2}>
-                      <p className="text-[0.8rem] font-bold text-slate-900">{fmt(vatAmt)}</p>
+                      <p className="text-sm font-bold text-slate-900">{fmt(vatAmt)}</p>
                       <p className="text-[0.65rem] uppercase tracking-wide text-slate-600 font-medium mt-0.5">Taxes</p>
                     </PrintTableCell>
                   </>}
                   <PrintTableCell numeric className="py-4" >
-                    <p className="text-[0.85rem] font-bold text-slate-900">{fmt(total)}</p>
+                    <p className="text-[0.9rem] font-bold text-slate-900">{fmt(total)}</p>
                     <p className="text-[0.65rem] uppercase tracking-wide text-slate-600 font-medium mt-0.5">Total Credit</p>
                   </PrintTableCell>
                 </PrintTableRow>

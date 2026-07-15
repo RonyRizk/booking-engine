@@ -7,7 +7,7 @@ import { CreditNotePreview } from "./components/credit-note-preview";
 import { DebitNotePreview } from "./components/debit-note-preview";
 import { StatementPreview } from "./components/statement-preview";
 import { ProformaPreview } from "./components/proforma-preview";
-import "./cl-printing.css";
+import "../shared/fiscal-printing.css";
 import { CommonServices } from "@/lib/services/common.service";
 import { ClTxTypeCode, FdTypes } from "@/lib/enums";
 import { convertBookingToCL } from "./utils/booking-to-cl";

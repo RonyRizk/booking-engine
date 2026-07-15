@@ -6,9 +6,9 @@
  */
 
 import { formatAmount } from '@/lib/utils';
-import { PrintDocument } from '../../cl/components/print-document';
-import { ReceiptRow, ReceiptSection } from '../../cl/components/receipt-preview';
-import { FiscalDocumentFooter } from '../../cl/components/fiscal-document-footer';
+import { PrintDocument } from '../../shared/print-document';
+import { ReceiptRow, ReceiptSection } from '../../shared/receipt-blocks';
+import { FiscalDocumentFooter } from '../../shared/fiscal-document-footer';
 import PrintingHeader from '@/components/printing/PrintingHeader';
 
 // ─── ReceiptPreview ───────────────────────────────────────────────────────────
@@ -23,7 +23,7 @@ import PrintingHeader from '@/components/printing/PrintingHeader';
  * @param {string}  [props.pid]            - Payment system_id to look up the specific payment.
  * @param {object}  [props.setupTables]    - Setup tables for payment method resolution.
  */
-export function ReceiptPreview({ booking, property, documentNumber, pid, setupTables, mode, locales, guestCountryName, totalPersons, printingService, privateNote, rnb }) {
+export function ReceiptPreview({ booking, property, documentNumber, pid, setupTables, mode, locales, guestCountryName, totalPersons, printingService, privateNote }) {
   const currencySymbol = property?.currency?.symbol ?? booking?.currency?.symbol ?? '$';
   const fmt = (v, sym) => (v != null ? formatAmount(v, sym ?? currencySymbol) : '—');
   const guestName = [booking?.guest?.first_name, booking?.guest?.last_name].filter(Boolean).join(' ');
@@ -49,7 +49,7 @@ export function ReceiptPreview({ booking, property, documentNumber, pid, setupTa
         className="p-0 sm:px-0 pb-8 w-full lg:px-0 max-w-full print:m-0 print:px-0"
         selectedDocument={null}
         documentId={documentNumber}
-        receiptNumber={rnb}
+        receiptNumber={documentNumber}
         pid={pid}
         guestCountryName={guestCountryName}
         totalPersons={totalPersons}

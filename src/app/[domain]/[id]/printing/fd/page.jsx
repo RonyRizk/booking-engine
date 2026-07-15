@@ -9,19 +9,22 @@
  *   - receipt       — payment receipt
  *   - creditnote    — credit note (negated amounts, references original invoice)
  *   - creditreceipt — credit receipt (negated amounts, references original receipt)
+ *   - refund        — credit receipt for a standalone refund payment (no receipt
+ *                     number, not linked to an original payment); same UI as
+ *                     creditreceipt
  *
  * @param {object} props
  * @param {object} props.params                    - Next.js route segments.
  * @param {string} props.params.id                 - Property aname used to resolve the property.
  * @param {object} props.searchParams              - URL search parameters.
- * @param {("invoice"|"receipt"|"creditnote"|"creditreceipt"|"printing","proforma")} props.searchParams.mode - Document mode (required).
+ * @param {("invoice"|"receipt"|"creditnote"|"creditreceipt"|"refund"|"printing"|"proforma")} props.searchParams.mode - Document mode (required).
  * @param {string} props.searchParams.bookingNbr   - Booking number (required).
  * @param {string} [props.searchParams.docNo]      - Document number shown in the header.
  * @param {string} [props.searchParams.lang="en"]  - Language code for localised values.
  */
 
 import { redirect } from "next/navigation";
-import "../cl/cl-printing.css";
+import "../shared/fiscal-printing.css";
 import { CreditNotePreview } from "./components/credit-note-preview";
 import { CreditReceiptPreview } from "./components/credit-receipt-preview";
 import { InvoicePreview, ProformaPreview } from "./components/invoice-preview";
@@ -33,7 +36,7 @@ import BookingPreview from "./components/booking-preview";
 import { CityLedgerService } from "@/lib/services/city-ledger.service";
 
 const DEFAULT_BASE_URL = "https://gateway.igloorooms.com/IR";
-const VALID_MODES = new Set(["invoice", "receipt", "creditnote", "creditreceipt", "printing", "proforma"]);
+const VALID_MODES = new Set(["invoice", "receipt", "creditnote", "creditreceipt", "refund", "printing", "proforma"]);
 const FALLBACK_URL = "https://x.igloorooms.com/manage/acbookinglist.aspx";
 
 export default async function FiscalDocumentsPage({ params, searchParams }) {
@@ -44,7 +47,6 @@ export default async function FiscalDocumentsPage({ params, searchParams }) {
         lang = "en",
         token,
         pid,
-        rnb,
         ids,
         bill_to,
     } = searchParams;
@@ -112,7 +114,7 @@ export default async function FiscalDocumentsPage({ params, searchParams }) {
         redirect(FALLBACK_URL);
     }
     if (normalizedMode === "receipt") {
-        printingService.checkReceipt({ booking, receiptNumber: rnb, paymentId: pid })
+        printingService.checkReceipt({ booking, receiptNumber: documentNumber, paymentId: pid })
     }
     const locales = localesRaw?.entries;
     const totalPersons = printingService.calculateTotalPersons(booking);
@@ -124,7 +126,7 @@ export default async function FiscalDocumentsPage({ params, searchParams }) {
     const sharedProps = {
         booking, property, documentNumber, invoiceInfo, setupTables,
         locales, guestCountryName, totalPersons, printingService, privateNote,
-        mode: normalizedMode, pid, rnb, agent, clTransactions, bedPreferences
+        mode: normalizedMode, pid, agent, clTransactions, bedPreferences
     };
 
     return (
@@ -136,6 +138,9 @@ export default async function FiscalDocumentsPage({ params, searchParams }) {
                 <CreditNotePreview {...sharedProps} />
             )}
             {normalizedMode === "creditreceipt" && (
+                <CreditReceiptPreview {...sharedProps} />
+            )}
+            {normalizedMode === "refund" && (
                 <CreditReceiptPreview {...sharedProps} />
             )}
             {normalizedMode === "proforma" && (

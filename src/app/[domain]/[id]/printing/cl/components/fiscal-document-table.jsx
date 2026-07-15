@@ -19,7 +19,7 @@ import {
   PrintTableHead,
   PrintTableHeaderCell,
   PrintTableRow,
-} from "./print-table";
+} from "../../shared/print-table";
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -83,7 +83,7 @@ export function FiscalDocumentTable({
         )}>
           {formatEntryDate(tx.SERVICE_DATE)}
         </PrintTableCell>
-        <PrintTableCell className={cn("w-full border-r whitespace-normal break-words text-[0.8rem]", { "border-b-black": isLast })}>
+        <PrintTableCell className={cn("w-full border-r whitespace-normal break-words", { "border-b-black": isLast })}>
           {tx.DESCRIPTION}
         </PrintTableCell>
         <PrintTableCell numeric bold className={cn("border-r",
@@ -132,12 +132,12 @@ export function FiscalDocumentTable({
             colSpan={withCityTax ? 8 : 6}
             className="py-1.5"
           >
-            <span className="text-[0.75rem] font-semibold text-slate-700">
+            <span className="text-[0.8rem] font-semibold text-slate-700">
               {roomName} - {group.GUEST_FIRST_NAME} {group.GUEST_LAST_NAME} (
               {group.occupancy} pax)
             </span>
             <span className="mx-3 text-slate-300">|</span>
-            <span className="text-[0.75rem] text-slate-600">
+            <span className="text-[0.8rem] text-slate-600">
               {formatEntryDate(group.FROM_DATE)} –{" "}
               {formatEntryDate(group.TO_DATE)}
             </span>
@@ -164,7 +164,7 @@ export function FiscalDocumentTable({
             <PrintTableCell
               colSpan={withCityTax ? 8 : 6}
               bold
-              className="py-2 px-3 text-[0.8rem]  text-slate-700"
+              className="py-2 px-3 text-slate-700"
             >
               Booking #{group.BOOK_NBR}
             </PrintTableCell>
@@ -221,7 +221,7 @@ export function FiscalDocumentTable({
         <PrintTableCell />
         <PrintTableCell />
         <PrintTableCell numeric className="py-4">
-          <p className="text-[0.8rem] font-bold text-slate-900">
+          <p className="text-sm font-bold text-slate-900">
             {money(totals.net)}
           </p>
           <p className="text-[0.65rem] uppercase tracking-wide text-slate-600 font-medium mt-0.5">
@@ -235,7 +235,7 @@ export function FiscalDocumentTable({
           className="py-4 border-x  border-x-slate-200"
           colSpan={2}
         >
-          <p className="text-[0.8rem] font-bold text-slate-900">
+          <p className="text-sm font-bold text-slate-900">
             {money(totals.tax)}
           </p>
           <p className="text-[0.65rem] uppercase tracking-wide text-slate-600 font-medium mt-0.5">
@@ -249,7 +249,7 @@ export function FiscalDocumentTable({
           </>
         )}
         <PrintTableCell numeric className="py-4">
-          <p className="text-[0.85rem] font-bold text-slate-900">
+          <p className="text-[0.9rem] font-bold text-slate-900">
             {money(totals.total)}
           </p>
           <p className="text-[0.65rem] uppercase tracking-wide text-slate-600 font-medium mt-0.5">

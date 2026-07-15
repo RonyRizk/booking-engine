@@ -1,6 +1,6 @@
 import React from 'react'
-import { PrintDocument } from '../cl/components/print-document'
-import { FiscalDocumentFooter } from '../cl/components/fiscal-document-footer'
+import { PrintDocument } from '../shared/print-document'
+import { FiscalDocumentFooter } from '../shared/fiscal-document-footer'
 
 export default function InvoicePreview({ booking, property }) {
     return (

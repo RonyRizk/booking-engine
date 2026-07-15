@@ -12,7 +12,7 @@ import PaymentInformation from "../../../../components/printing/PaymentInformati
 // import ChannelServices from "../../../../components/printing/ChannelServices";
 import ExtraServices from "../../../../components/printing/ExtraServices";
 import { errorLogger } from "@/logger";
-import { FiscalDocumentFooter } from "./cl/components/fiscal-document-footer";
+import { FiscalDocumentFooter } from "./shared/fiscal-document-footer";
 /**
  * Printing page for booking confirmation/invoice documents.
  *

@@ -1,8 +1,8 @@
 import moment from "moment";
 import { formatAmount } from "@/lib/utils";
-import { FiscalDocumentFooter } from "../../cl/components/fiscal-document-footer";
-import { PrintDocument } from "../../cl/components/print-document";
-import { ReceiptRow, ReceiptSection } from "../../cl/components/receipt-preview";
+import { FiscalDocumentFooter } from "../../shared/fiscal-document-footer";
+import { PrintDocument } from "../../shared/print-document";
+import { ReceiptRow, ReceiptSection } from "../../shared/receipt-blocks";
 import {
   PrintTable,
   PrintTableBody,
@@ -10,7 +10,7 @@ import {
   PrintTableHead,
   PrintTableHeaderCell,
   PrintTableRow,
-} from "../../cl/components/print-table";
+} from "../../shared/print-table";
 import PrintingHeader from "@/components/printing/PrintingHeader";
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -85,7 +85,7 @@ function BookingFiscalTable({ booking, currencySymbol, invertAmounts = false, it
         <PrintTableCell muted nowrap indent={indent ?? 0} className="border-r">
           {fmtDate(date)}
         </PrintTableCell>
-        <PrintTableCell className="w-full border-r whitespace-normal break-words text-[0.8rem]">
+        <PrintTableCell className="w-full border-r whitespace-normal break-words">
           {description}
         </PrintTableCell>
         <PrintTableCell numeric bold className="border-r">
@@ -134,13 +134,13 @@ function BookingFiscalTable({ booking, currencySymbol, invertAmounts = false, it
       <>
         <PrintTableRow variant="unit">
           <PrintTableCell indent={0} colSpan={colSpan} className="py-1.5 text-slate-700">
-            <span className="text-[0.75rem] font-semibold ">
+            <span className="text-[0.8rem] font-semibold ">
               {unitName}
               {guestName ? ` - ${guestName}` : ""}
               {totalGuests > 0 && <span> ({totalGuests} pax)</span>}
             </span>
             <span className="mx-3 text-slate-300">|</span>
-            <span className="text-[0.75rem] ">
+            <span className="text-[0.8rem] ">
               {fmtDate(room.from_date)} – {fmtDate(room.to_date)}
               {nightCount > 0 && (
                 <span className="ml-2 ">
@@ -183,7 +183,7 @@ function BookingFiscalTable({ booking, currencySymbol, invertAmounts = false, it
         <PrintTableCell muted nowrap indent={0} className="border-r">
           {fmtDate(cancellationPenalty.date)}
         </PrintTableCell>
-        <PrintTableCell className="w-full border-r whitespace-normal break-words text-[0.8rem]">
+        <PrintTableCell className="w-full border-r whitespace-normal break-words">
           Cancellation Penalty
         </PrintTableCell>
         <PrintTableCell numeric bold className="border-r">
@@ -210,27 +210,27 @@ function BookingFiscalTable({ booking, currencySymbol, invertAmounts = false, it
         <PrintTableCell />
         <PrintTableCell />
         <PrintTableCell numeric className="py-4">
-          <p className="text-[0.8rem] font-bold text-slate-900">{money(grandNet)}</p>
+          <p className="text-sm font-bold text-slate-900">{money(grandNet)}</p>
           <p className="text-[0.65rem] uppercase tracking-wide text-slate-600 font-medium mt-0.5">
             Net Price
           </p>
         </PrintTableCell>
         <PrintTableCell numeric className="py-4 border-x border-x-slate-200" colSpan={2}>
-          <p className="text-[0.8rem] font-bold text-slate-900">{money(grandVat)}</p>
+          <p className="text-sm font-bold text-slate-900">{money(grandVat)}</p>
           <p className="text-[0.65rem] uppercase tracking-wide text-slate-600 font-medium mt-0.5">
             VAT
           </p>
         </PrintTableCell>
         {withCityTax && (
           <PrintTableCell numeric className="py-4 border-r border-r-slate-200" colSpan={2}>
-            <p className="text-[0.8rem] font-bold text-slate-900">{money(grandCityTax)}</p>
+            <p className="text-sm font-bold text-slate-900">{money(grandCityTax)}</p>
             <p className="text-[0.65rem] uppercase tracking-wide text-slate-600 font-medium mt-0.5">
               City Tax
             </p>
           </PrintTableCell>
         )}
         <PrintTableCell numeric className="py-4">
-          <p className="text-[0.85rem] font-bold text-slate-900">{money(grandTotal)}</p>
+          <p className="text-[0.9rem] font-bold text-slate-900">{money(grandTotal)}</p>
           <p className="text-[0.65rem] uppercase tracking-wide text-slate-600 font-medium mt-0.5">
             Total Due
           </p>

@@ -2,19 +2,18 @@
 
 ## `/printing/fd` — Booking Fiscal Document For Guest folio
 
-Modes: `invoice` · `receipt` · `creditnote` · `creditreceipt` · `printing` · `proforma`
+Modes: `invoice` · `receipt` · `creditnote` · `creditreceipt` · `refund` · `printing` · `proforma`
 
-| Param        | Required | Description                                                 |
-| ------------ | -------- | ----------------------------------------------------------- |
-| `mode`       | yes      | Document mode (see list above)                              |
-| `id`         | yes      | Booking number                                              |
-| `token`      | yes      | Auth token                                                  |
-| `documentId` | no       | Document number shown in header                             |
-| `lang`       | no       | Language code (default: `en`)                               |
-| `pid`        | no       | Payment `system_id` — used for `receipt`, `creditreceipt`   |
-| `rnb`        | no       | Receipt number — used for `receipt`                         |
-| `ids`        | no       | List of `system_id` separated by `-` — used for `proforma`  |
-| `bill_to`    | no       | `company` or `empty` or `custom name` - used for `proforma` |
+| Param        | Required | Description                                                         |
+| ------------ | -------- | ------------------------------------------------------------------- |
+| `mode`       | yes      | Document mode (see list above)                                      |
+| `id`         | yes      | Booking number                                                      |
+| `token`      | yes      | Auth token                                                          |
+| `documentId` | no       | Document number shown in header                                     |
+| `lang`       | no       | Language code (default: `en`)                                       |
+| `pid`        | no       | Payment `system_id` — used for `receipt`, `creditreceipt`, `refund` |
+| `ids`        | no       | List of `system_id` separated by `-` — used for `proforma`          |
+| `bill_to`    | no       | `company` or `empty` or `custom name` - used for `proforma`         |
 
 **Invoice**
 
@@ -49,13 +48,19 @@ http://localhost:5863/a35/printing/fd?id={bookingNbr}&documentId={invoiceNbr}&mo
 **Credit Receipt**
 
 ```
-http://localhost:5863/a35/printing/fd?id={bookingNbr}&pid={pid}&rnb={rnb}&mode=creditreceipt&token={token}
+http://localhost:5863/a35/printing/fd?id={bookingNbr}&pid={pid}&documentId={creditReceiptNumber}&mode=creditreceipt&token={token}
 ```
 
 **Receipt**
 
 ```
-http://localhost:5863/a35/printing/fd?id={bookingNbr}&pid={pid}&rnb={rnb}&mode=receipt&token={token}
+http://localhost:5863/a35/printing/fd?id={bookingNbr}&pid={pid}&documentId={receiptNumber}&mode=receipt&token={token}
+```
+
+**Refund**
+
+```
+http://localhost:5863/a35/printing/fd?id={bookingNbr}&pid={pid}&documentId={receiptNumber}&mode=refund&token={token}
 ```
 
 **Printing**

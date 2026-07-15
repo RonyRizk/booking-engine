@@ -4,7 +4,7 @@ import moment from 'moment'
 
 
 export default function PrintInfo({ booking, mode, receiptNumber, documentId, selectedDocument, pid }) {
-    const payment = ["receipt", "creditreceipt"].includes(mode) ? booking?.financial?.payments?.find(
+    const payment = ["receipt", "creditreceipt", "refund"].includes(mode) ? booking?.financial?.payments?.find(
         (p) => p.system_id?.toString() === pid?.toString()
     ) : null
     const originalPayment = payment && mode === "creditreceipt" ? booking?.financial?.payments?.find(
@@ -25,7 +25,8 @@ export default function PrintInfo({ booking, mode, receiptNumber, documentId, se
     const getDocDate = () => {
         switch (mode) {
             case "receipt":
-            case "creditreceipt": {
+            case "creditreceipt":
+            case "refund": {
 
                 return payment?.date ? formatDate(moment(payment.date)) : null;
             }
@@ -42,9 +43,9 @@ export default function PrintInfo({ booking, mode, receiptNumber, documentId, se
                 <InfoDisplay className={""} label={"Credit note no.:"} value={selectedDocument?.credit_note?.nbr} />
                 <i><InfoDisplay className={""} label={"For original invoice no.:"} value={documentId} /></i>
             </>}
-            {mode === "creditreceipt" && <>
+            {["creditreceipt", "refund"].includes(mode) && <>
                 <InfoDisplay className={""} label={"Credit receipt no.:"} value={payment?.credit_receipt_nbr} />
-                <i><InfoDisplay className={""} label={"For original receipt no.:"} value={originalPayment?.receipt_nbr} /></i>
+                {mode === "creditreceipt" && <i><InfoDisplay className={""} label={"For original receipt no.:"} value={originalPayment?.receipt_nbr} /></i>}
             </>}
             {mode === "receipt" && <InfoDisplay className={""} label={"Receipt no.:"} value={receiptNumber} />}
 

@@ -1,32 +1,8 @@
 import { formatAmount } from '@/lib/utils';
 import { DocumentHeader } from './document-header';
-import { PrintDocument } from './print-document';
-import { FiscalDocumentFooter } from './fiscal-document-footer';
-
-// ─── Receipt layout sub-components ───────────────────────────────────────────
-// Exported so they can be reused in other print documents with a similar layout.
-
-export function ReceiptSection({ title, children }) {
-  return (
-    <section>
-      <h4 className="text-slate-800 font-bold text-base border-b border-slate-200 pb-1.5 mb-3">
-        {title}
-      </h4>
-      <div className="flex flex-col gap-2">{children}</div>
-    </section>
-  );
-}
-
-export function ReceiptRow({ label, value }) {
-  return (
-    <div className="flex text-sm gap-1">
-      <span className="text-slate-600 ">
-        {label}:
-      </span>
-      <span className="text-slate-900 font-medium text-right">{value ?? '—'}</span>
-    </div>
-  );
-}
+import { PrintDocument } from '../../shared/print-document';
+import { FiscalDocumentFooter } from '../../shared/fiscal-document-footer';
+import { ReceiptRow, ReceiptSection } from '../../shared/receipt-blocks';
 
 // ─── ReceiptPreview ───────────────────────────────────────────────────────────
 

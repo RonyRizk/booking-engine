@@ -5,12 +5,16 @@
  * a single-row table with Date · Description · Total and no tax breakdown.
  * Amounts are negated (a credit reverses the original receipt). The data is
  * sourced from the booking payment matched by the `pid` (payment system_id).
+ *
+ * Also rendered for the "refund" mode: a standalone refund payment printed as
+ * a credit receipt, except no receipt number is shown and it is not linked to
+ * an original payment (handled by `mode` inside PrintInfo).
  */
 
 import moment from 'moment';
 import { formatAmount } from '@/lib/utils';
-import { PrintDocument } from '../../cl/components/print-document';
-import { FiscalDocumentFooter } from '../../cl/components/fiscal-document-footer';
+import { PrintDocument } from '../../shared/print-document';
+import { FiscalDocumentFooter } from '../../shared/fiscal-document-footer';
 import {
   PrintTable,
   PrintTableBody,
@@ -18,7 +22,7 @@ import {
   PrintTableHead,
   PrintTableHeaderCell,
   PrintTableRow,
-} from '../../cl/components/print-table';
+} from '../../shared/print-table';
 import PrintingHeader from '@/components/printing/PrintingHeader';
 
 function fmtDate(dateStr) {
@@ -49,7 +53,6 @@ function getPaymentDescription(setupTables, payment) {
  * @param {object}  props.property         - Property from Get_Exposed_Property.
  * @param {string}  [props.documentNumber] - Document number shown in the header.
  * @param {string}  [props.pid]            - Payment system_id to look up the credited payment.
- * @param {string}  [props.rnb]            - Receipt number shown in the header.
  * @param {object}  [props.setupTables]    - Setup tables for payment method resolution.
  */
 export function CreditReceiptPreview({
@@ -57,7 +60,6 @@ export function CreditReceiptPreview({
   property,
   documentNumber,
   pid,
-  rnb,
   setupTables,
   locales,
   guestCountryName,
@@ -74,7 +76,7 @@ export function CreditReceiptPreview({
   );
 
   const sym = payment?.currency?.symbol ?? currencySymbol;
-  const fmt = (v) => (v != null ? formatAmount(v * -1, sym) : '—');
+  const fmt = (v) => (v != null ? formatAmount(v, sym) : '—');
 
   const total = payment?.amount ?? 0;
 
@@ -84,7 +86,7 @@ export function CreditReceiptPreview({
         className="p-0 sm:px-0 pb-8 w-full lg:px-0 max-w-full print:m-0 print:px-0"
         selectedDocument={null}
         documentId={documentNumber}
-        receiptNumber={rnb}
+        receiptNumber={documentNumber}
         pid={pid}
         guestCountryName={guestCountryName}
         totalPersons={totalPersons}
@@ -112,7 +114,7 @@ export function CreditReceiptPreview({
                   <PrintTableCell muted nowrap className="border-r">
                     {fmtDate(payment.date)}
                   </PrintTableCell>
-                  <PrintTableCell className="w-full border-r whitespace-normal break-words text-[0.8rem]">
+                  <PrintTableCell className="w-full border-r whitespace-normal break-words">
                     Credit receipt
                   </PrintTableCell>
                   <PrintTableCell numeric bold>{fmt(total)}</PrintTableCell>
@@ -122,7 +124,7 @@ export function CreditReceiptPreview({
                   <PrintTableCell />
                   <PrintTableCell />
                   <PrintTableCell numeric className="py-4">
-                    <p className="text-[0.85rem] font-bold text-slate-900">{fmt(total)}</p>
+                    <p className="text-[0.9rem] font-bold text-slate-900">{fmt(total)}</p>
                     <p className="text-[0.65rem] uppercase tracking-wide text-slate-600 font-medium mt-0.5">
                       Total Credit
                     </p>

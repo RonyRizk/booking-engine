@@ -1,6 +1,6 @@
 import { formatAmount } from '@/lib/utils';
 import { DocumentHeader } from './document-header';
-import { PrintDocument, PrintDocumentState } from './print-document';
+import { PrintDocument, PrintDocumentState } from '../../shared/print-document';
 import {
   PrintTable,
   PrintTableBody,
@@ -8,8 +8,8 @@ import {
   PrintTableHead,
   PrintTableHeaderCell,
   PrintTableRow,
-} from './print-table';
-import { FiscalDocumentFooter } from './fiscal-document-footer';
+} from '../../shared/print-table';
+import { FiscalDocumentFooter } from '../../shared/fiscal-document-footer';
 import { FdTypes } from '@/lib/enums';
 import moment from 'moment';
 

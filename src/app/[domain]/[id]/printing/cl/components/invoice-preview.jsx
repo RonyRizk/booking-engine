@@ -1,7 +1,7 @@
 import { DocumentHeader } from './document-header';
-import { FiscalDocumentFooter } from './fiscal-document-footer';
+import { FiscalDocumentFooter } from '../../shared/fiscal-document-footer';
 import { FiscalDocumentTable } from './fiscal-document-table';
-import { PrintDocument } from './print-document';
+import { PrintDocument } from '../../shared/print-document';
 
 export function InvoicePreview({ property, isDraft, transactions, documentNumber, agent }) {
   return (
