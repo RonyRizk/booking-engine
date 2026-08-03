@@ -45,6 +45,37 @@ export class CommonServices extends Token {
         return data.My_Result
     }
 
+    /**
+     * @typedef {Object} AcExtraResult
+     * @property {number} AC_EXTRA_ID - Unique identifier for the AC extra entry.
+     * @property {number} AC_ID - Identifier of the associated AC.
+     * @property {string} ENTRY_DATE - Entry date in `YYYY-MM-DD` format.
+     * @property {number} ENTRY_USER_ID - Identifier of the user who created the entry.
+     * @property {string} EXTRA_KEY - Name of the extra setting.
+     * @property {string} EXTRA_VALUE - Stored value of the extra setting.
+     * @property {unknown|null} My_Ac - Associated AC data, when available.
+     * @property {unknown|null} My_Ac_extra_translation - Associated translation data, when available.
+     * @property {number} OWNER_ID - Identifier of the owner.
+     * @property {boolean|number|null} is_sync_ghs - Indicates whether the entry is synchronized with GHS.
+    */
+
+    /**
+     * Gets an extra setting associated with an AC.
+     *
+     * @param {Object} params - Request parameters.
+     * @param {number} params.AC_ID - Identifier of the AC.
+     * @param {string} params.EXTRA_KEY - Key of the extra setting to retrieve.
+     * @returns {Promise<AcExtraResult>} The AC extra setting data.
+     */
+    async getAcExtra({ AC_ID, EXTRA_KEY }) {
+        const data = await this.apiService.makePostRequest("/Get_Ac_extra", {
+            AC_ID,
+            EXTRA_KEY
+        });
+
+        return data.My_Result;
+    }
+
     async getExposedMpo() {
         const data = await this.apiService.makePostRequest(`/Get_Exposed_Mpo`, {});
         return data.My_Result

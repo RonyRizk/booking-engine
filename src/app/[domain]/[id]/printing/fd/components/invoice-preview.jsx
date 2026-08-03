@@ -295,7 +295,7 @@ function BookingFiscalTable({ booking, currencySymbol, invertAmounts = false, it
 // ─── BookingPaymentSection ────────────────────────────────────────────────────
 
 function BookingPaymentSection({ booking, selectedDocument, currencySymbol, invertAmounts, mode }) {
-  const financial = booking?.financial;
+  const guestFinancial = booking.guest_financial
   const symbol = booking?.currency?.symbol ?? currencySymbol;
   const isCreditReceipt = mode === "creditreceipt";
   const originalDocLabel = isCreditReceipt ? "Original receipt" : "Original invoice";
@@ -305,10 +305,10 @@ function BookingPaymentSection({ booking, selectedDocument, currencySymbol, inve
     <div className="mt-8 flex flex-col gap-6">
       {!invertAmounts && (
         <ReceiptSection title="Balance Summary">
-          <ReceiptRow label="Guest Balance" value={formatAmount(financial?.due_amount, symbol)} />
+          <ReceiptRow label="Guest Balance" value={formatAmount(guestFinancial?.due_amount, symbol)} />
           <ReceiptRow
             label="Guest Collected"
-            value={formatAmount((Number(financial?.collected) + Number(financial?.refunds)) ?? 0, symbol)}
+            value={formatAmount(guestFinancial.collected ?? 0, symbol)}
           />
         </ReceiptSection>
       )}
@@ -407,7 +407,11 @@ export function InvoicePreview({
   const itemKeys = new Set(
     selectedDocument ? selectedDocument.items.map((i) => i.key) : [],
   );
-  console.log(selectedDocument.items)
+  if (!selectedDocument) {
+    return <div>
+      Missing document {documentNumber}
+    </div>
+  }
 
   return (
     <PrintDocument>

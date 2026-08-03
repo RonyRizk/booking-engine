@@ -449,6 +449,12 @@ const _baseData = {
 }
 const preArrivalReminder = {
     ..._baseData,
+    accessCode: {
+        ALLOW_ACCESS_CODE: '1',
+        ACCESS_CODE_PREFIX: 'IG-',
+        ACCESS_CODE_SUFFIX: '-X',
+        ACCESS_CODE: '4',
+    },
 }
 const duringTheStayReminder = {
     ..._baseData,

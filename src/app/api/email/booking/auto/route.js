@@ -9,6 +9,32 @@ import { ApiError } from '@/lib/services/api.service';
 // Force dynamic rendering to prevent static generation errors
 export const dynamic = 'force-dynamic';
 
+const ACCESS_CODE_KEYS = ['ALLOW_ACCESS_CODE', 'ACCESS_CODE_PREFIX', 'ACCESS_CODE_SUFFIX', 'ACCESS_CODE'];
+
+/**
+ * Fetches the access code AC extras in parallel.
+ *
+ * A failing/missing key resolves to `null` so the email still renders without the section.
+ *
+ * @param {import('@/lib/services/common.service').CommonServices} commonService
+ * @param {number} AC_ID - Identifier of the AC (the property id).
+ * @returns {Promise<Record<string, string|null>|null>}
+ */
+async function getAccessCodeSettings(commonService, AC_ID) {
+    if (!AC_ID) {
+        return null;
+    }
+    const results = await Promise.all(
+        ACCESS_CODE_KEYS.map((EXTRA_KEY) =>
+            commonService.getAcExtra({ AC_ID, EXTRA_KEY }).catch(() => null)
+        )
+    );
+    return ACCESS_CODE_KEYS.reduce((acc, key, i) => {
+        const result = Array.isArray(results[i]) ? results[i][0] : results[i];
+        acc[key] = result?.EXTRA_VALUE ?? null;
+        return acc;
+    }, {});
+}
 
 export async function GET(req) {
     try {
@@ -28,6 +54,10 @@ export async function GET(req) {
             ], lang)
             ]
         );
+        const accessCode = mode === 'pre'
+            ? await getAccessCodeSettings(commonService, data.property?.id)
+            : null;
+
         let Component;
         let emailHTML;
 
@@ -35,7 +65,7 @@ export async function GET(req) {
             switch (mode) {
                 case "pre":
                     Component = (await import('@/emails/booking/AutoEmailPreArrival')).default;
-                    emailHTML = await render(<Component {...data} setupTables={tables} lang={lang} />);
+                    emailHTML = await render(<Component {...data} setupTables={tables} lang={lang} accessCode={accessCode} />);
                     return new Response(emailHTML);
 
                 case "post":

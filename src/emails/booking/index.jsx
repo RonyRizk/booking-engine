@@ -5,6 +5,7 @@ import EmailText from "../components/EmailText";
 import GuestServiceContactUs from "./cmp/GuestServiceContactUs";
 import BookingDetails from "./cmp/BookingDetails";
 import EmailFooter from "../components/EmailFooter";
+import { formatAmount } from "@/lib/utils";
 
 export default function BookingEmail({
     locales,
@@ -20,7 +21,15 @@ export default function BookingEmail({
     const prepaymentCode = booking.extras?.find(
         (e) => e.key === "payment_code"
     )?.value;
+    const totalCollected = booking?.guest_financial?.collected || 0
+    const dueAmount = booking?.guest_financial?.due_amount || 0
     const getPaymentMessage = () => {
+        if (totalCollected > 0) {
+            return `<div>
+                        <p>Paid: ${formatAmount(totalCollected, booking?.currency?.symbol)}</p>
+                        <p>Due: ${formatAmount(dueAmount, booking?.currency?.symbol)}</p>
+                    </div>`
+        }
         switch (prepaymentCode) {
             case "001":
                 return `<p>${locales?.Lcz_Payment_OfflineCreditCard}</p>`;
@@ -50,8 +59,10 @@ export default function BookingEmail({
                 );
             default:
                 return `<p>${locales?.Lcz_Payment_NotFullyPaid}</p>`;
+                ;
         }
     };
+
     return (
         <EmailContainer lang={lang} connectedMpo={property.mpo}>
             <BookingHeader
