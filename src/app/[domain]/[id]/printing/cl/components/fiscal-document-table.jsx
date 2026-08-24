@@ -147,7 +147,7 @@ export function FiscalDocumentTable({
           <TxRow
             isLast={idx === group.subRows.length - 1 && showLast}
             key={`tx-${tx.CL_TX_ID ?? idx}-2-${idx}`}
-            tx={{ ...tx, DESCRIPTION: description }}
+            tx={{ ...tx, DESCRIPTION: tx.DESCRIPTION || description }}
             indent={2}
             withCityTax={withCityTax}
           />
@@ -176,7 +176,7 @@ export function FiscalDocumentTable({
             return (
               <UnitGroup
                 showLast={isLast}
-                key={`unit-${item.PR_ID ?? i}`}
+                key={`unit-${item.BSA_REF ?? i}`}
                 group={item}
                 withCityTax={withCityTax}
               />

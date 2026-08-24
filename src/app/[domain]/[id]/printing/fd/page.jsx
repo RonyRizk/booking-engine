@@ -124,7 +124,7 @@ export default async function FiscalDocumentsPage({ params, searchParams }) {
     const proformaIds = ids ? ids.split("-") : null;
 
     const sharedProps = {
-        booking, property, documentNumber, invoiceInfo, setupTables,
+        booking: { ...booking, rooms: booking.rooms ?? [] }, property, documentNumber, invoiceInfo, setupTables,
         locales, guestCountryName, totalPersons, printingService, privateNote,
         mode: normalizedMode, pid, agent, clTransactions, bedPreferences
     };

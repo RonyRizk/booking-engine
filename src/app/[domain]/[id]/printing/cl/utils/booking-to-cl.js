@@ -6,6 +6,10 @@
  *   - Room days: matched by BSA_REF (= room.identifier) + SERVICE_DATE
  *   - Extras / pickup: matched by REL_ENTITY_KEY (= system_id)
  *
+ * BSA_REF is also the grouping key used by groupData: room days carry their
+ * room.identifier and extras carry the identifier of the room they were sold
+ * against (service.room_identifier), so both render under the same room.
+ *
  * Only items whose agent.id matches agentId are included.
  */
 
@@ -54,6 +58,7 @@ export function convertBookingToCL({ booking, agentId, clTxs, setupEntries }) {
       transactions.push({
         BOOK_NBR: booking.booking_nbr,
         AGENCY_ID: agentId,
+        BSA_REF: room.identifier ?? null,
         PR_ID: room.unit?.id ?? null,
         ROOM_CATEGORY_ID: room.roomtype?.id ?? 0,
         ROOM_TYPE_ID: room.roomtype?.id ?? 0,
@@ -80,6 +85,7 @@ export function convertBookingToCL({ booking, agentId, clTxs, setupEntries }) {
     transactions.push({
       BOOK_NBR: booking.booking_nbr,
       AGENCY_ID: agentId,
+      BSA_REF: service.room_identifier ?? null,
       PR_ID: null,
       ROOM_CATEGORY_ID: null,
       ROOM_TYPE_ID: null,
@@ -87,7 +93,7 @@ export function convertBookingToCL({ booking, agentId, clTxs, setupEntries }) {
       SERVICE_DATE: service.start_date,
       FROM_DATE: service.start_date,
       TO_DATE: service.end_date,
-      DESCRIPTION: `${service.category?.code ? svcCategory[service.category.code] + `${service.description ? ": " : ""}` : ""}${service.description}`,
+      DESCRIPTION: `${service.category?.code ? svcCategory[service.category.code] + `${service.description ? ": " : ""}` : ""}${service.description ?? ""}`,
       GUEST_FIRST_NAME: booking.guest?.first_name ?? '',
       GUEST_LAST_NAME: booking.guest?.last_name ?? '',
       ADULTS_NBR: 0,
@@ -106,6 +112,7 @@ export function convertBookingToCL({ booking, agentId, clTxs, setupEntries }) {
       transactions.push({
         BOOK_NBR: booking.booking_nbr,
         AGENCY_ID: agentId,
+        BSA_REF: null,
         PR_ID: null,
         ROOM_CATEGORY_ID: null,
         ROOM_TYPE_ID: null,

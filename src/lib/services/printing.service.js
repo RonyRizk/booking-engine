@@ -80,7 +80,7 @@ export class PrintingService extends Token {
         return `+${country_phone_prefix?.replace('+', '')}-${mobile_without_prefix}`;
     }
     formatBookingDates(date) {
-        return moment(date, 'YYYY-MM-DD').locale('en').format('DD-MMM-YYYY');
+        return moment(date, 'YYYY-MM-DD').locale('en').format('MMM DD, YYYY');
     }
     getUserCountry(countries, country_id) {
         const country = countries.find(country => country.id === country_id);
@@ -133,7 +133,7 @@ export class PrintingService extends Token {
         const sumOfOccupancy = ({ adult_nbr, children_nbr, infant_nbr }) => {
             return (adult_nbr ?? 0) + (children_nbr ?? 0) + (infant_nbr ?? 0);
         };
-        return booking.rooms.reduce((prev, cur) => {
+        return (booking.rooms ?? [])?.reduce((prev, cur) => {
             return sumOfOccupancy(cur.occupancy) + prev;
         }, 0);
     }

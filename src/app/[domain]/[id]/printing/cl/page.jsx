@@ -27,6 +27,21 @@ const FD_TYPES = [FdTypes.CreditNote, FdTypes.DebitNote, FdTypes.Invoice, FdType
 const FALLBACK_URL = "https://x.igloorooms.com/manage/acbookinglist.aspx";
 
 /**
+ * Loads the _SVC_CATEGORY setup table used to turn the raw category codes that
+ * booking-service CL rows carry in DESCRIPTION into readable labels.
+ * Resolves to an empty map on failure so the document still renders with the
+ * raw descriptions instead of erroring out.
+ */
+const fetchSvcCategory = ({ token, lang }) => {
+    const commonService = new CommonServices(DEFAULT_BASE_URL);
+    commonService.setToken(token);
+    return commonService
+        .getSetupEntriesByTBLNameMulti(["_SVC_CATEGORY"], lang)
+        .then((setupEntries) => setupEntries?._SVC_CATEGORY ?? {})
+        .catch(() => ({}));
+};
+
+/**
  * Per-mode secondary fetchers. Called after property is resolved so they have
  * access to `property.id`, `property.currency.id`, etc.
  * Add a new entry here when introducing a new mode.
@@ -34,14 +49,22 @@ const FALLBACK_URL = "https://x.igloorooms.com/manage/acbookinglist.aspx";
  * @type {Record<string, (cl: CityLedgerService, property: object, params: object) => Promise<object>>}
  */
 const FETCHERS = {
-    invoice: (cl, _property, { agentId, documentNumber }) =>
-        cl
-            .fetchCL({ AGENCY_ID: agentId, SEARCH_QUERY: documentNumber })
-            .then((result) => ({ transactions: result?.My_Result?.My_Cl_tx ?? [] })),
-    draft: (cl, _property, { agentId, documentNumber }) =>
-        cl
-            .fetchCL({ AGENCY_ID: agentId, SEARCH_QUERY: documentNumber })
-            .then((result) => ({ transactions: result?.My_Result?.My_Cl_tx ?? [] })),
+    invoice: (cl, _property, { agentId, documentNumber, token, lang }) =>
+        Promise.all([
+            cl.fetchCL({ AGENCY_ID: agentId, SEARCH_QUERY: documentNumber }),
+            fetchSvcCategory({ token, lang }),
+        ]).then(([result, svcCategory]) => ({
+            transactions: result?.My_Result?.My_Cl_tx ?? [],
+            svcCategory,
+        })),
+    draft: (cl, _property, { agentId, documentNumber, token, lang }) =>
+        Promise.all([
+            cl.fetchCL({ AGENCY_ID: agentId, SEARCH_QUERY: documentNumber }),
+            fetchSvcCategory({ token, lang }),
+        ]).then(([result, svcCategory]) => ({
+            transactions: result?.My_Result?.My_Cl_tx ?? [],
+            svcCategory,
+        })),
 
     receipt: (cl, _property, { agentId, documentNumber }) =>
         Promise.all([

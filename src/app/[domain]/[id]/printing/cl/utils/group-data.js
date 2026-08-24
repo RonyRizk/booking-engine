@@ -9,14 +9,22 @@
  *   a booking group is "pulled up" by whichever of its rows has the earliest date.
  *
  * Level 2 — Unit groups (inside each booking's subRows):
- *   Within a booking, rows that share the same PR_ID (room/unit identifier)
- *   are further collapsed into { PR_ID, subRows: [...] }.
- *   Rows with PR_ID = 0 / null, or whose PR_ID is unique within the booking,
- *   are kept flat inside the booking's subRows.
+ *   Within a booking, rows that share the same BSA_REF (the room-stay
+ *   reference) are further collapsed into { BSA_REF, subRows: [...] }.
+ *   Extra services carry the BSA_REF of the room they were sold against, so
+ *   they land under that room alongside its accommodation rows.
+ *   Rows with no BSA_REF (e.g. pickup, discounts, adjustments) are kept flat
+ *   inside the booking's subRows.
  *   The booking's subRows array is sorted by each item's oldest SERVICE_DATE
  *   so that a unit group is pulled up by its earliest row.
  *
- *   The rows inside each unit group are also sorted oldest-first.
+ *   The rows inside each unit group are also sorted oldest-first, except that
+ *   the accommodation nights are kept together as one contiguous block: extras
+ *   dated before the first night render above it, all other extras below it.
+ *
+ *   The unit header fields (PR_ID, guest, occupancy, stay dates, room type,
+ *   rate plan) are derived from the group's accommodation rows — the ones
+ *   carrying a PR_ID — since extras have none of that information.
  *
  * @param  rows - Raw transaction rows from the API.
  * @returns {Array} Grouped and sorted rows ready for rendering.
@@ -64,31 +72,55 @@ export const groupData = (rows) => {
     }
   }
 
-  // ── Level 2: within each booking, group rows by PR_ID (unit/room) ───────
+  /**
+   * Orders the rows of a unit group so the accommodation nights stay together
+   * as one uninterrupted block. Extras dated before the first night are listed
+   * ahead of it; every other extra follows the block. Both sides keep the
+   * oldest-first ordering they already have.
+   */
+  const orderUnitRows = (sorted, roomRows) => {
+    if (roomRows.length === 0 || roomRows.length === sorted.length) return sorted;
+
+    const firstNight = roomRows[0].SERVICE_DATE ?? '';
+    const before = [];
+    const after = [];
+    for (const row of sorted) {
+      if (row.PR_ID) continue;
+      if ((row.SERVICE_DATE ?? '') < firstNight) before.push(row);
+      else after.push(row);
+    }
+    return [...before, ...roomRows, ...after];
+  };
+
+  // ── Level 2: within each booking, group rows by BSA_REF (room stay) ─────
 
   const groupByUnit = bookingRows => {
     const unitStandalone = [];
     const unitMap = new Map();
 
     for (const row of bookingRows) {
-      if (!row.PR_ID) {
+      if (!row.BSA_REF) {
         unitStandalone.push(row);
       } else {
-        if (!unitMap.has(row.PR_ID)) {
-          unitMap.set(row.PR_ID, []);
+        if (!unitMap.has(row.BSA_REF)) {
+          unitMap.set(row.BSA_REF, []);
         }
-        unitMap.get(row.PR_ID).push(row);
+        unitMap.get(row.BSA_REF).push(row);
       }
     }
 
     const unitGroups = [];
-    for (const [prId, subRows] of unitMap.entries()) {
+    for (const [bsaRef, subRows] of unitMap.entries()) {
       const sorted = sortByOldestDate(subRows);
-      const first = sorted[0];
-      const last = sorted[sorted.length - 1];
+      // Extras share the room's BSA_REF but carry no room information, so the
+      // header is always derived from the accommodation rows when present.
+      const roomRows = sorted.filter(row => row.PR_ID);
+      const first = roomRows[0] ?? sorted[0];
+      const last = roomRows[roomRows.length - 1] ?? sorted[sorted.length - 1];
       unitGroups.push({
-        PR_ID: prId,
-        subRows: sorted,
+        BSA_REF: bsaRef,
+        subRows: orderUnitRows(sorted, roomRows),
+        PR_ID: first.PR_ID ?? null,
         occupancy: (first.ADULTS_NBR ?? 0) + (first.CHILD_NBR ?? 0) + (first.INFANT_NBR ?? 0),
         GUEST_FIRST_NAME: first.GUEST_FIRST_NAME ?? '',
         GUEST_LAST_NAME: first.GUEST_LAST_NAME ?? '',

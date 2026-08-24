@@ -1,5 +1,5 @@
 import moment from "moment";
-import { formatAmount } from "@/lib/utils";
+import { formatAmount, formatTime } from "@/lib/utils";
 import { FiscalDocumentFooter } from "../../shared/fiscal-document-footer";
 import { PrintDocument } from "../../shared/print-document";
 import { ReceiptRow, ReceiptSection } from "../../shared/receipt-blocks";
@@ -12,6 +12,7 @@ import {
   PrintTableRow,
 } from "../../shared/print-table";
 import PrintingHeader from "@/components/printing/PrintingHeader";
+import { splitServicesByRoom } from "../utils/split-services-by-room";
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -24,11 +25,47 @@ function fmtDate(dateStr) {
   }
 }
 
+function formatDayUseTime(time) {
+  if (!time) return "";
+  const [hour, minute] = time.split(":");
+  return formatTime(hour, minute);
+}
+
+// Physical room linked to the service via pr_id (day-use services are tied to a unit).
+function getLinkedUnitName(service, property) {
+  if (service?.pr_id == null) return null;
+  for (const roomtype of property?.roomtypes ?? []) {
+    const physicalRoom = (roomtype.physicalrooms ?? []).find((pr) => pr.id === service.pr_id);
+    if (physicalRoom) return physicalRoom.name;
+  }
+  return null;
+}
+
+// Prefixes the service description with its setup-table category label
+// ("Category: description"), falling back to whichever half is present.
+// Day-use (DUZ) services drop the free-text description and instead show the
+// time range plus the linked unit, all on the same line.
+function getServiceDescription(service, svcCategory, property) {
+  const categoryLabel = svcCategory?.[service?.category?.code];
+
+  if (service?.category?.code === "DUZ") {
+    const timeRange = `${formatDayUseTime(service?.from_time)} – ${formatDayUseTime(service?.to_time)}`;
+    const unit = getLinkedUnitName(service, property);
+    const line = [categoryLabel, timeRange].filter(Boolean).join(": ");
+    return unit ? `${line} (Unit: ${unit})` : line;
+  }
+
+  const description = service?.description;
+  if (categoryLabel && description) return `${categoryLabel}: ${description}`;
+  return categoryLabel || description || "";
+}
+
 // ─── BookingFiscalTable ───────────────────────────────────────────────────────
 
-function BookingFiscalTable({ booking, currencySymbol, invertAmounts = false, itemKeys = null }) {
+function BookingFiscalTable({ booking, currencySymbol, invertAmounts = false, itemKeys = null, setupTables, property }) {
   const sign = (v) => (invertAmounts ? -(v ?? 0) : (v ?? 0));
   const money = (v) => formatAmount(sign(v), currencySymbol);
+  const svcCategory = setupTables?._SVC_CATEGORY;
 
   function inScope(key) {
     if (!itemKeys) return true;
@@ -45,6 +82,11 @@ function BookingFiscalTable({ booking, currencySymbol, invertAmounts = false, it
   const extras = (booking?.extra_services ?? []).filter(
     (s) => !itemKeys || inScope(s.system_id),
   );
+
+  // Room-scoped extras render under their room, after its unit days;
+  // the rest ("general" extras) keep rendering in the trailing flat block.
+  // Totals/city-tax/hasContent below intentionally keep using `extras` (unsplit).
+  const { byRoom: extrasByRoom, general: generalExtras } = splitServicesByRoom(extras, rooms);
 
   // City-tax column only when at least one line actually carries city tax
   const withCityTax =
@@ -156,6 +198,15 @@ function BookingFiscalTable({ booking, currencySymbol, invertAmounts = false, it
             date={day.date}
             description={rowDescription}
             charges={day.charges}
+            indent={1}
+          />
+        ))}
+        {(extrasByRoom.get(room.identifier) ?? []).map((service) => (
+          <ChargesRow
+            key={service.system_id}
+            date={service.start_date}
+            description={getServiceDescription(service, svcCategory, property)}
+            charges={service.charges}
             indent={1}
           />
         ))}
@@ -271,11 +322,11 @@ function BookingFiscalTable({ booking, currencySymbol, invertAmounts = false, it
 
               {pickup != null && <PickupRow />}
 
-              {extras.map((service) => (
+              {generalExtras.map((service) => (
                 <ChargesRow
                   key={service.system_id}
                   date={service.start_date}
-                  description={service.description}
+                  description={getServiceDescription(service, svcCategory, property)}
                   charges={service.charges}
                   indent={0}
                 />
@@ -344,6 +395,7 @@ export function ProformaPreview({
   mode,
   ids,
   billTo,
+  setupTables
 }) {
   const currencySymbol = property?.currency?.symbol ?? booking?.currency?.symbol ?? "$";
   const itemKeys = ids?.length ? new Set(ids) : null;
@@ -373,6 +425,8 @@ export function ProformaPreview({
         booking={booking}
         currencySymbol={currencySymbol}
         itemKeys={itemKeys}
+        setupTables={setupTables}
+        property={property}
       />
       <BookingPaymentSection
         booking={booking}
@@ -397,6 +451,7 @@ export function InvoicePreview({
   printingService,
   privateNote,
   mode,
+  setupTables,
 }) {
   const currencySymbol = property?.currency?.symbol ?? booking?.currency?.symbol ?? "$";
 
@@ -433,6 +488,8 @@ export function InvoicePreview({
         currencySymbol={currencySymbol}
         invertAmounts={invertAmounts}
         itemKeys={itemKeys}
+        setupTables={setupTables}
+        property={property}
       />
       <BookingPaymentSection
         booking={booking}

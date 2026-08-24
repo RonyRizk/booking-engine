@@ -7,7 +7,7 @@ export default function PickupArrivalRow({ pickup_info, locales }) {
         <div className="flex items-center gap-1.5 sm:gap-4 flex-wrap">
             <InfoDisplay
                 label={`${locales?.Lcz_ArrivalDate}:`}
-                value={moment(pickup_info.date).locale("en").format("dddd, DD MMM YYYY")}
+                value={moment(pickup_info.date).locale("en").format("MMM DD, YYYY")}
             />
             <InfoDisplay
                 label={`${locales?.Lcz_ArrivalTime}:`}

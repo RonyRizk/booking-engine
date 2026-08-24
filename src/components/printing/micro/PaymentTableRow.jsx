@@ -16,7 +16,7 @@ export default function PaymentTableRow({ payment: p, setupTables, mode }) {
     return (
         <tr>
             <td className="px-2 whitespace-nowrap py-1 font-medium text-gray-900 text-center">
-                {moment(p.date).locale('en').format('DD-MMM-YYYY')}
+                {moment(p.date).locale('en').format('MMM DD, YYYY')}
             </td>
             <td className="px-2 py-1 whitespace-nowrap text-gray-700 text-end">
                 {formatAmount(p.amount, p.currency.symbol)}
