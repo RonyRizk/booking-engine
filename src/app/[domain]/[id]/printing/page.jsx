@@ -43,7 +43,8 @@ export default async function Printing({ searchParams, params }) {
         bookingNumber: id,
         aName: params.id,
         language: lang,
-        mode
+        mode,
+        is_calculate_totals: mode === 'printing',
       });
   } catch (error) {
     errorLogger.log(error)

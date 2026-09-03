@@ -67,11 +67,12 @@ export class BookingService extends Token {
         const data = await this.apiService.makePostRequest(`/Get_Booking_Invoice_Info`, props);
         return data.My_Result;
     }
-    async getExposedBooking({ booking_nbr, language, extras, withExtras = true, is_get_financial_snapshot = true }) {
+    async getExposedBooking({ booking_nbr, language, is_calculate_totals = false, extras, withExtras = true, is_get_financial_snapshot = true }) {
         const data = await this.apiService.makePostRequest(`/Get_Exposed_Booking`, {
             booking_nbr,
             is_get_financial_snapshot,
             language,
+            is_calculate_totals,
             extras: extras?.length > 0 ? extras : withExtras ? [
                 {
                     "key": "private_note",

@@ -318,35 +318,19 @@ function CityLedgerTable({ transactions, currency }) {
 // vs. agent totals (folding in city-ledger adjustments); guest-mode shows the
 // booking balance/collected plus an optional cost line and the grand total.
 
-const CL_ALLOWED_OPS = new Set(["ADJ", "DB", "CPN", "DSC"]);
 
-function FinancialSection({ booking, agentMode, currency, clTransactions, locales, isAllServicesAgentOwned }) {
-  const agentTotal =
-    (booking.agent_financial?.gross_total ?? 0) +
-    clTransactions.reduce((prev, curr) => {
-      if (CL_ALLOWED_OPS.has(curr.CL_TX_TYPE_CODE) && curr.CATEGORY === null) {
-        return prev + curr.DEBIT - curr.CREDIT;
-      }
-      return prev;
-    }, 0);
-
-  const guestTotal =
-    (booking.guest_financial?.gross_total ?? 0) +
-    (booking.financial?.payments ?? []).reduce((prev, curr) => {
-      if (curr.is_city_ledger) return prev;
-      return prev + (curr.payment_type?.operation === "CR" ? (curr.payment_type?.code === "009" ? curr.amount * -1 : 0) : curr.amount);
-    }, 0);
+function FinancialSection({ booking, agentMode, currency, locales, isAllServicesAgentOwned }) {
+  const agentTotal = booking.financial.agent_total;
+  const bookingTotal = booking.financial.booking_total;
 
   if (agentMode) {
-    const bookingTotal = agentTotal + guestTotal;
     return (
       <section className="py-4 px-2 border-t-0 border-gray-600 border ">
-
         <div className="flex gap-4 flex-wrap justify-between">
           {!isAllServicesAgentOwned && (
             <div className="flex flex-col gap-1.5">
               <InfoDisplay label="Guest Balance:" value={formatAmount(booking?.guest_financial?.due_amount, currency)} />
-              <InfoDisplay label="Guest Collected:" value={formatAmount(booking?.guest_financial?.collected, currency)} />
+              <InfoDisplay label="Guest Collected:" value={formatAmount((booking?.financial?.collected ?? 0) + (booking?.financial?.refunds ?? 0), currency)} />
             </div>
           )}
           <div className="flex flex-col items-end gap-1.5">
@@ -374,7 +358,7 @@ function FinancialSection({ booking, agentMode, currency, clTransactions, locale
         </div>
         <div className="flex flex-col items-end gap-1.5">
           {shouldShowTotalCost && <InfoDisplay label="Total Cost:" value={formatAmount(totalCost, currency)} />}
-          <InfoDisplay label="Grand Total:" value={formatAmount(booking?.financial?.gross_total ?? 0, currency)} />
+          <InfoDisplay label="Grand Total:" value={formatAmount(bookingTotal ?? 0, currency)} />
         </div>
       </div>
     </section>

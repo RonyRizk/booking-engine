@@ -22,13 +22,14 @@ export class PrintingService extends Token {
         this.bookingService.setDefaultHeaders(headers);
     }
 
-    async getPrintingData({ bookingNumber, aName, language = "en", baseUrl, tables, includePenaltyStatement, mode }) {
+
+    async getPrintingData({ bookingNumber, is_calculate_totals = false, aName, language = "en", baseUrl, tables, includePenaltyStatement, mode }) {
         if (baseUrl) {
             this.commonService.setBaseUrl(baseUrl);
             this.bookingService.setBaseUrl(baseUrl)
         }
         const [booking, property, countries, locales, beddingPreference, setupTables, statement, invoiceInfo] = await Promise.all([
-            this.bookingService.getExposedBooking({ booking_nbr: bookingNumber, language }),
+            this.bookingService.getExposedBooking({ booking_nbr: bookingNumber, language, is_calculate_totals }),
             this.commonService.getExposedProperty(aName, language),
             this.commonService.getCountries(language),
             this.commonService.fetchLanguage(language, tables ?? ["_PRINT_FRONT", "_PMS_FRONT"]),
