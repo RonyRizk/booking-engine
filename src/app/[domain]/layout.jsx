@@ -1,4 +1,5 @@
 import "../globals.css";
+import { headers } from "next/headers";
 import { v4 } from "uuid";
 import { getExposedProperty } from "../../lib/actions";
 
@@ -55,12 +56,39 @@ export async function generateMetadata({ params }, parent) {
   };
 }
 
-export default async function layout({ children }) {
+export default async function layout({ children, params }) {
+  // The web-component loader and the JSON-LD structured data belong to the root
+  // booking page only, not to any nested route ([id], booked, signin, ...).
+  // `x-current-path` is set by src/middleware.js from the pre-rewrite pathname.
+  const isRootPage = headers().get("x-current-path") === "/";
+
+  let jsonld = null;
+  if (isRootPage) {
+    try {
+      const domain = decodeURIComponent(params.domain).split(".");
+      const property = await getExposedProperty({ perma_link: domain[0], aName: "" });
+      jsonld = property?.jsonld ?? null;
+    } catch {
+      jsonld = null;
+    }
+  }
   return (
     <html lang="en" suppressHydrationWarning>
-      <head>
-        <script type="module" src={`https://wb-cmp.igloorooms.com/be/dist/iglooroom/iglooroom.esm.js?v=${v4()}`} defer></script>
-      </head>
+      {isRootPage && (
+        <head>
+          <script
+            type="module"
+            src={`https://wb-cmp.igloorooms.com/be/dist/iglooroom/iglooroom.esm.js?v=${v4()}`}
+            defer
+          ></script>
+          {jsonld ? (
+            <script
+              type="application/ld+json"
+              dangerouslySetInnerHTML={{ __html: jsonld }}
+            />
+          ) : null}
+        </head>
+      )}
       <body>
         {children}
       </body>
