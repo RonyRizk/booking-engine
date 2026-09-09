@@ -40,7 +40,7 @@ export function DocumentHeader({ isDraft, documentType = 'invoice', property, do
   const docLabel = DOC_NUMBER_LABELS[documentType];
 
   return (
-    <header className={cn('text-gray-800 text-sm w-full', className)}>
+    <header className={cn('text-gray-800 text-[12.5px] w-full', className)}>
       <h3 className="text-3xl font-bold mb-4">{DOCUMENT_TITLES[documentType] ?? documentType} {isDraft ? "draft" : ""}</h3>
       <nav className="flex gap-4 flex-col-reverse sm:flex-row sm:justify-between sm:w-full">
         <div className="space-y-4">

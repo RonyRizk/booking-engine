@@ -27,7 +27,7 @@ export default function PrintingHeader({ booking, property, locales, documentId,
             }
         }
         return (
-            <header className={cn("p-4 sm:px-6 lg:px-8 text-gray-800  text-sm max-w-4xl mx-auto", className)}>
+            <header className={cn("p-4 sm:px-6 lg:px-8 text-gray-800  text-[12.5px] max-w-4xl mx-auto", className)}>
                 <h3 className="text-3xl font-bold mb-4">{getTitle()}</h3>
                 <nav className="flex gap-4 flex-col-reverse sm:flex-row sm:justify-between sm:w-full">
                     <div className="space-y-4">

@@ -32,7 +32,7 @@ import { cn } from '@/lib/utils';
 
 export function PrintTable({ children, className }) {
   return (
-    <table className={cn('w-full border-collapse table-auto text-sm font-[system-ui,Arial,sans-serif]', className)}>
+    <table className={cn('w-full border-collapse table-auto text-base font-[system-ui,Arial,sans-serif]', className)}>
       {children}
     </table>
   );
@@ -76,7 +76,7 @@ export function PrintTableHeaderCell({ children, numeric, className, style }) {
     <th
       style={style}
       className={cn(
-        'py-2.5 px-3 text-[0.75rem] text-left font-semibold uppercase tracking-wide text-slate-800 border-t-2 border-slate-300 border-b  whitespace-nowrap print:py-1.5',
+        'py-2.5 px-3 text-base text-left font-semibold uppercase tracking-wide text-slate-800 border-t-2 border-slate-300 border-b  whitespace-nowrap print:py-1.5',
         numeric && 'text-right',
         className,
       )}

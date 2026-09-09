@@ -16,7 +16,7 @@ export function ReceiptSection({ title, children }) {
 
 export function ReceiptRow({ label, value }) {
   return (
-    <div className="flex text-sm gap-1">
+    <div className="flex text-base gap-1">
       <span className="text-slate-600 ">
         {label}:
       </span>

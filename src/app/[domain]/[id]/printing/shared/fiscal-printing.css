@@ -2,7 +2,7 @@
 
 /* 1rem = 14px for both screen and print */
 :root {
-  font-size: 14px !important;
+  font-size: 12.3px !important;
 }
 
 /* Normalize body so screen and print render identically */
@@ -14,14 +14,25 @@ body {
   color: #1e293b !important;
 }
 
+/* Fiscal document tables always render at 14px, on screen and in PDF.
+   Covers direct cell text and any nested spans/paragraphs (e.g. totals labels)
+   that would otherwise pin themselves to a smaller size. */
+table th,
+table td,
+table th *,
+table td * {
+  font-size: 1rem !important;
+}
+
 @media print {
   @page {
     margin: 0;
     size: A4;
   }
 
+  /* Keep the same 1rem = 14px scale in print so PDF output matches the screen */
   :root {
-    font-size: 12px !important;
+    font-size: 12.3px !important;
   }
 
   body {

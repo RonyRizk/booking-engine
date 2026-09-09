@@ -1,0 +1,45 @@
+# igloorooms Booking Engine
+
+> The direct-booking interface for a single hotel, shown on the property's root page (for example `https://<property>.bookingmystay.com/`). A guest searches live availability by stay dates and occupancy, compares room types and rate plans in the property's currency and language, and completes a reservation — by card, payment gateway, pay-at-hotel, or agent credit — without leaving the page.
+
+This page is a thin server-rendered shell (Next.js) that resolves the property for metadata and redirects, then mounts the booking engine on the client. The engine is a self-contained Stencil web component, `<ir-be>` (shadow DOM, namespace `iglooroom`), loaded as an ES module from `https://wb-cmp.igloorooms.com/be/dist/iglooroom/iglooroom.esm.js`. All content is fetched at runtime from the IRBE API gateway (`https://gateway.igloorooms.com/IRBE`): the engine first requests an anonymous token from `Get_BE_Token`, then `Get_Exposed_Property`, currencies, languages, localized UI strings, and the property's non-bookable nights.
+
+Screens. The engine is a single page with an in-component router — the URL does not change as the guest moves between:
+- Availability & rooms (default): photo gallery, an availability header (date-range picker, adults/children counter with a per-child age entry, "check availability"), then the list of bookable room types. Each room type lists its rate plans (meal plan, cancellation policy, price for the stay), a room-count selector, and per-room options. A sticky bar shows the running total and a "Book now" button.
+- Checkout: guest contact form, per-room guest names and bed/smoking preferences, optional airport pickup, and a summary with the payment method. Submitting calls `DoReservation`; the guest is then sent to the invoice page, or to `Generate_Payment_Caller` when prepayment is due through a gateway.
+- Invoice, My Bookings, and Profile: retrieve or manage an existing reservation.
+
+Navigation bar: hotel logo linking to the hotel website, currency switcher, language switcher, a "booking code" lookup (retrieve a booking by number and email), sign in / sign up (email, Google, or Facebook), and a map of the property location.
+
+URL parameters, read from the page query string and applied to the first availability search:
+- `checkin`, `checkout` — stay dates in `YYYY-MM-DD`. Check-in must be today or later, check-out after check-in; both are validated against the property's non-bookable nights.
+- `adults` — number of adults (default `2`); `children` — number of children; `ages` — underscore-joined child ages, e.g. `ages=4_2_9` (an age under 3 counts as an infant).
+- `nights` — stay length from `checkin`, as an alternative to `checkout`.
+- `u` — restrict the page to a single room-type id.
+- `cur` — currency code (e.g. `USD`); `lang` — UI language code.
+- `promo` — promo / coupon code; `loyalty=true` — loyalty pricing; `agent` — travel-agent code (unlocks agent rate plans and on-credit payment); `aff` — affiliate name; `source` and `stag` — booking source and tag for attribution.
+
+Currency & language: the guest's country and default currency are inferred from IP, both are switchable, and the choice is stored in `localStorage` (`user_preference`). Supported UI languages: English, Arabic (right-to-left), French, Spanish, German, Polish, Ukrainian, Russian, Greek. Optional guest authentication is kept in `sessionStorage`.
+
+Theming: colours, logo, favicon, corner radius, and background come from the property's `space_theme`. A property may also inject custom `header` / `body` / `footer` HTML and a conversion tag that fires once a booking is confirmed.
+
+After a successful booking the guest is redirected to `/booked?b=<booking_nbr>&e=<email>&s=1` on the same property domain, where the confirmation and invoice are shown.
+
+Related web components shipped in the same bundle: `<ir-widget>` (a compact date/occupancy search box that redirects into this page), `<ir-invoice>`, `<ir-booking-listing>`, `<ir-booking-cancellation>`, and `<ir-google-maps>`.
+
+## Book a stay
+
+- [Property landing page](/): opens the booking engine with an empty availability search.
+- [Prefilled availability search](/?checkin=2026-10-01&checkout=2026-10-03&adults=2&children=0): pass `checkin`, `checkout`, `adults`, `children`, `ages`, `cur`, and `lang` to land directly on results.
+- [Single room type](/?u=ROOM_TYPE_ID&checkin=2026-10-01&checkout=2026-10-03&adults=2): limit the page to one room type.
+- [Retrieve a booking or invoice](/booked?b=BOOKING_NBR&e=GUEST_EMAIL): confirmation and invoice for an existing reservation.
+
+## Services
+
+- [Booking engine bundle](https://wb-cmp.igloorooms.com/be/dist/iglooroom/iglooroom.esm.js): the `<ir-be>` web component, loaded as `<script type="module">`.
+- [IRBE API gateway](https://gateway.igloorooms.com/IRBE): runtime data and reservation endpoints, including `Get_Exposed_Property`, `Check_Availability`, `DoReservation`, `Generate_Payment_Caller`, and `Get_Exposed_Booking`.
+
+## Optional
+
+- [igloorooms](https://info.igloorooms.com): the hotel software platform behind the booking engine.
+- [Stencil](https://stenciljs.com): the web-component compiler the engine is built with.
