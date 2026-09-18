@@ -56,11 +56,15 @@ export async function generateMetadata({ params }, parent) {
   };
 }
 const rootPages = new Set(['/', '/signin', '/booked'])
+// Dynamic routes that also need the root-page treatment, e.g. /[id]/signin.
+const rootPagePatterns = [/^\/[^/]+\/signin\/?$/]
+const isRootPagePath = (path) =>
+  rootPages.has(path) || rootPagePatterns.some((re) => re.test(path))
 export default async function layout({ children, params }) {
   // The web-component loader and the JSON-LD structured data belong to the root
   // booking page only, not to any nested route ([id], booked, signin, ...).
   // `x-current-path` is set by src/middleware.js from the pre-rewrite pathname.
-  const isRootPage = rootPages.has(headers().get("x-current-path"));
+  const isRootPage = isRootPagePath(headers().get("x-current-path"));
 
   let jsonld = null;
   if (isRootPage) {
