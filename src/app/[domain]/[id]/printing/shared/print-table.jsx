@@ -32,7 +32,7 @@ import { cn } from '@/lib/utils';
 
 export function PrintTable({ children, className }) {
   return (
-    <table className={cn('w-full border-collapse table-auto text-base font-[system-ui,Arial,sans-serif]', className)}>
+    <table className={cn('w-full max-w-full border-collapse table-auto text-base font-[system-ui,Arial,sans-serif]', className)}>
       {children}
     </table>
   );
@@ -76,7 +76,7 @@ export function PrintTableHeaderCell({ children, numeric, className, style }) {
     <th
       style={style}
       className={cn(
-        'py-2.5 px-3 text-base text-left font-semibold uppercase tracking-wide text-slate-800 border-t-2 border-slate-300 border-b  whitespace-nowrap print:py-1.5',
+        'py-[4pt] px-[6pt] text-left font-semibold uppercase tracking-normal text-slate-800 border-t-2 border-slate-300 border-b whitespace-normal break-words align-bottom print:py-[3pt]',
         numeric && 'text-right',
         className,
       )}
@@ -91,6 +91,8 @@ export function PrintTableHeaderCell({ children, numeric, className, style }) {
 // muted    — gray text
 // bold     — dark bold text
 // nowrap   — no word wrap
+// fill     — the flexible column (description): the one allowed to break
+//            anywhere, so the table can shrink to the page instead of overflowing
 // empty    — centered italic placeholder (for "no data" rows)
 // indent   — 0 | 1 | 2  (visual indentation for nested rows)
 
@@ -101,6 +103,7 @@ export function PrintTableCell({
   bold,
   nowrap,
   empty,
+  fill,
   indent = 0,
   colSpan,
   className,
@@ -109,14 +112,15 @@ export function PrintTableCell({
     <td
       colSpan={colSpan}
       className={cn(
-        'px-3 py-[0.45rem] font-normal align-top border-b border-slate-200 text-slate-700 print:py-[0.25rem] print:pr-2',
-        numeric && 'text-right whitespace-nowrap tabular-nums',
+        'px-[6pt] py-[3.5pt] font-normal align-top border-b border-slate-200 text-slate-700 break-words print:py-[2pt] print:pr-[4pt]',
+        numeric && 'text-right tabular-nums',
         muted && 'text-slate-600',
         bold && 'font-semibold text-slate-900',
         nowrap && 'whitespace-nowrap',
-        empty && 'text-center italic text-slate-600 py-4',
-        indent === 1 && 'pl-7 ',
-        indent === 2 && 'pl-12 ',
+        empty && 'text-center italic text-slate-600 py-[12pt]',
+        fill && 'whitespace-normal [overflow-wrap:anywhere]',
+        indent === 1 && 'pl-[16pt]',
+        indent === 2 && 'pl-[28pt]',
         className,
       )}
     >

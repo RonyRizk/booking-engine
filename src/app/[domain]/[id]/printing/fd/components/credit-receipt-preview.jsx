@@ -83,7 +83,7 @@ export function CreditReceiptPreview({
   return (
     <PrintDocument>
       <PrintingHeader
-        className="p-0 sm:px-0 pb-8 w-full lg:px-0 max-w-full print:m-0 print:px-0"
+        className="w-full pb-[20pt]"
         selectedDocument={null}
         documentId={documentNumber}
         receiptNumber={documentNumber}
@@ -103,7 +103,7 @@ export function CreditReceiptPreview({
           <PrintTableHead>
             <PrintTableRow>
               <PrintTableHeaderCell className="border-r">Date</PrintTableHeaderCell>
-              <PrintTableHeaderCell className="border-r w-full">Description</PrintTableHeaderCell>
+              <PrintTableHeaderCell className="border-r">Description</PrintTableHeaderCell>
               <PrintTableHeaderCell numeric>Total</PrintTableHeaderCell>
             </PrintTableRow>
           </PrintTableHead>
@@ -114,7 +114,7 @@ export function CreditReceiptPreview({
                   <PrintTableCell muted nowrap className="border-r">
                     {fmtDate(payment.date)}
                   </PrintTableCell>
-                  <PrintTableCell className="w-full border-r whitespace-normal break-words">
+                  <PrintTableCell fill className="border-r">
                     Credit receipt
                   </PrintTableCell>
                   <PrintTableCell numeric bold>{fmt(total)}</PrintTableCell>
@@ -124,8 +124,8 @@ export function CreditReceiptPreview({
                   <PrintTableCell />
                   <PrintTableCell />
                   <PrintTableCell numeric className="py-4">
-                    <p className="text-[0.9rem] font-bold text-slate-900">{fmt(total)}</p>
-                    <p className="text-[0.65rem] uppercase tracking-wide text-slate-600 font-medium mt-0.5">
+                    <p className="font-bold text-slate-900">{fmt(total)}</p>
+                    <p className="print-caption uppercase tracking-wide text-slate-600 font-medium mt-0.5">
                       Total Credit
                     </p>
                   </PrintTableCell>

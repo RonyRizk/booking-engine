@@ -40,11 +40,11 @@ export function DocumentHeader({ isDraft, documentType = 'invoice', property, do
   const docLabel = DOC_NUMBER_LABELS[documentType];
 
   return (
-    <header className={cn('text-gray-800 text-[12.5px] w-full', className)}>
-      <h3 className="text-3xl font-bold mb-4">{DOCUMENT_TITLES[documentType] ?? documentType} {isDraft ? "draft" : ""}</h3>
-      <nav className="flex gap-4 flex-col-reverse sm:flex-row sm:justify-between sm:w-full">
-        <div className="space-y-4">
-          <div className="w-fit">
+    <header className={cn('text-gray-800 text-base w-full max-w-full', className)}>
+      <h3 className="text-3xl font-bold mb-[12pt]">{DOCUMENT_TITLES[documentType] ?? documentType} {isDraft ? "draft" : ""}</h3>
+      <nav className="flex flex-row justify-between w-full gap-[16pt]">
+        <div className="min-w-0 space-y-[12pt]">
+          <div className="w-fit max-w-full space-y-[2pt]">
             {docLabel && documentNumber && (
               <InfoDisplay className="" label={docLabel + ":"} value={documentNumber} />
             )}
@@ -57,8 +57,8 @@ export function DocumentHeader({ isDraft, documentType = 'invoice', property, do
             <InfoDisplay className="" label="Date of issue:" value={today} />
           </div>
           {agent && (
-            <section className="justify-start flex flex-col">
-              <h3 className="font-bold">Bill to</h3>
+            <section className="justify-start flex flex-col min-w-0 max-w-full">
+              <h3 className="font-bold mb-[3pt]">Bill to</h3>
               <InfoDisplay label="" value={agent.name} />
               {agent.tax_nbr && <InfoDisplay label="" value={agent.tax_nbr} />}
               {(agent.city || agent.countryName) && (
@@ -70,7 +70,7 @@ export function DocumentHeader({ isDraft, documentType = 'invoice', property, do
             </section>
           )}
         </div>
-        <div className="space-y-2.5">
+        <div className="min-w-0 shrink-0 space-y-[7pt]">
           {property?.company && <CompanyInfo company={property.company} />}
           <PropertyInfo property={property} />
         </div>

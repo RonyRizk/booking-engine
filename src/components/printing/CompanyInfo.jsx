@@ -65,7 +65,7 @@ export default function CompanyInfo({ company }) {
     };
 
     return (
-        <div className='flex flex-col items-end'>
+        <div className='flex flex-col items-end min-w-0 max-w-full text-right break-words'>
             {company.name && <p className='font-bold'>{company.name}</p>}
             {company.address && <p className='font-regular'>{company.address}</p>}
             {renderLocation()}

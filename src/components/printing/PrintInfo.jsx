@@ -37,7 +37,7 @@ export default function PrintInfo({ booking, mode, receiptNumber, documentId, se
         }
     }
     return (
-        <div className='w-fit'>
+        <div className='w-fit max-w-full space-y-[2pt]'>
             {["invoice", "proforma"].includes(mode) && <InfoDisplay className={""} label={mode === "invoice" ? "Invoice no.:" : "Reference:"} value={documentId} />}
             {mode === "creditnote" && <>
                 <InfoDisplay className={""} label={"Credit note no.:"} value={selectedDocument?.credit_note?.nbr} />

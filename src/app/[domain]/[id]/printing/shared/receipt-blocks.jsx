@@ -5,22 +5,22 @@
 
 export function ReceiptSection({ title, children }) {
   return (
-    <section>
-      <h4 className="text-slate-800 font-bold text-base border-b border-slate-200 pb-1.5 mb-3">
+    <section className="max-w-full break-inside-avoid">
+      <h4 className="text-slate-800 font-bold text-base border-b border-slate-200 pb-[4pt] mb-[8pt]">
         {title}
       </h4>
-      <div className="flex flex-col gap-2">{children}</div>
+      <div className="flex flex-col gap-[5pt]">{children}</div>
     </section>
   );
 }
 
 export function ReceiptRow({ label, value }) {
   return (
-    <div className="flex text-base gap-1">
-      <span className="text-slate-600 ">
+    <div className="flex text-base gap-[3pt] max-w-full">
+      <span className="text-slate-600 whitespace-nowrap">
         {label}:
       </span>
-      <span className="text-slate-900 font-medium text-right">{value ?? '—'}</span>
+      <span className="text-slate-900 font-medium min-w-0 break-words">{value ?? '—'}</span>
     </div>
   );
 }

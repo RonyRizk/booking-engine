@@ -1,8 +1,46 @@
 @import url("../printing.css");
 
-/* 1rem = 14px for both screen and print */
+/* ─── Page geometry ───────────────────────────────────────────────────────────
+   Fiscal documents are a fixed A4 canvas expressed in pt, identical on screen
+   and in the PDF. The PDF is produced by an external headless renderer, so the
+   document must carry its own width — it cannot rely on the caller's page box.
+
+   A4        595.28pt x 841.89pt  (210mm x 297mm)
+   margin    36pt                 (12.7mm), applied as padding inside the page
+   content   523.28pt
+
+   Type sizes are pt and live in the two variables below. Tailwind's spacing and
+   type scales are rem-based, so anchoring the root in pt makes every utility in
+   these documents pt-derived (at an 10.5pt root: text-base 10.5pt, text-sm
+   9.19pt, text-3xl 19.7pt). The page tokens above are absolute, so changing the
+   type size never moves the page geometry.
+
+     --fiscal-font-size        body text on a fiscal document
+     --fiscal-table-font-size  line-item tables, capped at 8pt and set
+                               independently of the body so the wide 8-column
+                               layout keeps fitting as the body grows
+
+   The root stays at 9.225pt (exactly the 12.3px it has always been) for anything
+   that is NOT a fiscal document: fd/page.jsx loads this sheet for mode=printing
+   too, and the booking print must not move. */
 :root {
-  font-size: 12.3px !important;
+  --page-width: 595.28pt;
+  --page-height: 841.89pt;
+  --page-margin: 36pt;
+  --page-margin-tight: 18pt;
+  --content-width: 523.28pt;
+
+  --fiscal-font-size: 10.5pt;
+  --fiscal-table-font-size: 8pt;
+
+  font-size: 9.225pt !important;
+}
+
+/* Fiscal documents only — keyed off the .fiscal-page that PrintDocument renders,
+   which the booking print never does. If :has() is unsupported the documents
+   simply keep the 9.225pt root, which is the size they had before. */
+:root:has(.fiscal-page) {
+  font-size: var(--fiscal-font-size) !important;
 }
 
 /* Normalize body so screen and print render identically */
@@ -14,14 +52,66 @@ body {
   color: #1e293b !important;
 }
 
-/* Fiscal document tables always render at 14px, on screen and in PDF.
-   Covers direct cell text and any nested spans/paragraphs (e.g. totals labels)
-   that would otherwise pin themselves to a smaller size. */
+/* Tables render at one size throughout, on screen and in PDF. Covers direct cell
+   text and any nested spans/paragraphs (e.g. totals labels) that would otherwise
+   pin themselves to a smaller size. */
 table th,
 table td,
 table th *,
 table td * {
   font-size: 1rem !important;
+}
+
+/* On a fiscal document the table is sized independently of the body, so the body
+   can grow without squeezing the wide 8-column line-item layout. */
+.fiscal-page table th,
+.fiscal-page table td,
+.fiscal-page table th *,
+.fiscal-page table td * {
+  font-size: var(--fiscal-table-font-size) !important;
+}
+
+/* Escape hatches from the rules above, for text inside cells that is meant to be
+   smaller than the rest of the table:
+     .print-caption  totals-row labels
+     .print-subtle   group / banner rows */
+table th .print-caption,
+table td .print-caption,
+.fiscal-page table th .print-caption,
+.fiscal-page table td .print-caption {
+  font-size: 6.5pt !important;
+}
+
+table th .print-subtle,
+table td .print-subtle,
+.fiscal-page table th .print-subtle,
+.fiscal-page table td .print-subtle {
+  font-size: 7.5pt !important;
+}
+
+/* Only fiscal documents (everything rendered through PrintDocument) take the
+   named page box defined under @media print. The booking print does not use
+   PrintDocument and keeps the default margin-0 page box it has today. */
+.fiscal-page {
+  page: fiscal;
+}
+
+/* ─── Overflow guards ─────────────────────────────────────────────────────────
+   Nothing may widen the page: a long unbroken token (reference, email, URL) or
+   an oversized logo would otherwise push content past the A4 content box. */
+table {
+  width: 100%;
+  max-width: 100%;
+}
+
+table th,
+table td {
+  overflow-wrap: break-word;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
 }
 
 @media print {
@@ -30,9 +120,19 @@ table td * {
     size: A4;
   }
 
-  /* Keep the same 1rem = 14px scale in print so PDF output matches the screen */
+  /* Vertical margin lives on the page box so it repeats on EVERY page; element
+     padding would only apply at the start and end of the document, leaving
+     continuation pages running to the paper edge. Horizontal margin stays as
+     element padding so the document keeps its fixed 595.28pt width and the
+     screen preview matches the PDF. */
+  @page fiscal {
+    margin: 36pt 0;
+    size: A4;
+  }
+
+  /* Keep the same rem scale in print so PDF output matches the screen */
   :root {
-    font-size: 12.3px !important;
+    font-size: 9.225pt !important;
   }
 
   body {
@@ -47,5 +147,27 @@ table td * {
   thead tr th {
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
+  }
+
+  /* ─── Page breaks ───────────────────────────────────────────────────────────
+     Repeat the table header on every page and never split a row or orphan a
+     heading from the block it introduces. */
+  thead {
+    display: table-header-group;
+  }
+
+  tfoot {
+    display: table-footer-group;
+  }
+
+  tr {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  h3,
+  h4,
+  header {
+    break-after: avoid;
   }
 }

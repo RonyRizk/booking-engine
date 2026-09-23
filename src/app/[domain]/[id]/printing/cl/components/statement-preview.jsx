@@ -117,7 +117,7 @@ export function StatementPreview({ property, statement, fiscalDocuments, fromDat
                   {doc.ISSUE_DATE_DISPLAY || formatDocDate(doc.ISSUE_DATE)}
                 </PrintTableCell>
                 <PrintTableCell>{doc.DOC_NUMBER || '—'}</PrintTableCell>
-                <PrintTableCell>{doc.FD_TYPE_NAME || '—'}</PrintTableCell>
+                <PrintTableCell fill>{doc.FD_TYPE_NAME || '—'}</PrintTableCell>
                 <PrintTableCell numeric muted>
                   {debit ? fmt(debit) : '—'}
                 </PrintTableCell>

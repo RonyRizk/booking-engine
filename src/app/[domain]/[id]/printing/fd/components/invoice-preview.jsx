@@ -127,7 +127,7 @@ function BookingFiscalTable({ booking, currencySymbol, invertAmounts = false, it
         <PrintTableCell muted nowrap indent={indent ?? 0} className="border-r">
           {fmtDate(date)}
         </PrintTableCell>
-        <PrintTableCell className="w-full border-r whitespace-normal break-words">
+        <PrintTableCell fill className="border-r">
           {description}
         </PrintTableCell>
         <PrintTableCell numeric bold className="border-r">
@@ -176,13 +176,13 @@ function BookingFiscalTable({ booking, currencySymbol, invertAmounts = false, it
       <>
         <PrintTableRow variant="unit">
           <PrintTableCell indent={0} colSpan={colSpan} className="py-1.5 text-slate-700">
-            <span className="text-[0.8rem] font-semibold ">
+            <span className="print-subtle font-semibold ">
               {unitName}
               {guestName ? ` - ${guestName}` : ""}
               {totalGuests > 0 && <span> ({totalGuests} pax)</span>}
             </span>
             <span className="mx-3 text-slate-300">|</span>
-            <span className="text-[0.8rem] ">
+            <span className="print-subtle ">
               {fmtDate(room.from_date)} – {fmtDate(room.to_date)}
               {nightCount > 0 && (
                 <span className="ml-2 ">
@@ -234,7 +234,7 @@ function BookingFiscalTable({ booking, currencySymbol, invertAmounts = false, it
         <PrintTableCell muted nowrap indent={0} className="border-r">
           {fmtDate(cancellationPenalty.date)}
         </PrintTableCell>
-        <PrintTableCell className="w-full border-r whitespace-normal break-words">
+        <PrintTableCell fill className="border-r">
           Cancellation Penalty
         </PrintTableCell>
         <PrintTableCell numeric bold className="border-r">
@@ -262,27 +262,27 @@ function BookingFiscalTable({ booking, currencySymbol, invertAmounts = false, it
         <PrintTableCell />
         <PrintTableCell numeric className="py-4">
           <p className="text-sm font-bold text-slate-900">{money(grandNet)}</p>
-          <p className="text-[0.65rem] uppercase tracking-wide text-slate-600 font-medium mt-0.5">
+          <p className="print-caption uppercase tracking-wide text-slate-600 font-medium mt-0.5">
             Net Price
           </p>
         </PrintTableCell>
         <PrintTableCell numeric className="py-4 border-x border-x-slate-200" colSpan={2}>
           <p className="text-sm font-bold text-slate-900">{money(grandVat)}</p>
-          <p className="text-[0.65rem] uppercase tracking-wide text-slate-600 font-medium mt-0.5">
+          <p className="print-caption uppercase tracking-wide text-slate-600 font-medium mt-0.5">
             VAT
           </p>
         </PrintTableCell>
         {withCityTax && (
           <PrintTableCell numeric className="py-4 border-r border-r-slate-200" colSpan={2}>
             <p className="text-sm font-bold text-slate-900">{money(grandCityTax)}</p>
-            <p className="text-[0.65rem] uppercase tracking-wide text-slate-600 font-medium mt-0.5">
+            <p className="print-caption uppercase tracking-wide text-slate-600 font-medium mt-0.5">
               City Tax
             </p>
           </PrintTableCell>
         )}
         <PrintTableCell numeric className="py-4">
-          <p className="text-[0.9rem] font-bold text-slate-900">{money(grandTotal)}</p>
-          <p className="text-[0.65rem] uppercase tracking-wide text-slate-600 font-medium mt-0.5">
+          <p className="font-bold text-slate-900">{money(grandTotal)}</p>
+          <p className="print-caption uppercase tracking-wide text-slate-600 font-medium mt-0.5">
             Total Due
           </p>
         </PrintTableCell>
@@ -296,7 +296,7 @@ function BookingFiscalTable({ booking, currencySymbol, invertAmounts = false, it
         <PrintTableHead>
           <PrintTableRow>
             <PrintTableHeaderCell className="border-r">Date</PrintTableHeaderCell>
-            <PrintTableHeaderCell className="border-r w-full">Description</PrintTableHeaderCell>
+            <PrintTableHeaderCell className="border-r">Description</PrintTableHeaderCell>
             <PrintTableHeaderCell numeric className="border-r">Net Price</PrintTableHeaderCell>
             <PrintTableHeaderCell>VAT</PrintTableHeaderCell>
             <PrintTableHeaderCell numeric className="border-r">Amount</PrintTableHeaderCell>
@@ -409,7 +409,7 @@ export function ProformaPreview({
   return (
     <PrintDocument>
       <PrintingHeader
-        className="p-0 sm:px-0 pb-8 w-full lg:px-0 max-w-full print:m-0 print:px-0"
+        className="w-full pb-[20pt]"
         selectedDocument={selectedDocument}
         guestCountryName={guestCountryName}
         documentId={documentNumber}
@@ -471,7 +471,7 @@ export function InvoicePreview({
   return (
     <PrintDocument>
       <PrintingHeader
-        className="p-0 sm:px-0 pb-8 w-full lg:px-0 max-w-full print:m-0 print:px-0"
+        className="w-full pb-[20pt]"
         selectedDocument={selectedDocument}
         documentId={documentNumber}
         guestCountryName={guestCountryName}

@@ -27,10 +27,10 @@ export default function PrintingHeader({ booking, property, locales, documentId,
             }
         }
         return (
-            <header className={cn("p-4 sm:px-6 lg:px-8 text-gray-800  text-[12.5px] max-w-4xl mx-auto", className)}>
-                <h3 className="text-3xl font-bold mb-4">{getTitle()}</h3>
-                <nav className="flex gap-4 flex-col-reverse sm:flex-row sm:justify-between sm:w-full">
-                    <div className="space-y-4">
+            <header className={cn("w-full max-w-full text-base text-gray-800", className)}>
+                <h3 className="text-3xl font-bold mb-[12pt]">{getTitle()}</h3>
+                <nav className="flex flex-row justify-between w-full gap-[16pt]">
+                    <div className="min-w-0 space-y-[12pt]">
                         <PrintInfo selectedDocument={selectedDocument} receiptNumber={receiptNumber} documentId={documentId} mode={mode} booking={booking} pid={pid} />
                         <GuestInformation
                             booking={booking}
@@ -43,7 +43,7 @@ export default function PrintingHeader({ booking, property, locales, documentId,
                             privateNote={privateNote}
                         />
                     </div>
-                    <div className="space-y-2.5">
+                    <div className="min-w-0 shrink-0 space-y-[7pt]">
                         <CompanyInfo company={property.company} />
 
                         <PropertyInfo property={property} />

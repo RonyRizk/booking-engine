@@ -37,7 +37,7 @@ export function CreditNotePreview({ property, document, documentNumber, agent, d
           <PrintTableHead>
             <PrintTableRow>
               <PrintTableHeaderCell className="border-r">Date</PrintTableHeaderCell>
-              <PrintTableHeaderCell className="border-r w-full">Description</PrintTableHeaderCell>
+              <PrintTableHeaderCell className="border-r">Description</PrintTableHeaderCell>
               {documentType !== "creditreceipt" && <>
                 <PrintTableHeaderCell numeric className="border-r">Net Price</PrintTableHeaderCell>
                 <PrintTableHeaderCell>VAT</PrintTableHeaderCell>
@@ -53,7 +53,7 @@ export function CreditNotePreview({ property, document, documentNumber, agent, d
                   <PrintTableCell muted nowrap className="border-r">
                     {document.ISSUE_DATE_DISPLAY ?? document.ISSUE_DATE ?? '—'}
                   </PrintTableCell>
-                  <PrintTableCell className="w-full border-r whitespace-normal break-words">
+                  <PrintTableCell fill className="border-r">
                     {document.FD_TYPE_NAME ?? fallbackLabel}
                   </PrintTableCell>
                   {documentType !== "creditreceipt" && <>
@@ -73,16 +73,16 @@ export function CreditNotePreview({ property, document, documentNumber, agent, d
                   {documentType !== "creditreceipt" && <>
                     <PrintTableCell numeric className="py-4" >
                       <p className="text-sm font-bold text-slate-900">{fmt(net)}</p>
-                      <p className="text-[0.65rem] uppercase tracking-wide text-slate-600 font-medium mt-0.5">Net Price</p>
+                      <p className="print-caption uppercase tracking-wide text-slate-600 font-medium mt-0.5">Net Price</p>
                     </PrintTableCell>
                     <PrintTableCell numeric className="py-4 border-x border-x-slate-200" colSpan={2}>
                       <p className="text-sm font-bold text-slate-900">{fmt(vatAmt)}</p>
-                      <p className="text-[0.65rem] uppercase tracking-wide text-slate-600 font-medium mt-0.5">Taxes</p>
+                      <p className="print-caption uppercase tracking-wide text-slate-600 font-medium mt-0.5">Taxes</p>
                     </PrintTableCell>
                   </>}
                   <PrintTableCell numeric className="py-4" >
-                    <p className="text-[0.9rem] font-bold text-slate-900">{fmt(total)}</p>
-                    <p className="text-[0.65rem] uppercase tracking-wide text-slate-600 font-medium mt-0.5">Total Credit</p>
+                    <p className="font-bold text-slate-900">{fmt(total)}</p>
+                    <p className="print-caption uppercase tracking-wide text-slate-600 font-medium mt-0.5">Total Credit</p>
                   </PrintTableCell>
                 </PrintTableRow>
               </>

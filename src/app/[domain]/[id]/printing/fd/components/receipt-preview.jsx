@@ -46,7 +46,7 @@ export function ReceiptPreview({ booking, property, documentNumber, pid, setupTa
   return (
     <PrintDocument>
       <PrintingHeader
-        className="p-0 sm:px-0 pb-8 w-full lg:px-0 max-w-full print:m-0 print:px-0"
+        className="w-full pb-[20pt]"
         selectedDocument={null}
         documentId={documentNumber}
         receiptNumber={documentNumber}
