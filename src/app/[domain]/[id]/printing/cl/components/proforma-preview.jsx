@@ -3,7 +3,7 @@ import { FiscalDocumentFooter } from '../../shared/fiscal-document-footer';
 import { FiscalDocumentTable } from './fiscal-document-table';
 import { PrintDocument } from '../../shared/print-document';
 
-export function ProformaPreview({ property, transactions, documentNumber, agent }) {
+export function ProformaPreview({ property, transactions, documentNumber, agent, collapseUnits }) {
   return (
     <PrintDocument>
       <DocumentHeader
@@ -17,6 +17,7 @@ export function ProformaPreview({ property, transactions, documentNumber, agent 
         transactions={transactions}
         currencySymbol={property?.currency?.symbol ?? '$'}
         property={property}
+        collapseUnits={collapseUnits}
       />
       {/* <FiscalDocumentFooter property={property} /> */}
     </PrintDocument>

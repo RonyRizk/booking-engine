@@ -50,6 +50,7 @@ export function FiscalDocumentTable({
   transactions = [],
   currencySymbol = "$",
   invertAmounts = false,
+  collapseUnits = false,
   property,
 }) {
   const { prIdDict, roomTypesDict, rateplanDict } = buildLookups(property);
@@ -81,7 +82,7 @@ export function FiscalDocumentTable({
         <PrintTableCell muted nowrap indent={indent} className={cn("border-r ",
           { "border-b-black": isLast }
         )}>
-          {formatEntryDate(tx.SERVICE_DATE)}
+          {tx.COLLAPSED ? "" : formatEntryDate(tx.SERVICE_DATE)}
         </PrintTableCell>
         <PrintTableCell fill className={cn("border-r", { "border-b-black": isLast })}>
           {tx.DESCRIPTION}
@@ -262,7 +263,7 @@ export function FiscalDocumentTable({
 
   // ── Render ─────────────────────────────────────────────────────────────────
 
-  const grouped = groupData(transactions);
+  const grouped = groupData(transactions, { collapseUnits });
   const withCityTax = transactions?.some(t => t.CITY_TAX_PERCENT > 0);
 
   return (

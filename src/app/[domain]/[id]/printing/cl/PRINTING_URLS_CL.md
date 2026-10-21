@@ -15,11 +15,18 @@ Modes: `invoice` · `receipt` · `creditnote` · `creditreceipt` · `debitnote` 
 | `to`    | no       | Statement end date `YYYY-MM-DD` — used for `statement`, `proforma`                                      |
 | `id`    | no       | Booking number — used for `proforma`                                                                    |
 | `lang`  | no       | Language code (default: `en`)                                                                           |
+| `collapse_units` | no | `true` to print one summed row per unit instead of one row per night — used for `invoice`, `draft`, `proforma` |
 
 **Invoice**
 
 ```
 http://localhost:5863/a35/printing/cl?docNo=INV-19&aid=227&mode=invoice&token={token}
+```
+
+**Invoice (collapsed units)**
+
+```
+http://localhost:5863/a35/printing/cl?docNo=INV-19&aid=227&mode=invoice&collapse_units=true&token={token}
 ```
 
 **Draft**

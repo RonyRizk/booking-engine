@@ -26,10 +26,16 @@
  *   rate plan) are derived from the group's accommodation rows — the ones
  *   carrying a PR_ID — since extras have none of that information.
  *
+ *   With collapseUnits, the accommodation nights of a unit are replaced by a
+ *   single row (blank date in the table) that carries the summed amounts.
+ *   Extras are left as their own rows.
+ *
  * @param  rows - Raw transaction rows from the API.
+ * @param  {Object}  [options]
+ * @param  {boolean} [options.collapseUnits=false] - Sum each unit's nights into one row.
  * @returns {Array} Grouped and sorted rows ready for rendering.
  */
-export const groupData = (rows) => {
+export const groupData = (rows, { collapseUnits = false } = {}) => {
   // ── Sorting helper ────────────────────────────────────────────────────────
 
   /**
@@ -92,6 +98,41 @@ export const groupData = (rows) => {
     return [...before, ...roomRows, ...after];
   };
 
+  /**
+   * Folds a unit's accommodation nights into one row based on the first night.
+   * Amounts are summed with the row's sign applied (credits count negative,
+   * matching the table), so the result is emitted as a plain debit row.
+   * Percentages and description survive only when every night agrees.
+   * COLLAPSED tells the table to leave the date cell blank; SERVICE_DATE is
+   * kept so the row still sorts where the first night would.
+   */
+  const collapseRoomRows = roomRows => {
+    if (roomRows.length === 0) return roomRows;
+
+    const sameValue = key => {
+      const value = roomRows[0][key];
+      return roomRows.every(row => row[key] === value) ? value : null;
+    };
+    const sum = key =>
+      roomRows.reduce((acc, row) => acc + (row.CREDIT > 0 ? -1 : 1) * (row[key] ?? 0), 0);
+
+    return [
+      {
+        ...roomRows[0],
+        COLLAPSED: true,
+        CREDIT: 0,
+        NET_AMOUNT: sum('NET_AMOUNT'),
+        VAT_AMOUNT: sum('VAT_AMOUNT'),
+        TAX_AMOUNT: sum('TAX_AMOUNT'),
+        CITY_TAX_AMOUNT: sum('CITY_TAX_AMOUNT'),
+        TOTAL_AMOUNT: sum('TOTAL_AMOUNT'),
+        VAT_PERCENT: sameValue('VAT_PERCENT'),
+        CITY_TAX_PERCENT: sameValue('CITY_TAX_PERCENT'),
+        DESCRIPTION: sameValue('DESCRIPTION') ?? '',
+      },
+    ];
+  };
+
   // ── Level 2: within each booking, group rows by BSA_REF (room stay) ─────
 
   const groupByUnit = bookingRows => {
@@ -119,7 +160,7 @@ export const groupData = (rows) => {
       const last = roomRows[roomRows.length - 1] ?? sorted[sorted.length - 1];
       unitGroups.push({
         BSA_REF: bsaRef,
-        subRows: orderUnitRows(sorted, roomRows),
+        subRows: orderUnitRows(sorted, collapseUnits ? collapseRoomRows(roomRows) : roomRows),
         PR_ID: first.PR_ID ?? null,
         occupancy: (first.ADULTS_NBR ?? 0) + (first.CHILD_NBR ?? 0) + (first.INFANT_NBR ?? 0),
         GUEST_FIRST_NAME: first.GUEST_FIRST_NAME ?? '',

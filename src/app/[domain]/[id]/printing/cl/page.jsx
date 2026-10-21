@@ -187,6 +187,7 @@ const FETCHERS = {
  * @param {string}  [props.searchParams.from]  - Statement start date (YYYY-MM-DD).
  * @param {string}  [props.searchParams.to]    - Statement end date (YYYY-MM-DD).
  * @param {string}  [props.searchParams.ref]   - External reference (credit note).
+ * @param {string}  [props.searchParams.collapse_units] - "true" to print one summed row per unit instead of one per night (invoice / draft / proforma).
  */
 export default async function CityLedgerPrintingPages({
     searchParams,
@@ -202,7 +203,9 @@ export default async function CityLedgerPrintingPages({
         ref: externalRef,
         id: bookingId,
         lang = "en",
+        collapse_units,
     } = searchParams;
+    const collapseUnits = collapse_units === "true";
 
     const normalizedMode = mode?.toLowerCase()?.trim();
 
@@ -269,6 +272,7 @@ export default async function CityLedgerPrintingPages({
                     isDraft={normalizedMode === "draft"}
                     {...sharedProps}
                     documentNumber={documentNumber}
+                    collapseUnits={collapseUnits}
                 />
             )}
             {normalizedMode === "receipt" && (
@@ -295,7 +299,11 @@ export default async function CityLedgerPrintingPages({
                 />
             )}
             {normalizedMode === "proforma" && (
-                <ProformaPreview {...sharedProps} documentNumber={documentNumber} />
+                <ProformaPreview
+                    {...sharedProps}
+                    documentNumber={documentNumber}
+                    collapseUnits={collapseUnits}
+                />
             )}
         </div>
     );
