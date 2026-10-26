@@ -1,5 +1,5 @@
 import { render } from '@react-email/components';
-import { extractSearchParamsInsensitive, getBookingData, verifyToken } from '@/lib/middleware';
+import { extractSearchParamsInsensitive, getBookingData, verifyToken, getEnvironmentBaseUrl } from '@/lib/middleware';
 import BookingCancellationEmail from '@/emails/booking/cancellation';
 import { BookingSchema } from '../../schemas';
 import { ZodError } from 'zod';
@@ -16,7 +16,7 @@ export async function GET(req) {
         const token = verifyToken(req)
         const { id, aname, lang } = BookingSchema.parse(extractSearchParamsInsensitive(req))
 
-        const data = await getBookingData({ bookingNumber: id, aName: aname, language: lang, includePenaltyStatement: true }, token, { 'X-ClientId': 'EMAIL' });
+        const data = await getBookingData({ bookingNumber: id, aName: aname, language: lang, includePenaltyStatement: true, baseUrl: getEnvironmentBaseUrl(req) }, token, { 'X-ClientId': 'EMAIL' });
         const emailHTML = await render(<BookingCancellationEmail {...data} lang={lang} />);
         return new Response(emailHTML);
     } catch (error) {

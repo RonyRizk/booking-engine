@@ -52,12 +52,12 @@ export class ApiError extends Error {
 
 export class ApiService {
     constructor(baseUrl, token = null) {
-        axios.defaults.baseURL = baseUrl;
+        this.baseUrl = baseUrl;
         this.token = token;
         this.defaultHeaders = {};
     }
     setBaseUrl(url) {
-        axios.defaults.baseURL = url;
+        this.baseUrl = url;
     }
     // Set or update the token
     setToken(token) {
@@ -80,6 +80,7 @@ export class ApiService {
         }
         try {
             const { data } = await axios.post(`${endpoint}`, payload, {
+                baseURL: this.baseUrl,
                 headers: {
                     Authorization: token,
                     'Content-Type': 'application/json',

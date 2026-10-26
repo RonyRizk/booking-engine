@@ -1,5 +1,5 @@
 import { render } from '@react-email/components';
-import { extractSearchParamsInsensitive, getConnectedMpo, verifyToken } from '@/lib/middleware';
+import { extractSearchParamsInsensitive, getConnectedMpo, verifyToken, getEnvironmentBaseUrl } from '@/lib/middleware';
 import HkIssue from '@/emails/system/HkIssue';
 import { HkIssueSchema } from '../schemas';
 import { ZodError } from 'zod';
@@ -16,7 +16,7 @@ export async function GET(req) {
     try {
         const token = verifyToken(req)
         const { property_id, lang, unit_id } = HkIssueSchema.parse(extractSearchParamsInsensitive(req))
-        const housekeepingService = new HousekeepingService("https://gateway.igloorooms.com/IR");
+        const housekeepingService = new HousekeepingService(getEnvironmentBaseUrl(req, "https://gateway.igloorooms.com/IR"));
         housekeepingService.setToken(token)
         housekeepingService.setDefaultHeaders({ 'X-ClientId': 'EMAIL' })
         const [data, connectedMpo] = await Promise.all([housekeepingService.getHKIssues({ property_id, lang, unit_id }), getConnectedMpo(req, { 'X-ClientId': 'EMAIL' })]);

@@ -1,5 +1,5 @@
 import { render } from '@react-email/components';
-import { extractSearchParamsInsensitive, getBookingData, verifyToken } from '@/lib/middleware';
+import { extractSearchParamsInsensitive, getBookingData, verifyToken, getEnvironmentBaseUrl } from '@/lib/middleware';
 import BookingCHM from '@/emails/booking/BookingCHM';
 import { ZodError } from 'zod';
 import { BookingCHMSchema, BookingSchema } from '../../schemas';
@@ -16,7 +16,7 @@ export async function POST(req) {
         const token = verifyToken(req)
         const { id, aname, lang } = BookingSchema.parse(extractSearchParamsInsensitive(req))
         const { ota_name, ota_url, operation, booking_details_url } = BookingCHMSchema.parse(requestBody)
-        const data = await getBookingData({ bookingNumber: id, aName: aname, language: lang }, token, { 'X-ClientId': 'EMAIL' });
+        const data = await getBookingData({ bookingNumber: id, aName: aname, language: lang, baseUrl: getEnvironmentBaseUrl(req) }, token, { 'X-ClientId': 'EMAIL' });
         const emailHTML = await render(<BookingCHM {...data} operation={operation} bookingDetailsUrl={booking_details_url} channelName={ota_name} url={ota_url} lang={lang} />);
         return new Response(emailHTML);
     } catch (error) {

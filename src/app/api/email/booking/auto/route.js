@@ -1,5 +1,5 @@
 import { render } from '@react-email/components';
-import { extractSearchParamsInsensitive, getBookingData, verifyToken } from '@/lib/middleware';
+import { extractSearchParamsInsensitive, getBookingData, verifyToken, getEnvironmentBaseUrl } from '@/lib/middleware';
 import { CommonServices } from '@/lib/services/common.service';
 import { AutoEmailSchema } from '../../schemas';
 import { ZodError } from 'zod';
@@ -42,11 +42,11 @@ export async function GET(req) {
         const searchParams = extractSearchParamsInsensitive(req)
         const { id, aname, lang, mode } = AutoEmailSchema.parse(searchParams)
 
-        const commonService = new CommonServices("https://gateway.igloorooms.com/IRBE")
+        const commonService = new CommonServices(getEnvironmentBaseUrl(req, "https://gateway.igloorooms.com/IRBE"))
         commonService.setToken(token)
         commonService.setDefaultHeaders({ 'X-ClientId': 'EMAIL' })
         const [data, tables] = await Promise.all(
-            [getBookingData({ bookingNumber: id, aName: aname, language: lang }, token, { 'X-ClientId': 'EMAIL' }),
+            [getBookingData({ bookingNumber: id, aName: aname, language: lang, baseUrl: getEnvironmentBaseUrl(req) }, token, { 'X-ClientId': 'EMAIL' }),
             commonService.getSetupEntriesByTBLNameMulti([
                 '_PRE_ARRIVAL_EMAIL',
                 '_DURING_THE_STAY_EMAIL',

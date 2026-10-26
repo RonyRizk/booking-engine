@@ -1,5 +1,5 @@
 import { render } from '@react-email/components';
-import { getBookingData, verifyToken, extractSearchParamsInsensitive, getConnectedMpo } from '@/lib/middleware';
+import { getBookingData, verifyToken, extractSearchParamsInsensitive, getConnectedMpo, getEnvironmentBaseUrl } from '@/lib/middleware';
 import PMSFailover from '@/emails/system/PMSFailover';
 import { ZodError } from 'zod';
 import { logApiError } from '@/logger';
@@ -20,7 +20,7 @@ export async function POST(req) {
         const { reason } = PMSFailoverSchema.parse(requestBody);
         const mpo = await getConnectedMpo(req, { 'X-ClientId': 'EMAIL' })
 
-        const data = await getBookingData({ bookingNumber, aName, language }, token, { 'X-ClientId': 'EMAIL' });
+        const data = await getBookingData({ bookingNumber, aName, language, baseUrl: getEnvironmentBaseUrl(req) }, token, { 'X-ClientId': 'EMAIL' });
         const emailHTML = await render(<PMSFailover connectedMpo={mpo} {...data} reason={reason} lang={language} />);
         return new Response(emailHTML);
     } catch (error) {

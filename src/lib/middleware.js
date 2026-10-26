@@ -3,6 +3,7 @@ import { PrintingService } from "./services/printing.service";
 import { calculateDaysBetweenDates } from "./utils";
 
 const baseUrl = "https://gateway.igloorooms.com/IRBE";
+const alphaBaseUrl = "https://gateway.igloorooms.com/IRALPHA";
 const sections = ["_FRONT"]
 
 /**
@@ -24,6 +25,18 @@ export const parseConnectedUserTypeHeader = (req) => {
     }
     return connectedUser
 };
+
+/**
+ * Resolves the gateway base URL from the 'Environment' header.
+ *
+ * "alpha" → IRALPHA; anything else (or missing) → `defaultUrl`.
+ *
+ * @param {Request} req - The incoming request object.
+ * @param {string} [defaultUrl] - The URL used outside of alpha.
+ * @returns {string} The gateway base URL to use for this request.
+ */
+export const getEnvironmentBaseUrl = (req, defaultUrl = baseUrl) =>
+    req.headers.get('Environment')?.trim().toLowerCase() === 'alpha' ? alphaBaseUrl : defaultUrl;
 
 /**
  * Verifies the existence and validity of an Authorization token in the request headers.
@@ -120,7 +133,7 @@ export const getBookingData = async (params, token, headers = {}) => {
         printingService.setDefaultHeaders(headers);
     }
     const { booking, property, countries, locales: defaultLocales, statement, error } =
-        await printingService.getPrintingData({ ...params, baseUrl, tables: sections });
+        await printingService.getPrintingData({ baseUrl, ...params, tables: sections });
     const { entries: locales } = defaultLocales
     const totalPersons = booking?.occupancy?.adult_nbr + booking?.occupancy?.children_nbr;
     const currency = booking?.currency?.symbol;
@@ -184,7 +197,7 @@ export async function getConnectedMpo(req, headers = {}) {
     }
     let mpo = null;
     const token = verifyToken(req);
-    const commonService = new CommonServices(baseUrl);
+    const commonService = new CommonServices(getEnvironmentBaseUrl(req));
     commonService.setToken(token);
     if (Object.keys(headers).length > 0) {
         commonService.setDefaultHeaders(headers);

@@ -82,6 +82,7 @@ export default async function FiscalDocumentsPage({ params, searchParams }) {
             commonService.getExposedProperty(params.id, lang),
             bookingService.getExposedBooking({
                 is_get_financial_snapshot: true,
+                is_calculate_totals: mode === 'printing',
                 booking_nbr, "extras": [
                     {
                         "key": "payment_code",
