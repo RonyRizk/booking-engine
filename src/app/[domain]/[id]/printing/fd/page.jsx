@@ -21,6 +21,7 @@
  * @param {string} props.searchParams.bookingNbr   - Booking number (required).
  * @param {string} [props.searchParams.docNo]      - Document number shown in the header.
  * @param {string} [props.searchParams.lang="en"]  - Language code for localised values.
+ * @param {("alpha"|"production")} [props.searchParams.environment="production"] - Gateway to use: "alpha" → IRALPHA, otherwise IR.
  */
 
 import { redirect } from "next/navigation";
@@ -34,6 +35,7 @@ import { CommonServices } from "@/lib/services/common.service";
 import { PrintingService } from "@/lib/services/printing.service";
 import BookingPreview from "./components/booking-preview";
 import { CityLedgerService } from "@/lib/services/city-ledger.service";
+import { resolveEnvironmentBaseUrl } from "@/lib/middleware";
 
 const DEFAULT_BASE_URL = "https://gateway.igloorooms.com/IR";
 const VALID_MODES = new Set(["invoice", "receipt", "creditnote", "creditreceipt", "refund", "printing", "proforma"]);
@@ -49,8 +51,10 @@ export default async function FiscalDocumentsPage({ params, searchParams }) {
         pid,
         ids,
         bill_to,
+        environment,
     } = searchParams;
 
+    const baseUrl = resolveEnvironmentBaseUrl(environment, DEFAULT_BASE_URL);
     const normalizedMode = mode?.toLowerCase()?.trim();
 
     if (
@@ -65,15 +69,16 @@ export default async function FiscalDocumentsPage({ params, searchParams }) {
 
     const bookingService = new BookingService();
     bookingService.setToken(token);
-    bookingService.setBaseUrl(DEFAULT_BASE_URL);
+    bookingService.setBaseUrl(baseUrl);
 
     const commonService = new CommonServices();
     commonService.setToken(token);
-    commonService.setBaseUrl(DEFAULT_BASE_URL);
+    commonService.setBaseUrl(baseUrl);
 
 
 
     const printingService = new PrintingService(token);
+    printingService.setBaseUrl(baseUrl);
 
     let property, booking, bedPreferences, setupTables, invoiceInfo, countries, localesRaw, agent;
     let clTransactions = [];
@@ -82,7 +87,7 @@ export default async function FiscalDocumentsPage({ params, searchParams }) {
             commonService.getExposedProperty(params.id, lang),
             bookingService.getExposedBooking({
                 is_get_financial_snapshot: true,
-                is_calculate_totals: mode === 'printing',
+                is_calculate_totals: normalizedMode === 'printing',
                 booking_nbr, "extras": [
                     {
                         "key": "payment_code",
@@ -99,7 +104,7 @@ export default async function FiscalDocumentsPage({ params, searchParams }) {
         if (booking.agent?.id && normalizedMode === "printing") {
             const cl = new CityLedgerService();
             cl.setToken(token);
-            cl.setBaseUrl(DEFAULT_BASE_URL);
+            cl.setBaseUrl(baseUrl);
             const [agentData, clResult] = await Promise.all([
                 cl.getExposedAgent({ id: booking.agent.id }),
                 cl.fetchCL({ AGENCY_ID: booking.agent.id, SEARCH_QUERY: booking_nbr }),

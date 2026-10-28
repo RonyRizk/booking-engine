@@ -25,6 +25,7 @@ export function InvoicePreview({ property, isDraft, transactions, documentNumber
         currencySymbol={property?.currency?.symbol ?? '$'}
         property={property}
         collapseUnits={collapseUnits}
+        rtNamings={agent?.rt_namings}
       />
       {!isDraft && <FiscalDocumentFooter property={property} />}
     </PrintDocument>

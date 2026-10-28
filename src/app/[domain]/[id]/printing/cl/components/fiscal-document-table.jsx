@@ -6,6 +6,8 @@
  *
  * Data is grouped into: Booking → Unit (room) → individual rows, oldest-first.
  * Pass invertAmounts=true for credit notes to negate all monetary values.
+ * Pass rtNamings (the agent's rt_namings) so collapsed unit rows show the
+ * agent's custom code for their room type in the Date column.
  */
 
 import { Fragment } from "react";
@@ -35,6 +37,11 @@ function buildLookups(property) {
   return { prIdDict, roomTypesDict, rateplanDict };
 }
 
+// Agent's custom room-type codes, keyed by property room type id.
+function buildRtNamingDict(rtNamings) {
+  return new Map((rtNamings ?? []).map((n) => [n.room_type_id, n.name]));
+}
+
 function formatEntryDate(dateStr) {
   if (!dateStr) return "—";
   try {
@@ -52,8 +59,10 @@ export function FiscalDocumentTable({
   invertAmounts = false,
   collapseUnits = false,
   property,
+  rtNamings = [],
 }) {
   const { prIdDict, roomTypesDict, rateplanDict } = buildLookups(property);
+  const rtNamingDict = buildRtNamingDict(rtNamings);
 
   const rowSign = (tx) => (tx?.CREDIT > 0 ? -1 : 1);
   const applySign = (value, sign = 1) =>
@@ -82,7 +91,9 @@ export function FiscalDocumentTable({
         <PrintTableCell muted nowrap indent={indent} className={cn("border-r ",
           { "border-b-black": isLast }
         )}>
-          {tx.COLLAPSED ? "" : formatEntryDate(tx.SERVICE_DATE)}
+          {tx.COLLAPSED
+            ? rtNamingDict.get(tx.ROOM_CATEGORY_ID) ?? ""
+            : formatEntryDate(tx.SERVICE_DATE)}
         </PrintTableCell>
         <PrintTableCell fill className={cn("border-r", { "border-b-black": isLast })}>
           {tx.DESCRIPTION}

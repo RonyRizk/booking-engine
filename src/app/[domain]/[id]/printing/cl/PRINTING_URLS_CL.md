@@ -16,6 +16,7 @@ Modes: `invoice` · `receipt` · `creditnote` · `creditreceipt` · `debitnote` 
 | `id`    | no       | Booking number — used for `proforma`                                                                    |
 | `lang`  | no       | Language code (default: `en`)                                                                           |
 | `collapse_units` | no | `true` to print one summed row per unit instead of one row per night — used for `invoice`, `draft`, `proforma` |
+| `environment` | no | `alpha` (IRALPHA gateway) or `production` (IR gateway, default) |
 
 **Invoice**
 

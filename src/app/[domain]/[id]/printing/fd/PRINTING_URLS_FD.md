@@ -14,6 +14,7 @@ Modes: `invoice` · `receipt` · `creditnote` · `creditreceipt` · `refund` · 
 | `pid`        | no       | Payment `system_id` — used for `receipt`, `creditreceipt`, `refund` |
 | `ids`        | no       | List of `system_id` separated by `-` — used for `proforma`          |
 | `bill_to`    | no       | `company` or `empty` or `custom name` - used for `proforma`         |
+| `environment` | no      | `alpha` (IRALPHA gateway) or `production` (IR gateway, default)     |
 
 **Invoice**
 

@@ -27,6 +27,18 @@ export const parseConnectedUserTypeHeader = (req) => {
 };
 
 /**
+ * Resolves the gateway base URL from an environment name.
+ *
+ * "alpha" → IRALPHA; anything else (or missing) → `defaultUrl`.
+ *
+ * @param {string|null|undefined} environment - The environment name ("alpha" | "production").
+ * @param {string} [defaultUrl] - The URL used outside of alpha.
+ * @returns {string} The gateway base URL to use.
+ */
+export const resolveEnvironmentBaseUrl = (environment, defaultUrl = baseUrl) =>
+    environment?.trim().toLowerCase() === 'alpha' ? alphaBaseUrl : defaultUrl;
+
+/**
  * Resolves the gateway base URL from the 'Environment' header.
  *
  * "alpha" → IRALPHA; anything else (or missing) → `defaultUrl`.
@@ -36,7 +48,7 @@ export const parseConnectedUserTypeHeader = (req) => {
  * @returns {string} The gateway base URL to use for this request.
  */
 export const getEnvironmentBaseUrl = (req, defaultUrl = baseUrl) =>
-    req.headers.get('Environment')?.trim().toLowerCase() === 'alpha' ? alphaBaseUrl : defaultUrl;
+    resolveEnvironmentBaseUrl(req.headers.get('Environment'), defaultUrl);
 
 /**
  * Verifies the existence and validity of an Authorization token in the request headers.

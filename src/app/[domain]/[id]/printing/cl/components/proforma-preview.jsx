@@ -18,6 +18,7 @@ export function ProformaPreview({ property, transactions, documentNumber, agent,
         currencySymbol={property?.currency?.symbol ?? '$'}
         property={property}
         collapseUnits={collapseUnits}
+        rtNamings={agent?.rt_namings}
       />
       {/* <FiscalDocumentFooter property={property} /> */}
     </PrintDocument>

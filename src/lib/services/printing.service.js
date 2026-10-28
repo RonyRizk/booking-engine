@@ -22,6 +22,12 @@ export class PrintingService extends Token {
         this.bookingService.setDefaultHeaders(headers);
     }
 
+    setBaseUrl(url) {
+        this.baseUrl = url;
+        this.commonService.setBaseUrl(url);
+        this.bookingService.setBaseUrl(url);
+    }
+
 
     async getPrintingData({ bookingNumber, is_calculate_totals = false, aName, language = "en", baseUrl, tables, includePenaltyStatement, mode }) {
         if (baseUrl) {

@@ -103,7 +103,8 @@ export const groupData = (rows, { collapseUnits = false } = {}) => {
    * Amounts are summed with the row's sign applied (credits count negative,
    * matching the table), so the result is emitted as a plain debit row.
    * Percentages and description survive only when every night agrees.
-   * COLLAPSED tells the table to leave the date cell blank; SERVICE_DATE is
+   * COLLAPSED tells the table to leave the date cell blank (or show the
+   * agent's custom code for the room type, when it has one); SERVICE_DATE is
    * kept so the row still sorts where the first night would.
    */
   const collapseRoomRows = roomRows => {

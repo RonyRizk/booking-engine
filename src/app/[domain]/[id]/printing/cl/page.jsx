@@ -11,6 +11,7 @@ import "../shared/fiscal-printing.css";
 import { CommonServices } from "@/lib/services/common.service";
 import { ClTxTypeCode, FdTypes } from "@/lib/enums";
 import { convertBookingToCL } from "./utils/booking-to-cl";
+import { resolveEnvironmentBaseUrl } from "@/lib/middleware";
 
 const DEFAULT_BASE_URL = "https://gateway.igloorooms.com/IR";
 const VALID_MODES = new Set([
@@ -32,8 +33,8 @@ const FALLBACK_URL = "https://x.igloorooms.com/manage/acbookinglist.aspx";
  * Resolves to an empty map on failure so the document still renders with the
  * raw descriptions instead of erroring out.
  */
-const fetchSvcCategory = ({ token, lang }) => {
-    const commonService = new CommonServices(DEFAULT_BASE_URL);
+const fetchSvcCategory = ({ token, lang, baseUrl }) => {
+    const commonService = new CommonServices(baseUrl);
     commonService.setToken(token);
     return commonService
         .getSetupEntriesByTBLNameMulti(["_SVC_CATEGORY"], lang)
@@ -49,18 +50,18 @@ const fetchSvcCategory = ({ token, lang }) => {
  * @type {Record<string, (cl: CityLedgerService, property: object, params: object) => Promise<object>>}
  */
 const FETCHERS = {
-    invoice: (cl, _property, { agentId, documentNumber, token, lang }) =>
+    invoice: (cl, _property, { agentId, documentNumber, token, lang, baseUrl }) =>
         Promise.all([
             cl.fetchCL({ AGENCY_ID: agentId, SEARCH_QUERY: documentNumber }),
-            fetchSvcCategory({ token, lang }),
+            fetchSvcCategory({ token, lang, baseUrl }),
         ]).then(([result, svcCategory]) => ({
             transactions: result?.My_Result?.My_Cl_tx ?? [],
             svcCategory,
         })),
-    draft: (cl, _property, { agentId, documentNumber, token, lang }) =>
+    draft: (cl, _property, { agentId, documentNumber, token, lang, baseUrl }) =>
         Promise.all([
             cl.fetchCL({ AGENCY_ID: agentId, SEARCH_QUERY: documentNumber }),
-            fetchSvcCategory({ token, lang }),
+            fetchSvcCategory({ token, lang, baseUrl }),
         ]).then(([result, svcCategory]) => ({
             transactions: result?.My_Result?.My_Cl_tx ?? [],
             svcCategory,
@@ -103,14 +104,14 @@ const FETCHERS = {
     proforma: async (
         cl,
         _property,
-        { agentId, fromDate, toDate, bookingId, token, lang },
+        { agentId, fromDate, toDate, bookingId, token, lang, baseUrl },
     ) => {
-        const commonService = new CommonServices(DEFAULT_BASE_URL);
+        const commonService = new CommonServices(baseUrl);
         commonService.setToken(token);
         const invoicedClTxTypeCode = new Set([ClTxTypeCode.Adjustment, ClTxTypeCode.CancellationPenalty, ClTxTypeCode.Discount, ClTxTypeCode.StandardChargeDebit]);
 
         if (bookingId) {
-            const bookingService = new BookingService(DEFAULT_BASE_URL);
+            const bookingService = new BookingService(baseUrl);
             bookingService.setToken(token);
             const [clResult, booking, setupEntries] = await Promise.all([
                 cl.fetchCL({
@@ -188,6 +189,7 @@ const FETCHERS = {
  * @param {string}  [props.searchParams.to]    - Statement end date (YYYY-MM-DD).
  * @param {string}  [props.searchParams.ref]   - External reference (credit note).
  * @param {string}  [props.searchParams.collapse_units] - "true" to print one summed row per unit instead of one per night (invoice / draft / proforma).
+ * @param {("alpha"|"production")} [props.searchParams.environment="production"] - Gateway to use: "alpha" → IRALPHA, otherwise IR.
  */
 export default async function CityLedgerPrintingPages({
     searchParams,
@@ -204,8 +206,10 @@ export default async function CityLedgerPrintingPages({
         id: bookingId,
         lang = "en",
         collapse_units,
+        environment,
     } = searchParams;
     const collapseUnits = collapse_units === "true";
+    const baseUrl = resolveEnvironmentBaseUrl(environment, DEFAULT_BASE_URL);
 
     const normalizedMode = mode?.toLowerCase()?.trim();
 
@@ -218,12 +222,12 @@ export default async function CityLedgerPrintingPages({
         redirect(FALLBACK_URL);
     }
 
-    const cl = new CityLedgerService();
+    const cl = new CityLedgerService(baseUrl);
     cl.setToken(token);
 
     const commonService = new CommonServices();
     commonService.setToken(token);
-    commonService.setBaseUrl(DEFAULT_BASE_URL);
+    commonService.setBaseUrl(baseUrl);
 
     // Phase 1 — resolve property, agent, and countries in parallel
     let property;
@@ -257,6 +261,7 @@ export default async function CityLedgerPrintingPages({
             bookingId,
             token,
             lang,
+            baseUrl,
         });
     } catch (error) {
         console.log(error);
