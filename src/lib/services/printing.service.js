@@ -1,4 +1,3 @@
-import moment from "moment";
 import { CommonServices } from "./common.service";
 import { Token } from "../token";
 import { BookingService } from "./booking.service";
@@ -29,36 +28,40 @@ export class PrintingService extends Token {
     }
 
 
-    async getPrintingData({ bookingNumber, is_calculate_totals = false, aName, language = "en", baseUrl, tables, includePenaltyStatement, mode }) {
+    async getPrintingData({ bookingNumber, is_calculate_totals = false, aName, language = "en", baseUrl, includePenaltyStatement, mode }) {
         if (baseUrl) {
             this.commonService.setBaseUrl(baseUrl);
             this.bookingService.setBaseUrl(baseUrl)
         }
-        const [booking, property, countries, locales, beddingPreference, setupTables, statement, invoiceInfo] = await Promise.all([
+        const [booking, property, countries, beddingPreference, setupTables, statement, invoiceInfo] = await Promise.all([
             this.bookingService.getExposedBooking({ booking_nbr: bookingNumber, language, is_calculate_totals }),
             this.commonService.getExposedProperty(aName, language),
             this.commonService.getCountries(language),
-            this.commonService.fetchLanguage(language, tables ?? ["_PRINT_FRONT", "_PMS_FRONT"]),
             this.bookingService.getBedPreference(),
-            this.commonService.getSetupEntriesByTBLNameMulti(['_PAY_TYPE', '_PAY_TYPE_GROUP', '_PAY_METHOD'], 'en'),
+            this.commonService.getSetupEntriesByTBLNameMulti(['_PAY_TYPE', '_PAY_METHOD'], language),
             includePenaltyStatement ? this.bookingService.getPenaltyStatement() : Promise.resolve(null),
             (mode && ["invoice", "creditnote"].includes(mode?.toLowerCase()?.trim())) ? this.bookingService.getBookingInvoiceInfo({ booking_nbr: bookingNumber }) : Promise.resolve(null),
         ])
         this._bedPreferences = beddingPreference;
-        return { booking, property, countries, locales, beddingPreference, setupTables, statement, invoiceInfo, error: null }
+        return { booking, property, countries, beddingPreference, setupTables, statement, invoiceInfo, error: null }
     }
 
+    /** Marks the payment's receipt as issued. A failure is logged: it must not stop the receipt printing. */
     async checkReceipt({ booking, receiptNumber, paymentId }) {
-        const payment = booking.financial.payments.find(p => p.system_id?.toString() === paymentId);
-        if (!payment) {
-            errorLogger.log(`payment ${paymentId} for booking ${booking.booking_nbr} doesn't exist`)
-            return;
-        }
-        if (!payment.is_receipt_issued) {
-            await this.bookingService.markPaymentAsReceiptIssued({
-                payment_id: paymentId,
-                receipt_nbr: receiptNumber
-            })
+        try {
+            const payment = booking.financial.payments.find(p => p.system_id?.toString() === paymentId);
+            if (!payment) {
+                errorLogger.error(`payment ${paymentId} for booking ${booking.booking_nbr} doesn't exist`)
+                return;
+            }
+            if (!payment.is_receipt_issued) {
+                await this.bookingService.markPaymentAsReceiptIssued({
+                    payment_id: paymentId,
+                    receipt_nbr: receiptNumber
+                })
+            }
+        } catch (error) {
+            errorLogger.error(error);
         }
     }
 
@@ -68,11 +71,8 @@ export class PrintingService extends Token {
 
     //Helpers
 
-    formatGuestName({ first_name, last_name }) {
-        if (!last_name) {
-            return first_name;
-        }
-        return `${first_name} ${last_name}`;
+    formatGuestName({ first_name, last_name } = {}) {
+        return [first_name, last_name].filter(Boolean).join(" ");
     }
     formatPhoneNumber({ mobile_without_prefix, country_phone_prefix }, is_direct) {
         // if (!is_direct) {
@@ -86,22 +86,9 @@ export class PrintingService extends Token {
         }
         return `+${country_phone_prefix?.replace('+', '')}-${mobile_without_prefix}`;
     }
-    formatBookingDates(date) {
-        return moment(date, 'YYYY-MM-DD').locale('en').format('MMM DD, YYYY');
-    }
     getUserCountry(countries, country_id) {
         const country = countries.find(country => country.id === country_id);
         return country?.name;
-    }
-    formatDate(date) {
-        const dayMonth = moment(date).locale('en').format('DD/MM');
-        let dayOfWeekAbbr = moment(date).locale('en').format('ddd');
-        if (['Thu', 'Sun', 'Sat'].includes(dayOfWeekAbbr)) {
-            dayOfWeekAbbr = dayOfWeekAbbr.slice(0, 2);
-        } else {
-            dayOfWeekAbbr = dayOfWeekAbbr.charAt(0);
-        }
-        return `${dayMonth} ${dayOfWeekAbbr}`;
     }
     getBedLabel({ language, bed_preference, bed_preferences = this._bedPreferences }) {
         const bed = bed_preferences.find(p => p.CODE_NAME === bed_preference.toString());

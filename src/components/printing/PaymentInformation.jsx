@@ -1,9 +1,10 @@
+import { getI18n } from "@/lib/printing-i18n";
 import InfoDisplay from "@/components/InfoDisplay";
 import CreditCardInfo from "@/components/printing/CreditCardInfo";
 import { formatAmount } from "@/lib/utils";
-import moment from "moment";
 
-export default async function PaymentInformation({ printingService, selectedDocumentsItemsKeys, booking, locales, paymentId, mode, setupTables, selectedDocument }) {
+export default async function PaymentInformation({ printingService, selectedDocumentsItemsKeys, booking, paymentId, mode, setupTables, selectedDocument }) {
+    const { t, formatDate } = getI18n();
     const invoicableMode = ["invoice", "creditnote"].includes(mode)
     const payments = (booking.financial?.payments ?? []).filter(p => !p.is_city_ledger);
     function getPaymentDescription(setupTables, paymentTypeCode, paymentMethodCode, designation) {
@@ -28,15 +29,15 @@ export default async function PaymentInformation({ printingService, selectedDocu
         }
         return <section className="py-4 space-y-2.5 border-gray-300 border-y border-b-0">
             <InfoDisplay
-                label={`Payment received:`}
+                label={`${t("Lcz_PaymentReceived")}:`}
                 value={formatAmount(payment.amount, payment.currency.symbol)}
             />
             <InfoDisplay
-                label={`Method:`}
+                label={`${t("Lcz_Method")}:`}
                 value={getPaymentDescription(setupTables, payment.payment_type?.code, payment.payment_method?.code, payment?.designation)}
             />
             <InfoDisplay
-                label={`Reference:`}
+                label={`${t("Lcz_Reference")}:`}
                 value={payment.reference}
             />
         </section>
@@ -53,12 +54,12 @@ export default async function PaymentInformation({ printingService, selectedDocu
         return <section className="py-4 space-y-2.5 border-gray-300 border-y border-b-0">
             <div className="flex flex-col sm:justify-between sm:flex-row w-full  sm:items-center  sm:gap-4   flex-wrap">
                 <div className="flex flex-col sm:items-center sm:flex-row">
-                    <InfoDisplay inline label={""} className={"break-words max-w-[90vw] sm:max-w-2xl sm:mr-4"} value={"Cancellation penalty"}></InfoDisplay>
+                    <InfoDisplay inline label={""} className={"break-words max-w-[90vw] sm:max-w-2xl sm:mr-4"} value={t("Lcz_CancelationPenalty")}></InfoDisplay>
                     <div className="flex items-center">
                         <span>(</span>
                         <InfoDisplay
                             label={``}
-                            value={moment(cancellationPenalty?.date).locale("en").format("dddd, DD MMM YYYY")}
+                            value={formatDate(cancellationPenalty?.date, "full")}
                         />
                         <span>)</span>
                     </div>
@@ -77,17 +78,17 @@ export default async function PaymentInformation({ printingService, selectedDocu
             return null
         }
         return <section className="py-4 space-y-2.5 border-gray-300 border-y border-b-0">
-            <p className="text-lg font-semibold text-gray-900">Effects on Original Invoice</p>
+            <p className="text-lg font-semibold text-gray-900">{t("Lcz_EffectsOnOriginalInvoice")}</p>
             <InfoDisplay
-                label={`Original invoice total:`}
+                label={`${t("Lcz_OriginalInvoiceTotal")}:`}
                 value={formatAmount(selectedDocument?.total_amount, booking?.currency?.symbol)}
             />
             <InfoDisplay
-                label={`Less: Credit Note:`}
+                label={`${t("Lcz_LessCreditNote")}:`}
                 value={formatAmount(selectedDocument?.total_amount * -1, booking?.currency?.symbol)}
             />
             <InfoDisplay
-                label={`Revised net amount:`}
+                label={`${t("Lcz_RevisedNetAmount")}:`}
                 value={formatAmount(0, booking?.currency?.symbol)}
             />
         </section>
@@ -99,11 +100,11 @@ export default async function PaymentInformation({ printingService, selectedDocu
                 {mode === "printing" && <CreditCardInfo booking={booking} printingService={printingService} />}
                 <div className="">
                     <InfoDisplay
-                        label={`${locales?.Lcz_Balance}:`}
+                        label={`${t("Lcz_Balance")}:`}
                         value={formatAmount(booking?.financial?.due_amount, booking?.currency?.symbol)}
                     />
                     <InfoDisplay
-                        label={`${locales?.Lcz_Collected}:`}
+                        label={`${t("Lcz_Collected")}:`}
                         value={formatAmount(
                             (booking?.financial?.collected + booking?.financial?.refunds) ?? 0,
                             booking?.currency?.symbol
@@ -114,38 +115,38 @@ export default async function PaymentInformation({ printingService, selectedDocu
                     <div>
                         <InfoDisplay
                             value={booking?.ota_guarante?.card_type + `${booking?.ota_guarante?.is_virtual ? ' (virtual)' : ''}`}
-                            label={`${locales?.Lcz_CardType}:`}
+                            label={`${t("Lcz_CardType")}:`}
                         />
-                        <InfoDisplay value={booking?.ota_guarante?.cardholder_name} label={`${locales?.Lcz_CardHolderName}:`} />
-                        <InfoDisplay value={booking?.ota_guarante?.card_number} label={`${locales?.Lcz_CardNumber}:`} />
+                        <InfoDisplay value={booking?.ota_guarante?.cardholder_name} label={`${t("Lcz_CardHolderName")}:`} />
+                        <InfoDisplay value={booking?.ota_guarante?.card_number} label={`${t("Lcz_CardNumber")}:`} />
                         <InfoDisplay
                             value={formatAmount(
                                 Number(booking?.ota_guarante?.meta?.virtual_card_current_balance),
                                 booking?.ota_guarante?.meta?.virtual_card_currency_code,
                                 true
                             )}
-                            label={`${locales?.Lcz_CardBalance}:`}
+                            label={`${t("Lcz_CardBalance")}:`}
                         />
                     </div>
                 )} */}
                 {payments.length > 0 && !invoicableMode && (
                     <section className="space-y-2.5 py-4">
-                        <h1 className="font-medium uppercase">{mode === "printing" ? "Guest Folio" : `${locales?.Lcz_Payments} History`} </h1>
+                        <h1 className="font-medium uppercase">{t(mode === "printing" ? "Lcz_GuestFolio" : "Lcz_PaymentsHistory")}</h1>
                         <div className="overflow-x-auto">
                             <table className="table-auto divide-y-2 divide-gray-200 bg-white text-sm">
-                                <thead className="ltr:text-left rtl:text-right">
+                                <thead className="text-start">
                                     <tr>
                                         <th className="px-2 py-2 font-medium text-gray-900 text-center">
-                                            {locales?.Lcz_Date}
+                                            {t("Lcz_Date")}
                                         </th>
                                         <th className="px-2 py-2 font-medium text-gray-900 text-end">
-                                            {locales?.Lcz_Amount}
+                                            {t("Lcz_Amount")}
                                         </th>
                                         <th className="px-2 py-2 font-medium text-gray-900">
-                                            {locales?.Lcz_Designation}
+                                            {t("Lcz_Designation")}
                                         </th>
                                         <th className="px-2 py-2 font-medium text-gray-900">
-                                            {locales?.Lcz_Ref}
+                                            {t("Lcz_Ref")}
                                         </th>
                                     </tr>
                                 </thead>
@@ -157,7 +158,7 @@ export default async function PaymentInformation({ printingService, selectedDocu
                                         return (
                                             <tr key={p.id}>
                                                 <td className="px-2 whitespace-nowrap py-1 font-medium text-gray-900 text-center">
-                                                    {moment(p.date).locale('en').format('DD-MMM-YYYY')}
+                                                    {formatDate(p.date, "dmy")}
                                                 </td>
                                                 <td className="px-2 py-1 whitespace-nowrap text-gray-700 text-end">
                                                     {formatAmount(p.amount, p.currency.symbol)}

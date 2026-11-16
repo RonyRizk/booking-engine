@@ -12,7 +12,7 @@
 
 import { Fragment } from "react";
 import { cn, formatAmount, haveCityTax } from "@/lib/utils";
-import moment from "moment";
+import { getI18n } from "@/lib/printing-i18n";
 import { groupData } from "../utils/group-data";
 import {
   PrintTable,
@@ -43,12 +43,7 @@ function buildRtNamingDict(rtNamings) {
 }
 
 function formatEntryDate(dateStr) {
-  if (!dateStr) return "—";
-  try {
-    return moment(dateStr, 'YYYY-MM-DD').locale('en').format('MMM DD, YYYY');
-  } catch {
-    return dateStr;
-  }
+  return getI18n().formatDate(dateStr);
 }
 
 // ─── FiscalDocumentTable ──────────────────────────────────────────────────────
@@ -61,6 +56,7 @@ export function FiscalDocumentTable({
   property,
   rtNamings = [],
 }) {
+  const { t } = getI18n();
   const { prIdDict, roomTypesDict, rateplanDict } = buildLookups(property);
   const rtNamingDict = buildRtNamingDict(rtNamings);
 
@@ -88,33 +84,33 @@ export function FiscalDocumentTable({
     const sign = rowSign(tx);
     return (
       <PrintTableRow>
-        <PrintTableCell muted nowrap indent={indent} className={cn("border-r ",
+        <PrintTableCell muted nowrap indent={indent} className={cn("border-e ",
           { "border-b-black": isLast }
         )}>
           {tx.COLLAPSED
             ? rtNamingDict.get(tx.ROOM_CATEGORY_ID) ?? ""
             : formatEntryDate(tx.SERVICE_DATE)}
         </PrintTableCell>
-        <PrintTableCell fill className={cn("border-r", { "border-b-black": isLast })}>
+        <PrintTableCell fill className={cn("border-e", { "border-b-black": isLast })}>
           {tx.DESCRIPTION}
         </PrintTableCell>
-        <PrintTableCell numeric bold className={cn("border-r",
+        <PrintTableCell numeric bold className={cn("border-e",
           { "border-b-black": isLast }
         )}>
           {money(tx.NET_AMOUNT, sign)}
         </PrintTableCell>
-        <PrintTableCell numeric muted className={cn(" border-l-slate-200", { "border-b-black": isLast })}>
+        <PrintTableCell numeric muted className={cn(" border-s-slate-200", { "border-b-black": isLast })}>
           {tx.VAT_PERCENT != null ? `${tx.VAT_PERCENT}%` : "—"}
         </PrintTableCell>
-        <PrintTableCell numeric muted className={cn("border-r", { "border-b-black": isLast })}>
+        <PrintTableCell numeric muted className={cn("border-e", { "border-b-black": isLast })}>
           {money(tx.VAT_AMOUNT, sign)}
         </PrintTableCell>
         {withCityTax && (
           <>
-            <PrintTableCell numeric muted className={cn(" border-l-slate-200", { "border-b-black": isLast })}>
+            <PrintTableCell numeric muted className={cn(" border-s-slate-200", { "border-b-black": isLast })}>
               {tx.CITY_TAX_PERCENT ? `${tx.CITY_TAX_PERCENT}%` : ""}
             </PrintTableCell>
-            <PrintTableCell numeric muted className={cn("border-r", { "border-b-black": isLast })}>
+            <PrintTableCell numeric muted className={cn("border-e", { "border-b-black": isLast })}>
               {(tx.CITY_TAX_PERCENT || tx.CITY_TAX_AMOUNT)
                 ? money(tx.CITY_TAX_AMOUNT, sign)
                 : ""}
@@ -146,7 +142,7 @@ export function FiscalDocumentTable({
           >
             <span className="print-subtle font-semibold text-slate-700">
               {roomName} - {group.GUEST_FIRST_NAME} {group.GUEST_LAST_NAME} (
-              {group.occupancy} pax)
+              {t("Lcz_X_Pax", group.occupancy)})
             </span>
             <span className="mx-3 text-slate-300">|</span>
             <span className="print-subtle text-slate-600">
@@ -178,7 +174,7 @@ export function FiscalDocumentTable({
               bold
               className="py-2 px-3 text-slate-700"
             >
-              Booking #{group.BOOK_NBR}
+              {t("Lcz_BookingNbr_X", group.BOOK_NBR)}
             </PrintTableCell>
           </PrintTableRow>
         )}
@@ -237,11 +233,10 @@ export function FiscalDocumentTable({
             {money(totals.net)}
           </p>
           <p className="print-caption uppercase tracking-wide text-slate-600 font-medium mt-0.5">
-            Net Price
-
+            {t("Lcz_NetPrice")}
           </p>
         </PrintTableCell>
-        {/* <PrintTableCell className="border-l-2 border-l-slate-200" /> */}
+        {/* <PrintTableCell className="border-s-2 border-s-slate-200" /> */}
         <PrintTableCell
           numeric
           className="py-4 border-x  border-x-slate-200"
@@ -251,7 +246,7 @@ export function FiscalDocumentTable({
             {money(totals.tax)}
           </p>
           <p className="print-caption uppercase tracking-wide text-slate-600 font-medium mt-0.5">
-            Taxes
+            {t("Lcz_Taxes")}
           </p>
         </PrintTableCell>
         {withCityTax && (
@@ -265,7 +260,7 @@ export function FiscalDocumentTable({
             {money(totals.total)}
           </p>
           <p className="print-caption uppercase tracking-wide text-slate-600 font-medium mt-0.5">
-            Grand Total
+            {t("Lcz_GrandTotal")}
           </p>
         </PrintTableCell>
       </PrintTableRow>
@@ -282,35 +277,35 @@ export function FiscalDocumentTable({
       <PrintTable>
         <PrintTableHead>
           <PrintTableRow>
-            <PrintTableHeaderCell className={"border-r"}>
-              Date
+            <PrintTableHeaderCell className={"border-e"}>
+              {t("Lcz_Date")}
             </PrintTableHeaderCell>
-            <PrintTableHeaderCell className={"border-r"}>
-              Description
+            <PrintTableHeaderCell className={"border-e"}>
+              {t("Lcz_Description")}
             </PrintTableHeaderCell>
-            <PrintTableHeaderCell numeric className={"border-r"}>
-              Net Price
+            <PrintTableHeaderCell numeric className={"border-e"}>
+              {t("Lcz_NetPrice")}
             </PrintTableHeaderCell>
-            <PrintTableHeaderCell>VAT</PrintTableHeaderCell>
-            <PrintTableHeaderCell numeric className={"border-r"}>
-              Amount
+            <PrintTableHeaderCell>{t("Lcz_VAT")}</PrintTableHeaderCell>
+            <PrintTableHeaderCell numeric className={"border-e"}>
+              {t("Lcz_Amount")}
             </PrintTableHeaderCell>
             {withCityTax && (
-              <PrintTableHeaderCell>City Tax</PrintTableHeaderCell>
+              <PrintTableHeaderCell>{t("Lcz_CityTax")}</PrintTableHeaderCell>
             )}
             {withCityTax && (
-              <PrintTableHeaderCell numeric className="border-r">
-                Amount
+              <PrintTableHeaderCell numeric className="border-e">
+                {t("Lcz_Amount")}
               </PrintTableHeaderCell>
             )}
-            <PrintTableHeaderCell numeric>Total</PrintTableHeaderCell>
+            <PrintTableHeaderCell numeric>{t("Lcz_Total")}</PrintTableHeaderCell>
           </PrintTableRow>
         </PrintTableHead>
         <PrintTableBody>
           {transactions.length === 0 ? (
             <PrintTableRow>
               <PrintTableCell empty colSpan={8}>
-                No transactions found for this document.
+                {t("Lcz_NoTransactionsFoundForDocument")}
               </PrintTableCell>
             </PrintTableRow>
           ) : (

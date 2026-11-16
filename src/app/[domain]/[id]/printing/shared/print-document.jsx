@@ -8,6 +8,7 @@
  */
 
 import { cn } from '@/lib/utils';
+import { getI18n } from '@/lib/printing-i18n';
 
 // ─── PrintDocument ────────────────────────────────────────────────────────────
 // wide — trade margin for content width (18pt instead of 36pt → 559.28pt of
@@ -17,6 +18,7 @@ import { cn } from '@/lib/utils';
 export function PrintDocument({ children, wide, className }) {
   return (
     <div
+      dir={getI18n().dir}
       className={cn(
         'fiscal-page mx-auto w-page max-w-page bg-white rounded-lg shadow-lg print:rounded-none print:m-0 print:shadow-none print:ring-0',
         // vertical padding is dropped in print — @page supplies it on every page

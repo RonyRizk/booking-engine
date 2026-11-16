@@ -1,12 +1,13 @@
 import { render } from '@react-email/components';
 import OTPEmail from '@/emails/system/otp';
 import { ZodError } from 'zod';
-import { OTPEmailSchema } from '../../schemas';
+import { LanguageSchema, OTPEmailSchema } from '../../schemas';
 // import { BaseSchema, OTPEmailSchema } from '../../schemas';
 import { logApiError } from '@/logger';
 // import { extractSearchParamsInsensitive, getSystemData, verifyToken } from '@/lib/middleware';
 import { ApiError } from '@/lib/services/api.service';
-import { getConnectedMpo } from '@/lib/middleware';
+import { extractSearchParamsInsensitive, getConnectedMpo, getOptionalToken } from '@/lib/middleware';
+import { EMAIL_LABELS, fetchLabels } from '@/lib/labels';
 
 // Force dynamic rendering to prevent static generation errors
 export const dynamic = 'force-dynamic';
@@ -15,8 +16,12 @@ export async function POST(req) {
     let requestBody = null;
     try {
         requestBody = await req.json();
-        const { otp, geo, name } = OTPEmailSchema.parse(requestBody)
-        const mpo = await getConnectedMpo(req, { 'X-ClientId': 'EMAIL' })
+        const { otp, geo, name } = OTPEmailSchema.parse(requestBody);
+        const lang = LanguageSchema.parse(extractSearchParamsInsensitive(req)?.lang)
+        const [mpo, i18n] = await Promise.all([
+            getConnectedMpo(req, { 'X-ClientId': 'EMAIL' }),
+            fetchLabels(EMAIL_LABELS, lang, { token: getOptionalToken(req), headers: { 'X-ClientId': 'EMAIL' } }),
+        ])
         // const token = verifyToken(req)
         // const { aname, lang } = BaseSchema.parse(extractSearchParamsInsensitive(req))
         // const { property } = await getSystemData({ aName: aname, language: lang, withProperty: true }, token);
@@ -26,7 +31,7 @@ export async function POST(req) {
             name={name}
             geo={geo}
             connectedMpo={mpo}
-        // lang={lang}
+            i18n={i18n}
         />);
         return new Response(emailHTML);
     } catch (error) {

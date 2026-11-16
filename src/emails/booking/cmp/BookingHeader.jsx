@@ -5,22 +5,21 @@ import BookingInfoSection from './BookingInfoSection';
 
 export default function BookingHeader({
     booking,
-    lang = "en",
     property,
-    locales,
+    i18n,
     bookingEmail,
     phone,
     requestedCancellation
 }) {
     const isCancelled = booking.status.code === "003";
     const isDirect = booking.is_direct;
-    const _baseProps = { booking, locales }
+    const _baseProps = { booking, i18n }
     return (
         <Container style={styles.container}>
             <PropertyHeader property={property}>
                 {requestedCancellation && (
                     <EmailText variant='title' color='red'>
-                        Request email cancellation
+                        {i18n.t("Lcz_RequestEmailCancellation")}
                     </EmailText>
                 )}
             </PropertyHeader>
@@ -34,7 +33,7 @@ export default function BookingHeader({
                         padding: 0
                     }}
                 >
-                    {isCancelled ? locales?.Lcz_CancellationForBooking : locales?.Lcz_BookingNb} {isDirect ? booking.booking_nbr : booking.channel_booking_nbr}
+                    {i18n.t(isCancelled ? "Lcz_CancellationForBooking" : "Lcz_BookingNb")} {isDirect ? booking.booking_nbr : booking.channel_booking_nbr}
                 </EmailText>
             </Section>
 
@@ -45,9 +44,9 @@ export default function BookingHeader({
             <BookingInfoSection.BookingDetails>
                 <BookingInfoSection.NonCancelledOnly booking={booking}>
                     <BookingInfoSection.DirectBookingOnly booking={booking}>
-                        <BookingInfoSection.PropertyDetails property={property} locales={locales} />
-                        <BookingInfoSection.ContactInfo property={property} phone={phone} locales={locales} bookingEmail={bookingEmail} />
-                        {/* <BookingInfoSection.LocationInfo property={property} locales={locales} /> */}
+                        <BookingInfoSection.PropertyDetails property={property} i18n={i18n} />
+                        <BookingInfoSection.ContactInfo property={property} phone={phone} i18n={i18n} bookingEmail={bookingEmail} />
+                        {/* <BookingInfoSection.LocationInfo property={property} i18n={i18n} /> */}
                     </BookingInfoSection.DirectBookingOnly>
                 </BookingInfoSection.NonCancelledOnly>
                 <EmailText></EmailText>

@@ -6,6 +6,7 @@
  */
 
 import { formatAmount } from '@/lib/utils';
+import { getI18n } from '@/lib/printing-i18n';
 import { PrintDocument } from '../../shared/print-document';
 import { ReceiptRow, ReceiptSection } from '../../shared/receipt-blocks';
 import { FiscalDocumentFooter } from '../../shared/fiscal-document-footer';
@@ -23,7 +24,8 @@ import PrintingHeader from '@/components/printing/PrintingHeader';
  * @param {string}  [props.pid]            - Payment system_id to look up the specific payment.
  * @param {object}  [props.setupTables]    - Setup tables for payment method resolution.
  */
-export function ReceiptPreview({ booking, property, documentNumber, pid, setupTables, mode, locales, guestCountryName, totalPersons, printingService, privateNote }) {
+export function ReceiptPreview({ booking, property, documentNumber, pid, setupTables, mode, guestCountryName, totalPersons, printingService, privateNote }) {
+  const { t } = getI18n();
   const currencySymbol = property?.currency?.symbol ?? booking?.currency?.symbol ?? '$';
   const fmt = (v, sym) => (v != null ? formatAmount(v, sym ?? currencySymbol) : '—');
   const guestName = [booking?.guest?.first_name, booking?.guest?.last_name].filter(Boolean).join(' ');
@@ -57,7 +59,6 @@ export function ReceiptPreview({ booking, property, documentNumber, pid, setupTa
         privateNote={privateNote}
         booking={booking}
         property={property}
-        locales={locales}
         mode={mode}
       />
 
@@ -77,15 +78,15 @@ export function ReceiptPreview({ booking, property, documentNumber, pid, setupTa
         {payment && (
           <ReceiptSection title="">
             <ReceiptRow
-              label="Amount Received"
+              label={t('Lcz_AmountReceived')}
               value={fmt(payment.amount, payment.currency?.symbol)}
             />
             <ReceiptRow
-              label="Method"
+              label={t('Lcz_Method')}
               value={getPaymentMethod(payment.payment_type?.code, payment.payment_method?.code, payment?.designation)}
             />
             {payment.reference && (
-              <ReceiptRow label="Reference" value={payment.reference} />
+              <ReceiptRow label={t('Lcz_Reference')} value={payment.reference} />
             )}
           </ReceiptSection>
         )}

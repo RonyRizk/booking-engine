@@ -1,10 +1,12 @@
 import InfoDisplay from "@/components/InfoDisplay";
+import { getI18n } from "@/lib/printing-i18n";
 
-export default function GuestInformation({ booking, selectedDocument, guestCountryName, totalPersons, locales, printingService, mode, privateNote }) {
+export default function GuestInformation({ booking, selectedDocument, guestCountryName, totalPersons, printingService, mode, privateNote }) {
+    const { t } = getI18n()
     const isInvoicableMode = ["invoice", "creditnote", "proforma"].includes(mode)
     if (isInvoicableMode && selectedDocument?.target?.code === "002") {
         return <section className={"justify-start flex flex-col min-w-0 max-w-full"}>
-            <h3 className="text-slate-800 font-bold text-base mb-[3pt]">Bill to</h3>
+            <h3 className="text-slate-800 font-bold text-base mb-[3pt]">{t("Lcz_BillTo")}</h3>
             <div>
                 <InfoDisplay
                     label={``}
@@ -22,61 +24,60 @@ export default function GuestInformation({ booking, selectedDocument, guestCount
         <section className={mode === "printing" ? "py-4 border-y border-gray-300 justify-start flex" : "justify-start flex min-w-0 max-w-full"}>
             <div className="flex-1 min-w-0">
                 {mode !== "printing" && <div className="mb-[3pt]">
-                    <h3 className="text-slate-800 font-bold text-base">{isInvoicableMode ? "Bill to" : "From"}</h3>
+                    <h3 className="text-slate-800 font-bold text-base">{t(isInvoicableMode ? "Lcz_BillTo" : "Lcz_From")}</h3>
                 </div>}
                 {isInvoicableMode && selectedDocument?.billed_to_name && <InfoDisplay
                     label={``}
                     value={selectedDocument?.billed_to_name}
                 />}
                 {/* <InfoDisplay
-                    label={`${locales?.Lcz_BookedBy}:`}
+                    label={`${t("Lcz_BookedBy")}:`}
                     value={`${printingService.formatGuestName(
                         booking?.guest
-                    )} - ${totalPersons} ${totalPersons > 1 ? locales?.Lcz_Persons : locales?.Lcz_Person}`}
+                    )} - ${totalPersons} ${totalPersons > 1 ? t("Lcz_Persons") : t("Lcz_Person")}`}
                 /> */}
                 <InfoDisplay
-                    label={isInvoicableMode && selectedDocument?.billed_to_name ? "" : `Name:`}
-                    asHtml
-                    value={isInvoicableMode && selectedDocument?.billed_to_name ? `<span style="font-weight:bold">for</span> ${formattedGuestName}` : formattedGuestName}
+                    label={isInvoicableMode && selectedDocument?.billed_to_name ? "" : `${t("Lcz_Name")}:`}
+                    value={isInvoicableMode && selectedDocument?.billed_to_name ? t("Lcz_For_X", formattedGuestName) : formattedGuestName}
                 />
-                {/* <InfoDisplay label={`${locales?.Lcz_Email}:`} value={booking?.guest?.email} /> */}
-                <InfoDisplay label={`Email:`} value={booking?.guest?.email} />
+                {/* <InfoDisplay label={`${t("Lcz_Email")}:`} value={booking?.guest?.email} /> */}
+                <InfoDisplay label={`${t("Lcz_Email")}:`} value={booking?.guest?.email} />
                 {/* <InfoDisplay
-                    label={`${locales?.Lcz_Phone}:`}
+                    label={`${t("Lcz_Phone")}:`}
                     value={printingService.formatPhoneNumber(
                         booking?.guest,
                         booking?.is_direct
                     )}
                 /> */}
                 <InfoDisplay
-                    label={`Phone:`}
+                    label={`${t("Lcz_Phone")}:`}
                     value={printingService.formatPhoneNumber(
                         booking?.guest,
                         booking?.is_direct
                     )}
                 />
                 {guestCountryName && (
-                    // <InfoDisplay label={`${locales?.Lcz_Country}:`} value={guestCountryName} />
-                    <InfoDisplay label={`Country:`} value={guestCountryName} />
+                    // <InfoDisplay label={`${t("Lcz_Country")}:`} value={guestCountryName} />
+                    <InfoDisplay label={`${t("Lcz_Country")}:`} value={guestCountryName} />
                 )}
                 {mode === "printing" && booking?.guest?.notes && (
                     <div>
-                        <InfoDisplay inline={true} label={`Guest Notes:`} value={booking?.guest?.notes} />
+                        <InfoDisplay inline={true} label={`${t("Lcz_GuestNotes")}:`} value={booking?.guest?.notes} />
                     </div>
                 )}
                 {mode === "printing" && <InfoDisplay
-                    label={`${locales?.Lcz_ArrivalTime}:`}
+                    label={`${t("Lcz_ArrivalTime")}:`}
                     value={booking?.arrival?.description}
                 />}
                 {mode === "printing" && (
                     <>
                         {booking.remark && booking.is_direct && (
                             <div>
-                                <InfoDisplay inline={true} asHtml={true} label={`Channel ${locales?.Lcz_Notes ?? "Notes"}:`} value={booking.remark} />
+                                <InfoDisplay inline={true} asHtml={true} label={`${t("Lcz_ChannelNotes")}:`} value={booking.remark} />
                             </div>
                         )}
                         {booking.ota_notes && !booking.is_direct && (
-                            <InfoDisplay inline={true} label={`${locales?.Lcz_GuestRemark ?? "Guest Notes"}:`} value={booking.ota_notes?.map((notes) => (
+                            <InfoDisplay inline={true} label={`${t("Lcz_GuestRemark")}:`} value={booking.ota_notes?.map((notes) => (
                                 <span key={`ota_note_${notes.statement}`} className="text-gray-600">
                                     {notes.statement}
                                 </span>
@@ -94,7 +95,7 @@ export default function GuestInformation({ booking, selectedDocument, guestCount
                         )}
                         {privateNote && mode === "printing" && (
                             <div>
-                                {/* <InfoDisplay inline={true} label={`${locales?.Lcz_BookingPrivateNote}:`} value={privateNote.value} /> */}
+                                {/* <InfoDisplay inline={true} label={`${t("Lcz_BookingPrivateNote")}:`} value={privateNote.value} /> */}
                                 <InfoDisplay inline={true} label={``} value={privateNote.value} />
                             </div>
                         )}

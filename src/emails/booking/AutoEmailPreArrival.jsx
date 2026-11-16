@@ -20,13 +20,14 @@ function buildAccessCode(bookingNbr, accessCode) {
     return `${accessCode.ACCESS_CODE_PREFIX ?? ''}${digits}${accessCode.ACCESS_CODE_SUFFIX ?? ''}`;
 }
 
-export default function AutoEmailPreArrival({ booking, setupTables, lang, locales, property, accessCode }) {
+export default function AutoEmailPreArrival({ booking, setupTables, i18n, property, accessCode }) {
+    const { t, lang, dir } = i18n;
     const preTableEntries = setupTables["_PRE_ARRIVAL_EMAIL"]
     const duration = property?.extra_info?.find(e => e.key === "EMAIL_PRE_ARRIVAL_DAYS_BEFORE_CHECK_IN")?.value ?? "";
     const description = property?.extra_info?.find(e => e.key === "EMAIL_PRE_ARRIVAL_CUSTOM_MESSAGE")?.value ?? "";
     const showAccessCode = Number(accessCode?.ALLOW_ACCESS_CODE) === 1;
     return (
-        <EmailContainer lang={lang} connectedMpo={property.mpo}>
+        <EmailContainer lang={lang} dir={dir} connectedMpo={property.mpo}>
             <PropertyHeader property={property} />
             <EmailText>
                 {preTableEntries.ENTRY_01.replace('[GUEST_NAME]', formatGuestName(booking.guest))}
@@ -38,10 +39,10 @@ export default function AutoEmailPreArrival({ booking, setupTables, lang, locale
             {showAccessCode && (
                 <>
                     <EmailText style={{ marginBottom: "0", fontWeight: "bold" }}>
-                        Your access code{(booking.rooms ?? [])?.length > 1 ? "s" : ""}:
+                        {t.plural((booking.rooms ?? []).length, "Lcz_YourAccessCode", "Lcz_YourAccessCodes")}:
                     </EmailText>
                     {booking.rooms?.map(r => <EmailText style={{ marginBottom: "0" }} key={r.identifier}>
-                        {r.roomtype.name}{r.unit ? ` ${r.unit.name}` : ""}: {buildAccessCode(booking.booking_nbr, accessCode)}
+                        {r.roomtype.name}{r.unit ? ` ${r.unit.name}` : ""}: <span dir="ltr">{buildAccessCode(booking.booking_nbr, accessCode)}</span>
                     </EmailText>)}
                 </>
             )}
@@ -49,7 +50,7 @@ export default function AutoEmailPreArrival({ booking, setupTables, lang, locale
                 <EmailText>
                     {preTableEntries.ENTRY_06.replace('[BOOK_NBR]', booking.booking_nbr)}
                 </EmailText>
-                <GuestServiceContactUs property={property} locales={locales} />
+                <GuestServiceContactUs property={property} i18n={i18n} />
                 <EmailText>
                     {preTableEntries.ENTRY_05},<br />
                     {property.name}

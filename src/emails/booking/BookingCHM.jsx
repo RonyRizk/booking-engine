@@ -6,28 +6,28 @@ import EmailButton from '../components/EmailButton'
 import PropertyHeader from '../components/PropertyHeader'
 import EmailText from '../components/EmailText'
 
-export default function BookingCHM({ booking, lang, locales, bookingDetailsUrl, currency, property, url, channelName, operation }) {
-
-    const _baseProps = { booking, locales }
+export default function BookingCHM({ booking, i18n, bookingDetailsUrl, currency, property, url, channelName, operation }) {
+    const { t, lang, dir } = i18n;
+    const _baseProps = { booking, i18n }
     const getOperationName = () => {
         switch (operation) {
             case "COMMIT":
-                return locales.Lcz_NewReservation
+                return t("Lcz_NewReservation")
             case "MODIFY":
-                return locales.Lcz_Modification
+                return t("Lcz_Modification")
             case "CANCEL":
-                return locales.Lcz_Cancellation
+                return t("Lcz_Cancellation")
             default:
                 return null
         }
     }
     return (
-        <EmailContainer lang={lang} connectedMpo={property?.mpo}>
+        <EmailContainer lang={lang} dir={dir} connectedMpo={property?.mpo}>
             <PropertyHeader property={property} useMpoLogo />
             <EmailText color={operation === "CANCEL" ? "red" : undefined}><b>{getOperationName()} {booking.channel_booking_nbr}</b></EmailText>
             <BookingInfoSection.BookingDetails>
                 {channelName && <EmailText style={{ margin: "0" }}>
-                    <b>{locales?.Lcz_ChannelName}:</b> {channelName}
+                    <b>{t("Lcz_ChannelName")}:</b> {channelName}
                 </EmailText>}
                 <BookingInfoSection.GuestInfo {..._baseProps} />
                 <BookingInfoSection.BookedOnDate {..._baseProps} />
@@ -37,11 +37,11 @@ export default function BookingCHM({ booking, lang, locales, bookingDetailsUrl, 
                 <BookingInfoSection.TotalPrice {..._baseProps} currency={currency} />
             </BookingInfoSection.BookingDetails>
             <br />
-            {bookingDetailsUrl && <EmailButton href={bookingDetailsUrl}>
-                View details
+            {bookingDetailsUrl && <EmailButton dir={dir} href={bookingDetailsUrl}>
+                {t("Lcz_ViewDetails")}
             </EmailButton>}
-            {url && <EmailButton style={{ marginTop: 0 }} variant='primary' href={url}>
-                Open in channel
+            {url && <EmailButton dir={dir} style={{ marginTop: 0 }} variant='primary' href={url}>
+                {t("Lcz_OpenInChannel")}
             </EmailButton>}
         </EmailContainer>
     )

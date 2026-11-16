@@ -8,7 +8,6 @@ import DocumentTitle from "./DocumentTitle";
 export default function FiscalModeHeader({
     booking,
     property,
-    locales,
     documentId,
     receiptNumber,
     mode,
@@ -38,7 +37,6 @@ export default function FiscalModeHeader({
                         selectedDocument={selectedDocument}
                         guestCountryName={guestCountryName}
                         totalPersons={totalPersons}
-                        locales={locales}
                         printingService={printingService}
                         mode={mode}
                         privateNote={privateNote}

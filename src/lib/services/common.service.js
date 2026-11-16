@@ -1,5 +1,11 @@
 import { Token } from "../token";
 import { ApiService } from "./api.service";
+import { z } from "zod";
+
+const ExposedLanguageResultSchema = z.object({
+    entries: z.array(z.object({ code: z.string(), description: z.string().nullish() })).nullish().transform((v) => v ?? []),
+    direction: z.string().nullish(),
+});
 
 export class CommonServices extends Token {
     constructor(baseUrl) {
@@ -27,10 +33,24 @@ export class CommonServices extends Token {
         return data.My_Result;
     }
 
-    async fetchLanguage(code, sections = ['_PMS_FRONT']) {
-        const data = await this.apiService.makePostRequest(`/Get_Exposed_Language`, { code, sections });
-        let entries = this._transformArrayToObject(data.My_Result.entries);
-        return { entries, direction: data.My_Result.direction };
+    /**
+     * Fetches the localized strings for `code` across `sections`.
+     *
+     * Posts an absolute URL: this endpoint lives on the IRBE gateway, not the `/IR`
+     * base URL the service is configured with. The service token is still sent as
+     * the Authorization ticket.
+     *
+     * @param {string} code - Language code, e.g. `'en'` or `'ar'`.
+     * @param {string[]} sections - Setup tables to load, e.g. `['_COMMON', '_DOCUMENTS']`.
+     * @returns {Promise<{ entries: Record<string, string>, direction: 'ltr' | 'rtl' }>}
+     */
+    async getExposedLanguage(code, sections) {
+        const data = await this.apiService.makePostRequest(`https://gateway.igloorooms.com/IRBE/Get_Exposed_Language`, { code, sections });
+        const result = ExposedLanguageResultSchema.parse(data.My_Result ?? {});
+        return {
+            entries: this._transformArrayToObject(result.entries),
+            direction: String(result.direction).toLowerCase() === 'rtl' ? 'rtl' : 'ltr',
+        };
     }
 
     async getSetupEntriesByTBLNameMulti(tables = [], language = en) {
@@ -92,7 +112,7 @@ export class CommonServices extends Token {
         const m = new Map();
         for (const d of data) {
             const prev = m.get(d.TBL_NAME) ?? {}
-            const value = d[`CODE_VALUE_${lang?.toUpperCase()}`] ?? d["CODE_VALUE_EN"]
+            const value = d[`CODE_VALUE_${lang?.toUpperCase()}`] || d["CODE_VALUE_EN"]
             m.set(d.TBL_NAME, { ...prev, [d.CODE_NAME]: value })
         }
         return Object.fromEntries(m)

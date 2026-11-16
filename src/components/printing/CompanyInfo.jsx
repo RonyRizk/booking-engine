@@ -1,5 +1,6 @@
 import React from 'react'
 import InfoDisplay from '../InfoDisplay';
+import { getI18n } from '@/lib/printing-i18n';
 /**
  * Company information object.
  *
@@ -37,6 +38,7 @@ import InfoDisplay from '../InfoDisplay';
  * @returns {JSX.Element}
  */
 export default function CompanyInfo({ company }) {
+    const { t } = getI18n();
     const renderLocation = () => {
         const { postal, city, country } = company;
         if (!postal && !city && !country) return null;
@@ -65,14 +67,14 @@ export default function CompanyInfo({ company }) {
     };
 
     return (
-        <div className='flex flex-col items-end min-w-0 max-w-full text-right break-words'>
+        <div className='flex flex-col items-end min-w-0 max-w-full text-end break-words'>
             {company.name && <p className='font-bold'>{company.name}</p>}
             {company.address && <p className='font-regular'>{company.address}</p>}
             {renderLocation()}
             {company.phone &&
-                <InfoDisplay label={"Phone:"} value={`${company.country.phone_prefix ?? ""} ${company.phone}`} />
+                <InfoDisplay label={`${t("Lcz_Phone")}:`} value={`${company.country.phone_prefix ?? ""} ${company.phone}`} />
             }
-            <InfoDisplay label={"Tax ID:"} value={company.tax_nbr} />
+            <InfoDisplay label={`${t("Lcz_TaxID")}:`} value={company.tax_nbr} />
         </div>
     )
 }

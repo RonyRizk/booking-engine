@@ -69,15 +69,15 @@ export function PrintTableRow({ children, variant = 'default', className }) {
 }
 
 // ─── PrintTableHeaderCell ─────────────────────────────────────────────────────
-// numeric — aligns text right for numeric columns
+// numeric — aligns text to the end (right in LTR, left in RTL) for numeric columns
 
 export function PrintTableHeaderCell({ children, numeric, className, style }) {
   return (
     <th
       style={style}
       className={cn(
-        'py-[4pt] px-[6pt] text-left font-semibold uppercase tracking-normal text-slate-800 border-t-2 border-slate-300 border-b whitespace-normal break-words align-bottom print:py-[3pt]',
-        numeric && 'text-right',
+        'py-[4pt] px-[6pt] text-start font-semibold uppercase tracking-normal text-slate-800 border-t-2 border-slate-300 border-b whitespace-normal break-words align-bottom print:py-[3pt]',
+        numeric && 'text-end',
         className,
       )}
     >
@@ -87,7 +87,7 @@ export function PrintTableHeaderCell({ children, numeric, className, style }) {
 }
 
 // ─── PrintTableCell ───────────────────────────────────────────────────────────
-// numeric  — right-align + tabular nums
+// numeric  — end-align + tabular nums
 // muted    — gray text
 // bold     — dark bold text
 // nowrap   — no word wrap
@@ -112,15 +112,15 @@ export function PrintTableCell({
     <td
       colSpan={colSpan}
       className={cn(
-        'px-[6pt] py-[3.5pt] font-normal align-top border-b border-slate-200 text-slate-700 break-words print:py-[2pt] print:pr-[4pt]',
-        numeric && 'text-right tabular-nums',
+        'px-[6pt] py-[3.5pt] font-normal align-top border-b border-slate-200 text-slate-700 break-words print:py-[2pt] print:pe-[4pt]',
+        numeric && 'text-end tabular-nums',
         muted && 'text-slate-600',
         bold && 'font-semibold text-slate-900',
         nowrap && 'whitespace-nowrap',
         empty && 'text-center italic text-slate-600 py-[12pt]',
         fill && 'whitespace-normal [overflow-wrap:anywhere]',
-        indent === 1 && 'pl-[16pt]',
-        indent === 2 && 'pl-[28pt]',
+        indent === 1 && 'ps-[16pt]',
+        indent === 2 && 'ps-[28pt]',
         className,
       )}
     >

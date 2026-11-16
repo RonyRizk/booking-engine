@@ -1,3 +1,4 @@
+import React from 'react';
 import moment from 'moment';
 import 'moment/locale/ar';
 import 'moment/locale/es';
@@ -7,10 +8,30 @@ import 'moment/locale/pl';
 import 'moment/locale/uk';
 import 'moment/locale/ru';
 import 'moment/locale/el';
-import { calculateDaysBetweenDates } from '@/lib/utils';
+import 'moment/locale/he';
+import { calculateDaysBetweenDates, formatPropertyPhone } from '@/lib/utils';
+
+// Importing a moment locale makes it the global one; an unknown code would
+// otherwise borrow whichever language was imported last.
+moment.locale('en');
+
+/** igloorooms language codes that differ from moment's locale names. */
+const MOMENT_LOCALES = { ua: 'uk' };
 
 export function formatDate({ date, format, locale }) {
-    return moment(date, 'YYYY-MM-DD').locale(locale).format(format)
+    return moment(date, 'YYYY-MM-DD').locale(MOMENT_LOCALES[locale] ?? locale).format(format)
+}
+
+
+/**
+ * Fills `%1`, `%2`, … in a translated template with React nodes, so a
+ * placeholder can render as markup (e.g. a bold OTP) instead of a plain string.
+ */
+export function interpolate(template, ...nodes) {
+    return template.split(/(%\d+)/).map((part, i) => {
+        const match = /^%(\d+)$/.exec(part);
+        return match ? React.createElement(React.Fragment, { key: i }, nodes[Number(match[1]) - 1]) : part;
+    });
 }
 
 
@@ -26,7 +47,7 @@ export function getBookingDetails({ booking, property }) {
     const guestCountryName = booking.guest.country.name;
     const privateNote = booking?.extras?.find((k) => k.key === "private_note");
     const bookingEmail = property?.contacts?.find((c) => c.type === "booking")?.email;
-    const phone = `+${property?.country?.phone_prefix?.replace("+", "") || ""} - ${property?.phone || ""}`;
+    const phone = formatPropertyPhone(property);
 
     return {
         totalPersons,

@@ -1,10 +1,10 @@
 import { CommonServices } from "./services/common.service";
 import { PrintingService } from "./services/printing.service";
-import { calculateDaysBetweenDates } from "./utils";
+import { calculateDaysBetweenDates, formatPropertyPhone } from "./utils";
+import { EMAIL_LABELS, fetchLabels } from "./labels";
 
 const baseUrl = "https://gateway.igloorooms.com/IRBE";
 const alphaBaseUrl = "https://gateway.igloorooms.com/IRALPHA";
-const sections = ["_FRONT"]
 
 /**
  * Reads the 'ConnectedUserType' header from the request.
@@ -76,43 +76,14 @@ export const verifyToken = (req) => {
 }
 
 /**
- * Fetches system-level data including property information and localization entries.
+ * Reads the Authorization token when present, for routes where it's optional.
  *
- * If `withProperty` is true, it retrieves both the exposed property details
- * and the language translations simultaneously. Otherwise, it only fetches
- * the translations.
- *
- * @async
- * @param {{ aName: string, language?: string, withProperty?: boolean }} params - The parameters used to retrieve data.
- * @param {string} token - The authorization token used for API calls.
- * @returns {Promise<{ property: object|null, locales: object }>} A promise resolving to an object containing:
- * - `property`: The property data or `null` if `withProperty` is false.
- * - `locales`: The fetched localization entries.
+ * @param {Request} req
+ * @returns {string|null}
  */
-export const getSystemData = async (
-    { aName, language = "en", withProperty = true },
-    token,
-    headers = {}
-) => {
-    const commonService = new CommonServices(baseUrl);
-    commonService.setToken(token);
-    if (Object.keys(headers).length > 0) {
-        commonService.setDefaultHeaders(headers);
-    }
-    let property = null;
-    let locales = null;
-    if (withProperty) {
-        [property, locales] = await Promise.all([
-            commonService.getExposedProperty(aName, language),
-            commonService.fetchLanguage(language, sections),
-        ]);
-    } else {
-        property = null;
-        locales = await commonService.fetchLanguage(language, sections);
-    }
-    return { property, locales };
+export const getOptionalToken = (req) => {
+    return req.headers.get("authorization")?.trim() || null;
 }
-
 
 /**
  * Retrieves detailed booking data, including property info, booking details,
@@ -126,7 +97,7 @@ export const getSystemData = async (
  * @param {object} params - Parameters required by the printing service to identify the booking.
  * @param {string} token - The authorization token used for API calls.
  * @returns {Promise<{
-*   locales: object,
+*   i18n: ReturnType<typeof import("./labels").createLabels>,
 *   totalPersons: number|null,
 *   booking: object|null,
 *   currency: string|null,
@@ -144,18 +115,22 @@ export const getBookingData = async (params, token, headers = {}) => {
     if (Object.keys(headers).length > 0) {
         printingService.setDefaultHeaders(headers);
     }
-    const { booking, property, countries, locales: defaultLocales, statement, error } =
-        await printingService.getPrintingData({ baseUrl, ...params, tables: sections });
-    const { entries: locales } = defaultLocales
+    const [{ booking, property, countries, statement }, i18n] = await Promise.all([
+        printingService.getPrintingData({ baseUrl, ...params }),
+        fetchLabels(EMAIL_LABELS, params.language, { token, headers }),
+    ]);
+    if (!booking) {
+        throw new Error("No booking found");
+    }
     const totalPersons = booking?.occupancy?.adult_nbr + booking?.occupancy?.children_nbr;
     const currency = booking?.currency?.symbol;
     const totalNights = calculateDaysBetweenDates(booking.from_date, booking.to_date);
     const guestCountryName = printingService.getUserCountry(countries, booking.guest.country_id);
     const privateNote = booking.extras?.find((k) => k.key === "private_note");
     const bookingEmail = property?.contacts?.find((c) => c.type === "booking")?.email;
-    const phone = `+${property?.country?.phone_prefix?.replace("+", "") || ""}-${property?.phone || ""}`;
+    const phone = formatPropertyPhone(property);
     return {
-        locales,
+        i18n,
         totalPersons,
         booking,
         currency,

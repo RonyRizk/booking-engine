@@ -28,16 +28,25 @@ export function constructURL(baseUrl, paramsObj) {
     }
     return url.length > baseUrl.length ? url.slice(0, -1) : baseUrl;
 }
-export function formatTime(hour, minute) {
-    const timeString = `${hour}:${minute}`;
-    return moment(timeString, 'HH:mm').locale('en').format('hh:mm A');
-}
 export function formatAmount(amount = 0, currency = 'USD', withIntl = false) {
     if (withIntl) {
         return new Intl.NumberFormat('en-US', { style: 'currency', currency: currency }).format(amount);
     }
     return `${amount < 0 ? "- " : ""}${currency} ${Math.abs(amount)?.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 }
+/**
+ * The property phone as `+<country prefix>-<number>`, or just the number when
+ * the country has no prefix. `null` when the property has no phone.
+ *
+ * @param {{ phone?: string, country?: { phone_prefix?: string } } | null | undefined} property
+ * @returns {string | null}
+ */
+export function formatPropertyPhone(property) {
+    if (!property?.phone) return null;
+    const prefix = property.country?.phone_prefix?.replace("+", "");
+    return prefix ? `+${prefix}-${property.phone}` : property.phone;
+}
+
 export function calculateDaysBetweenDates(from_date, to_date) {
     const daysDiff = moment(to_date, 'YYYY-MM-DD').diff(moment(from_date, 'YYYY-MM-DD'), 'days');
     return daysDiff || 1;

@@ -2,13 +2,16 @@ import EmailButton from '@/emails/components/EmailButton';
 import EmailLink from '@/emails/components/EmailLink';
 import EmailText from '@/emails/components/EmailText'
 import { Section } from '@react-email/components';
+import { formatPropertyPhone } from '@/lib/utils';
+import { siteUrl } from '@/lib/app-env';
 // import parse from 'html-react-parser';
 
-export default function GuestServiceContactUs({ property, locales }) {
+export default function GuestServiceContactUs({ property, i18n }) {
+    const { t, dir } = i18n;
     const bookingEmail = property.contacts?.find(
         (c) => c.type === "booking"
     )?.email;
-    const phone = `+${property?.country?.phone_prefix?.replace("+", "") + "-" || ""}${property?.phone}`;
+    const phone = formatPropertyPhone(property);
     // const processedString = locales?.Lcz_GuestService_ContactUs
     //     ?.replace('{0}', `__EMAIL__`)
     //     ?.replace('{1}', `__PHONE__`)
@@ -85,17 +88,17 @@ export default function GuestServiceContactUs({ property, locales }) {
         <Section>
             <EmailText style={styles.contactText}>
                 {/* {guestServiceContactUsJsx} */}
-                {bookingEmail && <>{locales.Lcz_ContactUserAnytimeByEmail}{" "}
+                {bookingEmail && <>{t("Lcz_ContactUserAnytimeByEmail")}{" "}
                     <EmailLink href={`mailto:${bookingEmail}`}>{bookingEmail}</EmailLink>
                 </>}
                 {" "}
                 {phone && <>
-                    {locales.Lcz_OrCallOn} {phone}.
+                    {t("Lcz_OrCallOn")} <span dir="ltr">{phone}</span>.
                 </>}
             </EmailText>
-            {locales?.Lcz_ClickHereToManageBooking && <EmailButton href={`https://${property.perma_link}.bookingmystay.com/signin`}>
-                {locales.Lcz_ClickHereToManageBooking?.replace(" ?", "")?.replace(".", "")}
-            </EmailButton>}
+            <EmailButton dir={dir} href={siteUrl(property.perma_link, "/signin")}>
+                {t("Lcz_ClickHereToManageBooking").replace(" ?", "").replace(".", "")}
+            </EmailButton>
         </Section>
     )
 }

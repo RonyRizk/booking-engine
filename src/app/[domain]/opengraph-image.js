@@ -1,4 +1,5 @@
 import { getExposedProperty } from '@/lib/actions'
+import { isPrintingRequest } from '@/lib/printing-route'
 import { ImageResponse } from 'next/og'
 
 export const runtime = 'edge'
@@ -9,6 +10,9 @@ export const size = {
 export const contentType = 'image/png'
 
 export async function generateImageMetadata({ params }) {
+  if (isPrintingRequest()) {
+    return []
+  }
   const domain = decodeURIComponent(params.domain).split('.')
   const result = await getExposedProperty({ perma_link: domain[0], aName: '' })
   const title = result?.name ? `${result.name} – Book direct` : 'igloorooms'

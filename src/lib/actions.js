@@ -1,11 +1,4 @@
 import axios from "axios";
-import { jwtDecode } from "jwt-decode";
-
-
-
-let anchor = {
-    token: null
-};
 
 /**
  * Retrieves exposed property information using the provided parameters.
@@ -22,7 +15,7 @@ let anchor = {
  */
 export async function getExposedProperty({ aName, perma_link }) {
     try {
-        await ensureTokenIsValid();
+        const token = await fetchToken();
         const { data } = await axios.post(
             `https://gateway.igloorooms.com/IRBE/Get_Exposed_Property`,
             {
@@ -33,7 +26,7 @@ export async function getExposedProperty({ aName, perma_link }) {
             },
             {
                 headers: {
-                    Authorization: anchor.token,
+                    Authorization: token,
                     'X-ClientId': "BE"
                 },
 
@@ -45,22 +38,6 @@ export async function getExposedProperty({ aName, perma_link }) {
 
         throw error;
     }
-}
-
-/**
- * Ensures that the token is valid and not expired. If expired or not present, it fetches a new token.
- *
- * @returns {Promise<void>}
- * @throws {Error} - Throws an error if fetching a new token fails.
- *
- * @example
- * await ensureTokenIsValid();
- */
-async function ensureTokenIsValid() {
-    // if (!anchor.token || isTokenExpired(anchor.token)) {
-    const newToken = await fetchToken();
-    anchor.token = newToken;
-    // }
 }
 
 /**
@@ -90,19 +67,4 @@ async function fetchToken() {
 
         throw error;
     }
-}
-
-/**
- * Checks if the provided token is expired.
- *
- * @param {string} token - The token to check.
- * @returns {boolean} - Returns true if the token is expired, false otherwise.
- *
- * @example
- * const isExpired = isTokenExpired('your-jwt-token');
- * console.log(isExpired); // Output: true or false
- */
-function isTokenExpired(token) {
-    const decoded = jwtDecode(token);
-    return Math.floor(Date.now() / 1000) >= decoded.exp;
 }

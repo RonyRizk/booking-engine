@@ -8,16 +8,16 @@ import EmailFooter from "../components/EmailFooter";
 import { formatAmount } from "@/lib/utils";
 
 export default function BookingEmail({
-    locales,
+    i18n,
     totalPersons,
     booking,
     currency,
     totalNights,
     property,
-    lang,
     phone,
     bookingEmail,
 }) {
+    const { t, lang, dir } = i18n;
     const prepaymentCode = booking.extras?.find(
         (e) => e.key === "payment_code"
     )?.value;
@@ -26,13 +26,13 @@ export default function BookingEmail({
     const getPaymentMessage = () => {
         if (totalCollected > 0) {
             return `<div>
-                        <p>Paid: ${formatAmount(totalCollected, booking?.currency?.symbol)}</p>
-                        <p>Due: ${formatAmount(dueAmount, booking?.currency?.symbol)}</p>
+                        <p>${t("Lcz_Paid")}: ${formatAmount(totalCollected, booking?.currency?.symbol)}</p>
+                        <p>${t("Lcz_Due")}: ${formatAmount(dueAmount, booking?.currency?.symbol)}</p>
                     </div>`
         }
         switch (prepaymentCode) {
             case "001":
-                return `<p>${locales?.Lcz_Payment_OfflineCreditCard}</p>`;
+                return `<p>${t("Lcz_Payment_OfflineCreditCard")}</p>`;
             case "005":
                 const method = property.allowed_payment_methods?.find(
                     (e) => e.code === "005"
@@ -58,13 +58,13 @@ export default function BookingEmail({
                     '<p style="margin:0;padding:0;">'
                 );
             default:
-                return `<p>${locales?.Lcz_Payment_NotFullyPaid}</p>`;
+                return `<p>${t("Lcz_Payment_NotFullyPaid")}</p>`;
                 ;
         }
     };
 
     return (
-        <EmailContainer lang={lang} connectedMpo={property.mpo}>
+        <EmailContainer lang={lang} dir={dir} connectedMpo={property.mpo}>
             <BookingHeader
                 bookingEmail={bookingEmail}
                 totalPersons={totalPersons}
@@ -73,13 +73,13 @@ export default function BookingEmail({
                 phone={phone}
                 booking={booking}
                 property={property}
-                locales={locales}
+                i18n={i18n}
                 mode={"printing"}
             />
-            <EmailText variant="subtitle">{locales?.Lcz_Booking_details}</EmailText>
-            <BookingDetails booking={booking} lang={lang} property={property} locales={locales} currency={currency} />
-            <EmailText variant="subtitle">{locales?.Lcz_PaymentDetails}</EmailText>
-            <EmailText>{property.is_upon_request && booking?.status?.code === "001" ? (locales?.Lcz_YourBookingIsNotGuaranteed) : locales?.Lcz_YourBookingIsGuaranteed}</EmailText>
+            <EmailText variant="subtitle">{t("Lcz_Booking_details")}</EmailText>
+            <BookingDetails booking={booking} property={property} i18n={i18n} currency={currency} />
+            <EmailText variant="subtitle">{t("Lcz_PaymentDetails")}</EmailText>
+            <EmailText>{t(property.is_upon_request && booking?.status?.code === "001" ? "Lcz_YourBookingIsNotGuaranteed" : "Lcz_YourBookingIsGuaranteed")}</EmailText>
             <div
                 style={styles.paymentMessage}
                 dangerouslySetInnerHTML={{ __html: getPaymentMessage() }}
@@ -87,9 +87,9 @@ export default function BookingEmail({
 
             <EmailFooter>
                 <EmailText style={styles.contactText} dangerouslySetInnerHTML={{ __html: property.description.important_info }} />
-                <GuestServiceContactUs property={property} locales={locales} />
+                <GuestServiceContactUs property={property} i18n={i18n} />
                 <EmailText>
-                    {locales?.Lcz_Look_forward} {property.name}
+                    {t("Lcz_Look_forward")} {property.name}
                 </EmailText>
             </EmailFooter>
         </EmailContainer>

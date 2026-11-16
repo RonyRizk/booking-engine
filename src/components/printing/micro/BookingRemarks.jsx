@@ -1,11 +1,13 @@
 import InfoDisplay from "@/components/InfoDisplay";
+import { getI18n } from "@/lib/printing-i18n";
 
-export default function BookingRemarks({ booking, locales, privateNote }) {
+export default function BookingRemarks({ booking, privateNote }) {
+    const { t } = getI18n();
     return (
         <>
             {booking?.guest?.notes && (
                 <div>
-                    <InfoDisplay inline label={`Guest Notes:`} value={booking.guest.notes} />
+                    <InfoDisplay inline label={`${t("Lcz_GuestNotes")}:`} value={booking.guest.notes} />
                 </div>
             )}
             {booking.remark && booking.is_direct && (
@@ -13,7 +15,7 @@ export default function BookingRemarks({ booking, locales, privateNote }) {
                     <InfoDisplay
                         inline
                         asHtml
-                        label={`Channel ${locales?.Lcz_Notes ?? "Notes"}:`}
+                        label={`${t("Lcz_ChannelNotes")}:`}
                         value={booking.remark}
                     />
                 </div>
@@ -21,7 +23,7 @@ export default function BookingRemarks({ booking, locales, privateNote }) {
             {booking.ota_notes && !booking.is_direct && (
                 <InfoDisplay
                     inline
-                    label={`${locales?.Lcz_GuestRemark ?? "Guest Notes"}:`}
+                    label={`${t("Lcz_GuestRemark")}:`}
                     value={booking.ota_notes?.map(notes => (
                         <span key={`ota_note_${notes.statement}`} className="text-gray-600">
                             {notes.statement}

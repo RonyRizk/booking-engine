@@ -15,12 +15,17 @@ import { Button } from "@react-email/components";
  *   - "compact": Smaller button for less prominent actions
  *   - "pill": More rounded button style
  * 
+ * - dir: "ltr" (default) or "rtl". Flips the trailing margin to the left side for rtl.
  * - style: You can override or extend default styles by passing a custom style object.
  * - All other props are passed directly to the <Button> component.
  */
-export default function EmailButton({ variant = "primary", ...props }) {
+export default function EmailButton({ variant = "primary", dir = "ltr", ...props }) {
+    const variantStyle = styles[variant] ?? styles["primary"];
+    const directionStyle = dir === "rtl"
+        ? { marginLeft: variantStyle.marginRight, marginRight: variantStyle.marginLeft }
+        : {};
     return (
-        <Button {...props} style={{ ...styles[variant] ?? styles["primary"], ...props?.style }} />
+        <Button {...props} style={{ ...variantStyle, ...directionStyle, ...props?.style }} />
     )
 }
 const base = {

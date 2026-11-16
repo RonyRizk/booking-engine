@@ -1,6 +1,8 @@
+import { getI18n } from "@/lib/printing-i18n";
 import InfoDisplay from "@/components/InfoDisplay";
 
-export default function SmokingPreference({ room, booking, property, locales }) {
+export default function SmokingPreference({ room, booking, property }) {
+    const { t } = getI18n();
     const getSmokingLabel = () => {
         if (booking.is_direct) {
             if (!room.smoking_option) return null;
@@ -15,6 +17,6 @@ export default function SmokingPreference({ room, booking, property, locales }) 
         return room.ota_meta?.smoking_preferences;
     };
     return (
-        <InfoDisplay label={`${locales?.Lcz_SmokingOptions}:`} inline value={getSmokingLabel()} />
+        <InfoDisplay label={`${t("Lcz_SmokingOptions")}:`} inline value={getSmokingLabel()} />
     );
 }

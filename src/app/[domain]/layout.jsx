@@ -2,8 +2,14 @@ import "../globals.css";
 import { headers } from "next/headers";
 import { v4 } from "uuid";
 import { getExposedProperty } from "../../lib/actions";
+import { escapeJsonLd } from "../../lib/jsonld";
+import { bookingEngineScriptUrl, isTestingEnvironment } from "../../lib/app-env";
+import { isPrintingRequest } from "../../lib/printing-route";
 
 export async function generateMetadata({ params }, parent) {
+  if (isPrintingRequest()) {
+    return { title: "igloorooms" };
+  }
   const parentMetadata = await parent;
   const domain = decodeURIComponent(params.domain).split('.');
   const result = await getExposedProperty({ perma_link: domain[0], aName: "" });
@@ -39,6 +45,7 @@ export async function generateMetadata({ params }, parent) {
     : [];
 
   return {
+    metadataBase: new URL(`https://${decodeURIComponent(params.domain)}`),
     title,
     images: structuredImages,
     icons: {
@@ -60,29 +67,33 @@ const rootPages = new Set(['/', '/signin', '/booked'])
 const rootPagePatterns = [/^\/[^/]+\/signin\/?$/]
 const isRootPagePath = (path) =>
   rootPages.has(path) || rootPagePatterns.some((re) => re.test(path))
+const PROPERTY_PAGE_PATH = /^\/[^/]+\/?$/
 export default async function layout({ children, params }) {
   // The web-component loader and the JSON-LD structured data belong to the root
   // booking page only, not to any nested route ([id], booked, signin, ...).
   // `x-current-path` is set by src/middleware.js from the pre-rewrite pathname.
-  const isRootPage = isRootPagePath(headers().get("x-current-path"));
+  const currentPath = headers().get("x-current-path");
+  const isRootPage = isRootPagePath(currentPath);
+  // In testing /[id] shows the booking engine too, but its JSON-LD would be the domain's.
+  const loadsBookingEngine = isRootPage || (isTestingEnvironment() && PROPERTY_PAGE_PATH.test(currentPath));
 
   let jsonld = null;
   if (isRootPage) {
     try {
       const domain = decodeURIComponent(params.domain).split(".");
       const property = await getExposedProperty({ perma_link: domain[0], aName: "" });
-      jsonld = property?.jsonld ?? null;
+      jsonld = property?.jsonld ? escapeJsonLd(property.jsonld) : null;
     } catch {
       jsonld = null;
     }
   }
   return (
     <html lang="en" suppressHydrationWarning>
-      {isRootPage && (
+      {loadsBookingEngine && (
         <head>
           <script
             type="module"
-            src={`https://wb-cmp.igloorooms.com/be/dist/iglooroom/iglooroom.esm.js?v=${v4()}`}
+            src={`${bookingEngineScriptUrl()}?v=${v4()}`}
             defer
           ></script>
           {jsonld ? (

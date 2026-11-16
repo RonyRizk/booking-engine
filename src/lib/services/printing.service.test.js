@@ -1,6 +1,7 @@
-import { afterEach, beforeEach, describe, expect, test } from "bun:test";
+import { afterEach, beforeEach, describe, expect, spyOn, test } from "bun:test";
 import { PrintingService } from "./printing.service";
-import { installFakeGateway, IRALPHA } from "@/test/fake-gateway";
+import { errorLogger } from "@/logger";
+import { installFakeGateway, IRALPHA } from "@/test/helpers/fake-gateway";
 
 const bookingWithUnissuedReceipt = {
     booking_nbr: "74046077780",
@@ -20,6 +21,21 @@ describe("PrintingService.checkReceipt", () => {
 
         await printingService.checkReceipt({ booking: bookingWithUnissuedReceipt, receiptNumber: "R-1", paymentId: "5" });
 
-        expect(gateway.requests).toEqual([{ baseURL: IRALPHA, endpoint: "/Mark_Payment_As_Receipt_Issued" }]);
+        expect(gateway.requests).toMatchObject([{ baseURL: IRALPHA, endpoint: "/Mark_Payment_As_Receipt_Issued" }]);
+    });
+});
+
+describe("PrintingService.checkReceipt when marking fails", () => {
+    test("records the failure at error level, the only way it reaches the log file", async () => {
+        const gateway = installFakeGateway({ "/Mark_Payment_As_Receipt_Issued": new Error("Marking service down") });
+        const logged = spyOn(errorLogger, "error").mockImplementation(() => {});
+        const printingService = new PrintingService("token");
+
+        await printingService.checkReceipt({ booking: bookingWithUnissuedReceipt, receiptNumber: "R-1", paymentId: "5" });
+        const messages = logged.mock.calls.map(([error]) => error.message);
+
+        logged.mockRestore();
+        gateway.restore();
+        expect(messages).toEqual(["Marking service down"]);
     });
 });

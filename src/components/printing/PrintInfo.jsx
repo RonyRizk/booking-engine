@@ -1,9 +1,11 @@
 import React from 'react'
 import InfoDisplay from '../InfoDisplay'
 import moment from 'moment'
+import { getI18n } from '@/lib/printing-i18n'
 
 
 export default function PrintInfo({ booking, mode, receiptNumber, documentId, selectedDocument, pid }) {
+    const { t, formatDate: formatI18nDate } = getI18n()
     const payment = ["receipt", "creditreceipt", "refund"].includes(mode) ? booking?.financial?.payments?.find(
         (p) => p.system_id?.toString() === pid?.toString()
     ) : null
@@ -20,7 +22,7 @@ export default function PrintInfo({ booking, mode, receiptNumber, documentId, se
     }
     const formatDate = (date) => {
         if (!date || !date.isValid()) return null
-        return date.locale('en').format('MMMM DD, YYYY')
+        return formatI18nDate(date, 'long')
     }
     const getDocDate = () => {
         switch (mode) {
@@ -33,26 +35,26 @@ export default function PrintInfo({ booking, mode, receiptNumber, documentId, se
             case "proforma":
                 return formatDate(moment())
             default:
-                return formatDate(moment(selectedDocument.date, 'YYYY-MM-DD'))
+                return selectedDocument?.date ? formatDate(moment(selectedDocument.date, 'YYYY-MM-DD')) : null
         }
     }
     return (
         <div className='w-fit max-w-full space-y-[2pt]'>
-            {["invoice", "proforma"].includes(mode) && <InfoDisplay className={""} label={mode === "invoice" ? "Invoice no.:" : "Reference:"} value={documentId} />}
+            {["invoice", "proforma"].includes(mode) && <InfoDisplay className={""} label={`${t(mode === "invoice" ? "Lcz_InvoiceNo" : "Lcz_Reference")}:`} value={documentId} />}
             {mode === "creditnote" && <>
-                <InfoDisplay className={""} label={"Credit note no.:"} value={selectedDocument?.credit_note?.nbr} />
-                <i><InfoDisplay className={""} label={"For original invoice no.:"} value={documentId} /></i>
+                <InfoDisplay className={""} label={`${t("Lcz_CreditNoteNo")}:`} value={selectedDocument?.credit_note?.nbr} />
+                <i><InfoDisplay className={""} label={`${t("Lcz_ForOriginalInvoiceNo")}:`} value={documentId} /></i>
             </>}
             {["creditreceipt", "refund"].includes(mode) && <>
-                <InfoDisplay className={""} label={"Credit receipt no.:"} value={payment?.credit_receipt_nbr} />
-                {mode === "creditreceipt" && <i><InfoDisplay className={""} label={"For original receipt no.:"} value={originalPayment?.receipt_nbr} /></i>}
+                <InfoDisplay className={""} label={`${t("Lcz_CreditReceiptNo")}:`} value={payment?.credit_receipt_nbr} />
+                {mode === "creditreceipt" && <i><InfoDisplay className={""} label={`${t("Lcz_ForOriginalReceiptNo")}:`} value={originalPayment?.receipt_nbr} /></i>}
             </>}
-            {mode === "receipt" && <InfoDisplay className={""} label={"Receipt no.:"} value={receiptNumber} />}
+            {mode === "receipt" && <InfoDisplay className={""} label={`${t("Lcz_ReceiptNo")}:`} value={receiptNumber} />}
 
-            <InfoDisplay className={""} label={"Date of issue:"} value={
+            <InfoDisplay className={""} label={`${t("Lcz_DateOfIssue")}:`} value={
                 getDocDate()
             } />
-            <InfoDisplay className={""} label={"Booking"} value={"#" + getBookingNumbers()} />
+            <InfoDisplay className={""} label={t("Lcz_Booking")} value={"#" + getBookingNumbers()} />
         </div>
     )
 }

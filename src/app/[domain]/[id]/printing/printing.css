@@ -15,18 +15,18 @@ body {
 }
 .main-container {
   max-width: 56.25rem;
-  margin-left: auto;
-  margin-right: auto;
+  margin-inline: auto;
   /* background: white; */
 }
 .label-title {
   padding: 0;
   margin: 0;
   color: rgb(51, 51, 51);
-  font-weight: 700;
+  /* Semi-bold like InfoDisplay's labels: every label in a print is 600. */
+  font-weight: 600;
 }
 .label-value {
-  padding-left: 0.25rem;
+  padding-inline-start: 0.25rem;
   color: rgb(102, 102, 102);
   font-weight: 600;
 }
@@ -53,7 +53,7 @@ body {
 
 .roomtype-title td {
   padding-top: 1.56rem;
-  padding-right: 0.62rem;
+  padding-inline-end: 0.62rem;
 }
 .policies {
   font-size: 0.88rem;
@@ -79,7 +79,7 @@ body {
   /* width: 100%; */
   /* min-width: fit-content; */
   text-align: end;
-  padding-left: 0.62rem;
+  padding-inline-start: 0.62rem;
   padding-bottom: 0.94rem;
 }
 
@@ -136,7 +136,7 @@ body {
 }
 .billing_cell {
   /* padding: 0.62rem; */
-  text-align: left;
+  text-align: start;
 }
 .billing_table {
   padding: 0.62rem 0;
@@ -158,10 +158,10 @@ body {
 .car_name {
   color: #333;
   font-weight: bold;
-  padding-right: 0.62rem;
+  padding-inline-end: 0.62rem;
 }
 .pickup-details .label-title {
-  padding-right: 0.62rem;
+  padding-inline-end: 0.62rem;
 }
 .billing_reference {
   width: 2.5rem;
@@ -192,6 +192,13 @@ body {
   flex-wrap: wrap;
   /* gap: 0.31rem; */
 }
+/* Arrows point toward the end of the line, so they mirror in RTL documents.
+   Unicode arrows and SVGs don't flip with the text direction on their own.
+   Keyed off the dir attribute that PrintDocument and each page's <main> carry. */
+[dir="rtl"] .print-arrow {
+  transform: scaleX(-1);
+}
+
 @media only screen and (min-width: 768px) {
   .room_amount_container {
     flex-direction: column;

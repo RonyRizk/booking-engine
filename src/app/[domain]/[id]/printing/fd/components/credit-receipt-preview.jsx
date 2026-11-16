@@ -11,8 +11,8 @@
  * an original payment (handled by `mode` inside PrintInfo).
  */
 
-import moment from 'moment';
 import { formatAmount } from '@/lib/utils';
+import { getI18n } from '@/lib/printing-i18n';
 import { PrintDocument } from '../../shared/print-document';
 import { FiscalDocumentFooter } from '../../shared/fiscal-document-footer';
 import {
@@ -25,22 +25,13 @@ import {
 } from '../../shared/print-table';
 import PrintingHeader from '@/components/printing/PrintingHeader';
 
-function fmtDate(dateStr) {
-  if (!dateStr) return '—';
-  try {
-    return moment(dateStr).locale('en').format('MMM DD, YYYY');
-  } catch {
-    return dateStr;
-  }
-}
-
 function getPaymentDescription(setupTables, payment) {
   const type = setupTables?._PAY_TYPE?.[payment?.payment_type?.code];
   const method = setupTables?._PAY_METHOD?.[payment?.payment_method?.code];
   if (method) return method;
   if (type) return type;
   if (payment?.designation) return payment.designation;
-  return 'Credit Receipt';
+  return getI18n().t('Lcz_CreditReceipt');
 }
 
 // ─── CreditReceiptPreview ─────────────────────────────────────────────────────
@@ -61,13 +52,13 @@ export function CreditReceiptPreview({
   documentNumber,
   pid,
   setupTables,
-  locales,
   guestCountryName,
   totalPersons,
   printingService,
   privateNote,
   mode,
 }) {
+  const { t, formatDate } = getI18n();
   const currencySymbol = property?.currency?.symbol ?? booking?.currency?.symbol ?? '$';
 
   // Find the credited payment by pid, mirroring the receipt lookup.
@@ -94,7 +85,6 @@ export function CreditReceiptPreview({
         privateNote={privateNote}
         booking={booking}
         property={property}
-        locales={locales}
         mode={mode}
       />
 
@@ -102,20 +92,20 @@ export function CreditReceiptPreview({
         <PrintTable>
           <PrintTableHead>
             <PrintTableRow>
-              <PrintTableHeaderCell className="border-r">Date</PrintTableHeaderCell>
-              <PrintTableHeaderCell className="border-r">Description</PrintTableHeaderCell>
-              <PrintTableHeaderCell numeric>Total</PrintTableHeaderCell>
+              <PrintTableHeaderCell className="border-e">{t('Lcz_Date')}</PrintTableHeaderCell>
+              <PrintTableHeaderCell className="border-e">{t('Lcz_Description')}</PrintTableHeaderCell>
+              <PrintTableHeaderCell numeric>{t('Lcz_Total')}</PrintTableHeaderCell>
             </PrintTableRow>
           </PrintTableHead>
           <PrintTableBody>
             {payment ? (
               <>
                 <PrintTableRow>
-                  <PrintTableCell muted nowrap className="border-r">
-                    {fmtDate(payment.date)}
+                  <PrintTableCell muted nowrap className="border-e">
+                    {formatDate(payment.date)}
                   </PrintTableCell>
-                  <PrintTableCell fill className="border-r">
-                    Credit receipt
+                  <PrintTableCell fill className="border-e">
+                    {t('Lcz_CreditReceipt')}
                   </PrintTableCell>
                   <PrintTableCell numeric bold>{fmt(total)}</PrintTableCell>
                 </PrintTableRow>
@@ -126,7 +116,7 @@ export function CreditReceiptPreview({
                   <PrintTableCell numeric className="py-4">
                     <p className="font-bold text-slate-900">{fmt(total)}</p>
                     <p className="print-caption uppercase tracking-wide text-slate-600 font-medium mt-0.5">
-                      Total Credit
+                      {t('Lcz_TotalCredit')}
                     </p>
                   </PrintTableCell>
                 </PrintTableRow>
@@ -134,7 +124,7 @@ export function CreditReceiptPreview({
             ) : (
               <PrintTableRow>
                 <PrintTableCell empty colSpan={3}>
-                  No payment found for this credit receipt.
+                  {t('Lcz_NoPaymentFoundForCreditReceipt')}
                 </PrintTableCell>
               </PrintTableRow>
             )}

@@ -4,14 +4,18 @@ import TaxAmount from "./TaxAmount";
 import EmailText from '@/emails/components/EmailText';
 import { PrintingService } from '@/lib/services/printing.service';
 
+const OCCUPANCY_KEYS = ["Lcz_Adult", "Lcz_Adults", "Lcz_Child", "Lcz_Children", "Lcz_Infant", "Lcz_Infants"];
+
 export default function RoomDetails({
   room,
   booking,
   property,
-  locales,
+  i18n,
   currency,
-  lang
 }) {
+  const { t, dir } = i18n;
+  const [alignStart, alignEnd] = dir === "rtl" ? ["right", "left"] : ["left", "right"];
+  const occupancyLabels = Object.fromEntries(OCCUPANCY_KEYS.map((key) => [key, t(key)]));
   const printingService = new PrintingService()
   const currRT = property.roomtypes.find(rt => rt.id === room.roomtype.id);
   const currRp = currRT?.rateplans.find(rp => rp.id === room.rateplan.id)
@@ -35,18 +39,18 @@ export default function RoomDetails({
   const guest = room.sharing_persons?.find(guest => guest.is_main) || room.guest
   return (
     <Row key={room.id} style={{ marginBottom: "15px", width: "100%" }}>
-      <Column align={lang === "ar" ? "right" : 'left'} style={{ width: "70%", verticalAlign: 'top', }}>
-        <EmailText style={{ margin: 0 }}><b>{room.roomtype.name} - {room.rateplan.short_name} {room.rateplan?.is_non_refundable ? locales.Lcz_NonRefundable : ""} {custom_text}</b> <br /> {printingService.formatGuestName(guest)} - <span dangerouslySetInnerHTML={{ __html: printingService.formatGuestAvailability(room.occupancy, locales) }}></span>.
-          <br /><i>{locales?.Lcz_Cancellation}: {room.rateplan.cancelation}
-            {" "}Guarantee: {room.rateplan.guarantee}</i></EmailText>
+      <Column align={alignStart} style={{ width: "70%", verticalAlign: 'top', }}>
+        <EmailText style={{ margin: 0 }}><b>{room.roomtype.name} - {room.rateplan.short_name} {room.rateplan?.is_non_refundable ? t("Lcz_NonRefundable") : ""} {custom_text}</b> <br /> {printingService.formatGuestName(guest)} - <span dangerouslySetInnerHTML={{ __html: printingService.formatGuestAvailability(room.occupancy, occupancyLabels) }}></span>.
+          <br /><i>{t("Lcz_Cancellation")}: {room.rateplan.cancelation}
+            {" "}{t("Lcz_Guarantee")}: {room.rateplan.guarantee}</i></EmailText>
       </Column>
-      <Column align={lang === "ar" ? "left" : 'right'} style={{ width: "30%", verticalAlign: 'top', }}>
-        <EmailText style={{ margin: 0 }}>{formatAmount(room.total, currency)}</EmailText>
+      <Column align={alignEnd} style={{ width: "30%", verticalAlign: 'top', textAlign: alignEnd }}>
+        <EmailText style={{ margin: 0, textAlign: alignEnd }}>{formatAmount(room.total, currency)}</EmailText>
         <TaxAmount
           room={room}
           booking={booking}
           property={property}
-          locales={locales}
+          i18n={i18n}
           currency={currency}
         />
       </Column>

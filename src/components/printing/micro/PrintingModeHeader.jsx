@@ -1,3 +1,4 @@
+import { getI18n } from "@/lib/printing-i18n";
 /* eslint-disable @next/next/no-img-element */
 import InfoDisplay from "@/components/InfoDisplay";
 import BookingNumberDisplay from "./BookingNumberDisplay";
@@ -6,7 +7,8 @@ import PropertyAddressBlock from "./PropertyAddressBlock";
 import RegisteredNameTaxLine from "./RegisteredNameTaxLine";
 import BookingSourceLine from "./BookingSourceLine";
 
-export default function PrintingModeHeader({ booking, property, locales, mode, agent }) {
+export default function PrintingModeHeader({ booking, property, mode, agent }) {
+    const { t } = getI18n();
     return (
         <header className="px-4 pt-4 sm:px-6 lg:px-8 text-gray-800 py-0 text-sm max-w-4xl mx-auto">
             <nav className="flex flex-col-reverse sm:flex-row sm:justify-between sm:w-full">
@@ -17,13 +19,13 @@ export default function PrintingModeHeader({ booking, property, locales, mode, a
                         className="aspect-1 h-14 hidden mb-2.5 sm:block"
                     />
                     <p className="property_name">{property?.name}</p>
-                    {/* <PropertyAddressBlock property={property} locales={locales} /> */}
+                    {/* <PropertyAddressBlock property={property} /> */}
                 </div>
                 <div>
-                    <BookingNumberDisplay booking={booking} locales={locales} />
+                    <BookingNumberDisplay booking={booking} />
                     <BookingSourceLine booking={booking} agent={agent} />
                     <BookedOnTimestamp booking={booking} />
-                    <RegisteredNameTaxLine property={property} locales={locales} mode={mode} />
+                    <RegisteredNameTaxLine property={property} mode={mode} />
                 </div>
             </nav>
             <section className="pb-4">
@@ -32,7 +34,7 @@ export default function PrintingModeHeader({ booking, property, locales, mode, a
                     {mode === "invoice" && (
                         <div>
                             <InfoDisplay
-                                label={`${locales?.Lcz_InvoiceReference}:`}
+                                label={`${t("Lcz_InvoiceReference")}:`}
                                 value={booking?.financial.invoice_nbr}
                             />
                         </div>

@@ -5,6 +5,7 @@ import 'winston-daily-rotate-file';
 
 const MAX_SIZE = '200m' // rotate when file hits 200mb
 const MAX_FILES = '2d'  // delete files older than 2 days
+const IS_TEST = process.env.NODE_ENV === 'test' // `bun test` must not write to the real log files
 
 const apiInfoFormat = printf(({ level, message, timestamp, ...meta }) => {
     return JSON.stringify({
@@ -85,8 +86,9 @@ const errorLogger = winston.createLogger({
             maxSize: MAX_SIZE,
             maxFiles: MAX_FILES,
             zippedArchive: true,
+            silent: IS_TEST,
         }),
-        new winston.transports.Console()
+        new winston.transports.Console({ silent: IS_TEST })
     ],
 });
 
@@ -104,6 +106,22 @@ const apiErrorLogger = winston.createLogger({
         new winston.transports.Console({
             format: combine(timestamp(), json())
         })
+    ],
+});
+
+// One line per print outcome that isn't a failure; failures go to errorLogger.
+const printLogger = winston.createLogger({
+    level: "info",
+    format: combine(timestamp(), json()),
+    transports: [
+        new winston.transports.DailyRotateFile({
+            filename: "logs/next-prints-%DATE%.log",
+            datePattern: "YYYY-MM-DD",
+            maxSize: '20m',
+            maxFiles: '14d',
+            zippedArchive: true,
+            silent: IS_TEST,
+        }),
     ],
 });
 // const apiInfoLogger = winston.createLogger({
@@ -178,6 +196,7 @@ export {
     // logger,
     errorLogger,
     apiErrorLogger,
+    printLogger,
     // apiInfoLogger,
     logApiError,
     logError,

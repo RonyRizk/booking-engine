@@ -1,27 +1,28 @@
 /* eslint-disable @next/next/no-img-element */
 import InfoDisplay from "@/components/InfoDisplay";
-import moment from "moment";
-import { cn, formatTime } from "@/lib/utils";
+import { cn, formatPropertyPhone } from "@/lib/utils";
 import CompanyInfo from "./CompanyInfo";
 import PropertyInfo from "./PropertyInfo";
 import PrintInfo from "./PrintInfo";
 import GuestInformation from "./GuestInformation";
+import { getI18n } from "@/lib/printing-i18n";
 
-export default function PrintingHeader({ booking, property, locales, documentId, receiptNumber, mode, guestCountryName, totalPersons, printingService, className, privateNote, selectedDocument, pid }) {
+export default function PrintingHeader({ booking, property, documentId, receiptNumber, mode, guestCountryName, totalPersons, printingService, className, privateNote, selectedDocument, pid }) {
+    const { t, formatDate, formatTime } = getI18n();
     if (["receipt", "invoice", "creditnote", "creditreceipt", "refund", "proforma"].includes(mode.toLowerCase().toString())) {
         const getTitle = () => {
             switch (mode) {
                 case "receipt":
-                    return "Receipt";
+                    return t("Lcz_Receipt");
                 case "invoice":
-                    return "Invoice";
+                    return t("Lcz_Invoice");
                 case "creditnote":
-                    return "Credit Note";
+                    return t("Lcz_CreditNote");
                 case "creditreceipt":
                 case "refund":
-                    return "Credit Receipt";
+                    return t("Lcz_CreditReceipt");
                 case "proforma":
-                    return "Proforma Invoice";
+                    return t("Lcz_ProformaInvoice");
                 default:
                     return "";
             }
@@ -37,14 +38,13 @@ export default function PrintingHeader({ booking, property, locales, documentId,
                             selectedDocument={selectedDocument}
                             guestCountryName={guestCountryName}
                             totalPersons={totalPersons}
-                            locales={locales}
                             printingService={printingService}
                             mode={mode}
                             privateNote={privateNote}
                         />
                     </div>
                     <div className="min-w-0 shrink-0 space-y-[7pt]">
-                        <CompanyInfo company={property.company} />
+                        {property.company && <CompanyInfo company={property.company} />}
 
                         <PropertyInfo property={property} />
 
@@ -60,11 +60,11 @@ export default function PrintingHeader({ booking, property, locales, documentId,
                 <div>
                     <img
                         src={property.space_theme.logo}
-                        alt="logo"
+                        alt={t("Lcz_Logo")}
                         className="aspect-1 h-14 hidden mb-2.5 sm:block"
                     />
                     <InfoDisplay
-                        label={`${locales?.Lcz_Address}:`}
+                        label={`${t("Lcz_Address")}:`}
                         value={[
                             property?.address ?? null,
                             property?.city.name ?? null,
@@ -74,25 +74,22 @@ export default function PrintingHeader({ booking, property, locales, documentId,
                             .join(", ")}
                     />
                     <InfoDisplay
-                        label={`${locales?.Lcz_Phone}:`}
-                        value={`+${property?.country?.phone_prefix.replace("+", "") + " -" || ""} ${property?.phone}`}
+                        label={`${t("Lcz_Phone")}:`}
+                        value={formatPropertyPhone(property)}
                     />
                 </div>
                 <div>
-                    <p className="text-xl text-gray-900">{locales?.Lcz_Booking}#{booking?.is_direct ? booking?.booking_nbr : booking?.booking_nbr}</p>
+                    <p className="text-xl text-gray-900">{t("Lcz_Booking")}#{booking?.is_direct ? booking?.booking_nbr : booking?.booking_nbr}</p>
                     {!booking.is_direct && <p className="sm:text-end text-xl">{booking.channel_booking_nbr}</p>}
                     <div className={"flex items-center sm:justify-end"}>
                         <p className="booked_on_date">
-                            {moment(booking?.booked_on.date, "YYYY-MM-DD").locale("en").format("DD-MMM-YYYY")}{" "}
-                            {formatTime(
-                                booking?.booked_on.hour.toString(),
-                                booking?.booked_on.minute.toString()
-                            )}
+                            {formatDate(booking?.booked_on?.date, "dmy")}{" "}
+                            {formatTime(booking?.booked_on?.hour, booking?.booked_on?.minute)}
                         </p>
                         <img
                             src={booking?.origin.Icon}
                             alt={booking?.origin.Label}
-                            className="size-6 aspect-1 ml-2"
+                            className="size-6 aspect-1 ms-2"
                         />
                     </div>
                     {/* {booking.agent && <div className="flex flex-col sm:items-end">
@@ -101,7 +98,7 @@ export default function PrintingHeader({ booking, property, locales, documentId,
                     <div className="flex flex-col sm:items-end">
                         <InfoDisplay label={``} value={property?.registered_name} />
                         {mode === "invoice" && property?.tax_nbr && (
-                            <InfoDisplay label={`${locales?.Lcz_TaxID}:`} value={property?.tax_nbr} />
+                            <InfoDisplay label={`${t("Lcz_TaxID")}:`} value={property?.tax_nbr} />
                         )}
                     </div>
 
@@ -112,7 +109,7 @@ export default function PrintingHeader({ booking, property, locales, documentId,
                     <p className="property_name">{property?.name}</p>
                     {mode === "invoice" && <div>
                         <InfoDisplay
-                            label={`${locales?.Lcz_InvoiceReference}:`}
+                            label={`${t("Lcz_InvoiceReference")}:`}
                             value={booking?.financial.invoice_nbr}
                         />
                     </div>}

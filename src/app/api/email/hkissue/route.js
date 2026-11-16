@@ -4,6 +4,7 @@ import HkIssue from '@/emails/system/HkIssue';
 import { HkIssueSchema } from '../schemas';
 import { ZodError } from 'zod';
 import { logApiError } from '@/logger';
+import { EMAIL_LABELS, fetchLabels } from '@/lib/labels';
 import { ApiError } from '@/lib/services/api.service';
 import { HousekeepingService } from '@/lib/services/housekeeping.service';
 
@@ -19,11 +20,15 @@ export async function GET(req) {
         const housekeepingService = new HousekeepingService(getEnvironmentBaseUrl(req, "https://gateway.igloorooms.com/IR"));
         housekeepingService.setToken(token)
         housekeepingService.setDefaultHeaders({ 'X-ClientId': 'EMAIL' })
-        const [data, connectedMpo] = await Promise.all([housekeepingService.getHKIssues({ property_id, lang, unit_id }), getConnectedMpo(req, { 'X-ClientId': 'EMAIL' })]);
+        const [data, connectedMpo, i18n] = await Promise.all([
+            housekeepingService.getHKIssues({ property_id, lang, unit_id }),
+            getConnectedMpo(req, { 'X-ClientId': 'EMAIL' }),
+            fetchLabels(EMAIL_LABELS, lang, { token, headers: { 'X-ClientId': 'EMAIL' } }),
+        ]);
         if ((data ?? []).length <= 0) {
             return Response.json({ message: 'No housekeeping issues found for this unit' }, { status: 404 })
         }
-        const emailHTML = await render(<HkIssue issue={data[0]} lang={lang} connectedMpo={connectedMpo} />);
+        const emailHTML = await render(<HkIssue issue={data[0]} i18n={i18n} connectedMpo={connectedMpo} />);
         return new Response(emailHTML);
     } catch (error) {
         logApiError(error, req, {

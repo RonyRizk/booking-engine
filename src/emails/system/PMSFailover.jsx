@@ -9,22 +9,22 @@ import BookingInfoSection from '../booking/cmp/BookingInfoSection'
 export default function PMSFailover({
     booking,
     currency,
-    lang,
-    locales,
+    i18n,
     property,
     reason,
     connectedMpo
 }) {
-    const _baseProps = { booking, locales }
+    const { t, lang, dir } = i18n;
+    const _baseProps = { booking, i18n }
     return (
-        <EmailContainer lang={lang} connectedMpo={connectedMpo}>
+        <EmailContainer lang={lang} dir={dir} connectedMpo={connectedMpo}>
             <SystemHeader name={property.name} connectedMpo={connectedMpo} />
-            <EmailText color='red' variant='title'>PMS delivery failure: Booking#{booking.booking_nbr}</EmailText>
+            <EmailText color='red' variant='title'>{t("Lcz_PmsDeliveryFailure", booking.booking_nbr)}</EmailText>
             <EmailText variant='subtitle'>
-                We will keep retrying during the next 24 hours.
+                {t("Lcz_PmsRetryNotice")}
             </EmailText>
             <EmailText>
-                <br /> <b>PMS Answer</b>: {reason}
+                <br /> <b>{t("Lcz_PmsAnswer")}</b>: {reason}
             </EmailText>
             <BookingInfoSection.BookingDetails>
                 <BookingInfoSection.GuestInfo {..._baseProps} />
@@ -36,7 +36,7 @@ export default function PMSFailover({
             </BookingInfoSection.BookingDetails>
             <br />
             {/* //TODO: ask rony */}
-            <EmailButton href="https://x.igloorooms.com/manage/AcBookingEdit.aspx?IRID=[BH_ID]&Ran=[RANDOM]">View details</EmailButton>
+            <EmailButton dir={dir} href="https://x.igloorooms.com/manage/AcBookingEdit.aspx?IRID=[BH_ID]&Ran=[RANDOM]">{t("Lcz_ViewDetails")}</EmailButton>
         </EmailContainer>
     )
 }

@@ -1,5 +1,5 @@
-import moment from "moment";
-import { formatAmount, formatTime } from "@/lib/utils";
+import { formatAmount } from "@/lib/utils";
+import { getI18n } from "@/lib/printing-i18n";
 import { FiscalDocumentFooter } from "../../shared/fiscal-document-footer";
 import { PrintDocument } from "../../shared/print-document";
 import { ReceiptRow, ReceiptSection } from "../../shared/receipt-blocks";
@@ -17,18 +17,13 @@ import { splitServicesByRoom } from "../utils/split-services-by-room";
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 function fmtDate(dateStr) {
-  if (!dateStr) return "—";
-  try {
-    return moment(dateStr).locale("en").format("MMM DD, YYYY");
-  } catch {
-    return dateStr;
-  }
+  return getI18n().formatDate(dateStr);
 }
 
 function formatDayUseTime(time) {
   if (!time) return "";
   const [hour, minute] = time.split(":");
-  return formatTime(hour, minute);
+  return getI18n().formatTime(hour, minute);
 }
 
 // Physical room linked to the service via pr_id (day-use services are tied to a unit).
@@ -52,7 +47,7 @@ function getServiceDescription(service, svcCategory, property) {
     const timeRange = `${formatDayUseTime(service?.from_time)} – ${formatDayUseTime(service?.to_time)}`;
     const unit = getLinkedUnitName(service, property);
     const line = [categoryLabel, timeRange].filter(Boolean).join(": ");
-    return unit ? `${line} (Unit: ${unit})` : line;
+    return unit ? `${line} (${getI18n().t("Lcz_Unit_X", unit)})` : line;
   }
 
   const description = service?.description;
@@ -63,6 +58,7 @@ function getServiceDescription(service, svcCategory, property) {
 // ─── BookingFiscalTable ───────────────────────────────────────────────────────
 
 function BookingFiscalTable({ booking, currencySymbol, invertAmounts = false, itemKeys = null, setupTables, property }) {
+  const { t } = getI18n();
   const sign = (v) => (invertAmounts ? -(v ?? 0) : (v ?? 0));
   const money = (v) => formatAmount(sign(v), currencySymbol);
   const svcCategory = setupTables?._SVC_CATEGORY;
@@ -76,7 +72,7 @@ function BookingFiscalTable({ booking, currencySymbol, invertAmounts = false, it
   const rooms = (booking?.rooms ?? []).filter((room) => !itemKeys || inScope(room.system_id));
 
   // Pickup (booking-level)
-  const pickup = booking?.pickup_info ? itemKeys.has(booking?.pickup_info?.system_id) ? booking?.pickup_info : null : null;
+  const pickup = booking?.pickup_info && inScope(booking.pickup_info.system_id) ? booking.pickup_info : null;
 
   // Extra services scoped by service.system_id
   const extras = (booking?.extra_services ?? []).filter(
@@ -124,19 +120,19 @@ function BookingFiscalTable({ booking, currencySymbol, invertAmounts = false, it
     const hasCityTax = (c.city_tax_amount ?? 0) > 0;
     return (
       <PrintTableRow>
-        <PrintTableCell muted nowrap indent={indent ?? 0} className="border-r">
+        <PrintTableCell muted nowrap indent={indent ?? 0} className="border-e">
           {fmtDate(date)}
         </PrintTableCell>
-        <PrintTableCell fill className="border-r">
+        <PrintTableCell fill className="border-e">
           {description}
         </PrintTableCell>
-        <PrintTableCell numeric bold className="border-r">
+        <PrintTableCell numeric bold className="border-e">
           {money(c.net_amount)}
         </PrintTableCell>
         <PrintTableCell numeric muted>
           {c.vat_percent != null ? `${c.vat_percent}%` : "—"}
         </PrintTableCell>
-        <PrintTableCell numeric muted className="border-r">
+        <PrintTableCell numeric muted className="border-e">
           {c.vat_amount != null ? money(c.vat_amount) : "—"}
         </PrintTableCell>
         {withCityTax && (
@@ -144,7 +140,7 @@ function BookingFiscalTable({ booking, currencySymbol, invertAmounts = false, it
             <PrintTableCell numeric muted>
               {hasCityTax ? `${c.city_tax_percent}%` : "—"}
             </PrintTableCell>
-            <PrintTableCell numeric muted className="border-r">
+            <PrintTableCell numeric muted className="border-e">
               {hasCityTax ? money(c.city_tax_amount) : "—"}
             </PrintTableCell>
           </>
@@ -179,14 +175,14 @@ function BookingFiscalTable({ booking, currencySymbol, invertAmounts = false, it
             <span className="print-subtle font-semibold ">
               {unitName}
               {guestName ? ` - ${guestName}` : ""}
-              {totalGuests > 0 && <span> ({totalGuests} pax)</span>}
+              {totalGuests > 0 && <span> ({t("Lcz_X_Pax", totalGuests)})</span>}
             </span>
             <span className="mx-3 text-slate-300">|</span>
             <span className="print-subtle ">
               {fmtDate(room.from_date)} – {fmtDate(room.to_date)}
               {nightCount > 0 && (
-                <span className="ml-2 ">
-                  ({nightCount} night{nightCount !== 1 ? "s" : ""})
+                <span className="ms-2">
+                  ({t.plural(nightCount, "Lcz_X_Night", "Lcz_X_Nights")})
                 </span>
               )}
             </span>
@@ -231,21 +227,21 @@ function BookingFiscalTable({ booking, currencySymbol, invertAmounts = false, it
   function CancellationPenaltyRow() {
     return (
       <PrintTableRow>
-        <PrintTableCell muted nowrap indent={0} className="border-r">
+        <PrintTableCell muted nowrap indent={0} className="border-e">
           {fmtDate(cancellationPenalty.date)}
         </PrintTableCell>
-        <PrintTableCell fill className="border-r">
-          Cancellation Penalty
+        <PrintTableCell fill className="border-e">
+          {t("Lcz_CancelationPenalty")}
         </PrintTableCell>
-        <PrintTableCell numeric bold className="border-r">
+        <PrintTableCell numeric bold className="border-e">
           {money(cancellationAmount)}
         </PrintTableCell>
         <PrintTableCell numeric muted>—</PrintTableCell>
-        <PrintTableCell numeric muted className="border-r"></PrintTableCell>
+        <PrintTableCell numeric muted className="border-e"></PrintTableCell>
         {withCityTax && (
           <>
             <PrintTableCell numeric muted>—</PrintTableCell>
-            <PrintTableCell numeric muted className="border-r"></PrintTableCell>
+            <PrintTableCell numeric muted className="border-e"></PrintTableCell>
           </>
         )}
         <PrintTableCell numeric bold>
@@ -263,27 +259,27 @@ function BookingFiscalTable({ booking, currencySymbol, invertAmounts = false, it
         <PrintTableCell numeric className="py-4">
           <p className="text-sm font-bold text-slate-900">{money(grandNet)}</p>
           <p className="print-caption uppercase tracking-wide text-slate-600 font-medium mt-0.5">
-            Net Price
+            {t("Lcz_NetPrice")}
           </p>
         </PrintTableCell>
         <PrintTableCell numeric className="py-4 border-x border-x-slate-200" colSpan={2}>
           <p className="text-sm font-bold text-slate-900">{money(grandVat)}</p>
           <p className="print-caption uppercase tracking-wide text-slate-600 font-medium mt-0.5">
-            VAT
+            {t("Lcz_VAT")}
           </p>
         </PrintTableCell>
         {withCityTax && (
-          <PrintTableCell numeric className="py-4 border-r border-r-slate-200" colSpan={2}>
+          <PrintTableCell numeric className="py-4 border-e border-e-slate-200" colSpan={2}>
             <p className="text-sm font-bold text-slate-900">{money(grandCityTax)}</p>
             <p className="print-caption uppercase tracking-wide text-slate-600 font-medium mt-0.5">
-              City Tax
+              {t("Lcz_CityTax")}
             </p>
           </PrintTableCell>
         )}
         <PrintTableCell numeric className="py-4">
           <p className="font-bold text-slate-900">{money(grandTotal)}</p>
           <p className="print-caption uppercase tracking-wide text-slate-600 font-medium mt-0.5">
-            Total Due
+            {t("Lcz_TotalDue")}
           </p>
         </PrintTableCell>
       </PrintTableRow>
@@ -295,23 +291,23 @@ function BookingFiscalTable({ booking, currencySymbol, invertAmounts = false, it
       <PrintTable>
         <PrintTableHead>
           <PrintTableRow>
-            <PrintTableHeaderCell className="border-r">Date</PrintTableHeaderCell>
-            <PrintTableHeaderCell className="border-r">Description</PrintTableHeaderCell>
-            <PrintTableHeaderCell numeric className="border-r">Net Price</PrintTableHeaderCell>
-            <PrintTableHeaderCell>VAT</PrintTableHeaderCell>
-            <PrintTableHeaderCell numeric className="border-r">Amount</PrintTableHeaderCell>
-            {withCityTax && <PrintTableHeaderCell>City Tax</PrintTableHeaderCell>}
+            <PrintTableHeaderCell className="border-e">{t("Lcz_Date")}</PrintTableHeaderCell>
+            <PrintTableHeaderCell className="border-e">{t("Lcz_Description")}</PrintTableHeaderCell>
+            <PrintTableHeaderCell numeric className="border-e">{t("Lcz_NetPrice")}</PrintTableHeaderCell>
+            <PrintTableHeaderCell>{t("Lcz_VAT")}</PrintTableHeaderCell>
+            <PrintTableHeaderCell numeric className="border-e">{t("Lcz_Amount")}</PrintTableHeaderCell>
+            {withCityTax && <PrintTableHeaderCell>{t("Lcz_CityTax")}</PrintTableHeaderCell>}
             {withCityTax && (
-              <PrintTableHeaderCell numeric className="border-r">Amount</PrintTableHeaderCell>
+              <PrintTableHeaderCell numeric className="border-e">{t("Lcz_Amount")}</PrintTableHeaderCell>
             )}
-            <PrintTableHeaderCell numeric>Total</PrintTableHeaderCell>
+            <PrintTableHeaderCell numeric>{t("Lcz_Total")}</PrintTableHeaderCell>
           </PrintTableRow>
         </PrintTableHead>
         <PrintTableBody>
           {!hasContent ? (
             <PrintTableRow>
               <PrintTableCell empty colSpan={colSpan}>
-                No line items found for this document.
+                {t("Lcz_NoLineItemsFoundForDocument")}
               </PrintTableCell>
             </PrintTableRow>
           ) : (
@@ -346,35 +342,34 @@ function BookingFiscalTable({ booking, currencySymbol, invertAmounts = false, it
 // ─── BookingPaymentSection ────────────────────────────────────────────────────
 
 function BookingPaymentSection({ booking, selectedDocument, currencySymbol, invertAmounts, mode }) {
+  const { t } = getI18n();
   const guestFinancial = booking.guest_financial
   const symbol = booking?.currency?.symbol ?? currencySymbol;
   const isCreditReceipt = mode === "creditreceipt";
-  const originalDocLabel = isCreditReceipt ? "Original receipt" : "Original invoice";
-  const creditLabel = isCreditReceipt ? "Credit Receipt" : "Credit Note";
 
   return (
     <div className="mt-8 flex flex-col gap-6">
       {!invertAmounts && (
-        <ReceiptSection title="Balance Summary">
-          <ReceiptRow label="Guest Balance" value={formatAmount(guestFinancial?.due_amount, symbol)} />
+        <ReceiptSection title={t("Lcz_BalanceSummary")}>
+          <ReceiptRow label={t("Lcz_GuestBalance")} value={formatAmount(guestFinancial?.due_amount, symbol)} />
           <ReceiptRow
-            label="Guest Collected"
-            value={formatAmount(guestFinancial.collected ?? 0, symbol)}
+            label={t("Lcz_GuestCollected")}
+            value={formatAmount(guestFinancial?.collected ?? 0, symbol)}
           />
         </ReceiptSection>
       )}
 
       {invertAmounts && (
-        <ReceiptSection title={`Effects on ${originalDocLabel}`}>
+        <ReceiptSection title={t(isCreditReceipt ? "Lcz_EffectsOnOriginalReceipt" : "Lcz_EffectsOnOriginalInvoice")}>
           <ReceiptRow
-            label={`${originalDocLabel} total`}
+            label={t(isCreditReceipt ? "Lcz_OriginalReceiptTotal" : "Lcz_OriginalInvoiceTotal")}
             value={formatAmount(selectedDocument?.total_amount ?? 0, symbol)}
           />
           <ReceiptRow
-            label={`Less: ${creditLabel}`}
+            label={t(isCreditReceipt ? "Lcz_LessCreditReceipt" : "Lcz_LessCreditNote")}
             value={formatAmount((selectedDocument?.total_amount ?? 0) * -1, symbol)}
           />
-          <ReceiptRow label="Revised net amount" value={formatAmount(0, symbol)} />
+          <ReceiptRow label={t("Lcz_RevisedNetAmount")} value={formatAmount(0, symbol)} />
         </ReceiptSection>
       )}
     </div>
@@ -386,7 +381,6 @@ function BookingPaymentSection({ booking, selectedDocument, currencySymbol, inve
 export function ProformaPreview({
   booking,
   property,
-  locales,
   guestCountryName,
   totalPersons,
   printingService,
@@ -418,7 +412,6 @@ export function ProformaPreview({
         privateNote={privateNote}
         booking={booking}
         property={property}
-        locales={locales}
         mode={mode}
       />
       <BookingFiscalTable
@@ -445,7 +438,6 @@ export function InvoicePreview({
   documentNumber,
   invoiceInfo,
   invertAmounts = false,
-  locales,
   guestCountryName,
   totalPersons,
   printingService,
@@ -464,7 +456,7 @@ export function InvoicePreview({
   );
   if (!selectedDocument) {
     return <div>
-      Missing document {documentNumber}
+      {getI18n().t("Lcz_MissingDocument_X", documentNumber)}
     </div>
   }
 
@@ -480,7 +472,6 @@ export function InvoicePreview({
         privateNote={privateNote}
         booking={booking}
         property={property}
-        locales={locales}
         mode={mode}
       />
       <BookingFiscalTable

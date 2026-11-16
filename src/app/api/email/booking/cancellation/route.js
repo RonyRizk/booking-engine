@@ -17,7 +17,7 @@ export async function GET(req) {
         const { id, aname, lang } = BookingSchema.parse(extractSearchParamsInsensitive(req))
 
         const data = await getBookingData({ bookingNumber: id, aName: aname, language: lang, includePenaltyStatement: true, baseUrl: getEnvironmentBaseUrl(req) }, token, { 'X-ClientId': 'EMAIL' });
-        const emailHTML = await render(<BookingCancellationEmail {...data} lang={lang} />);
+        const emailHTML = await render(<BookingCancellationEmail {...data} />);
         return new Response(emailHTML);
     } catch (error) {
         logApiError(error, req, {

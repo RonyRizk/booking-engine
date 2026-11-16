@@ -1,9 +1,14 @@
 import { Body, Container, Head, Html, Link, Text } from '@react-email/components'
 
 
-export default function EmailContainer({ style, lang, connectedMpo, ...props }) {
+/**
+ * - dir: "ltr" (default) or "rtl". Set on <html>, <body> and the content wrapper,
+ *   with an explicit text-align, since some clients drop `dir` on <html>.
+ */
+export default function EmailContainer({ style, lang = "en", dir = "ltr", connectedMpo, ...props }) {
+    const directionStyle = { direction: dir, textAlign: dir === "rtl" ? "right" : "left" };
     return (
-        <Html dir={lang === "ar" ? "rtl" : "ltr"}>
+        <Html lang={lang} dir={dir}>
             <Head>
                 <style>
                     {`
@@ -19,9 +24,9 @@ export default function EmailContainer({ style, lang, connectedMpo, ...props }) 
                     `}
                 </style>
             </Head>
-            <Body {...props} style={{ ...styles.body, ...style }}>
+            <Body {...props} dir={dir} style={{ ...styles.body, ...directionStyle, ...style }}>
                 <Container style={styles.container}>
-                    <div style={styles.content} className='email-container'>
+                    <div dir={dir} style={{ ...styles.content, ...directionStyle }} className='email-container'>
                         {props.children}
                     </div>
                     <div style={styles.footer}>

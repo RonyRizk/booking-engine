@@ -20,9 +20,9 @@
                                independently of the body so the wide 8-column
                                layout keeps fitting as the body grows
 
-   The root stays at 9.225pt (exactly the 12.3px it has always been) for anything
-   that is NOT a fiscal document: fd/page.jsx loads this sheet for mode=printing
-   too, and the booking print must not move. */
+   The root stays at 9.225pt (exactly the 12.3px it has always been) unless a
+   document opts in: fiscal documents via .fiscal-page, the booking print
+   (fd/page.jsx mode=printing, which loads this sheet too) via .booking-print. */
 :root {
   --page-width: 595.28pt;
   --page-height: 841.89pt;
@@ -41,6 +41,35 @@
    simply keep the 9.225pt root, which is the size they had before. */
 :root:has(.fiscal-page) {
   font-size: var(--fiscal-font-size) !important;
+}
+
+/* Booking print (fd mode=printing) only — keyed off the .booking-print that
+   BookingPreview renders. Its body text is text-sm (0.875rem), so a 12pt root
+   sets the body at 10.5pt, the usual size for printed documents, with secondary
+   text (text-xs) at 9pt and headings at 13.5–15pt. Tables follow the body size
+   rather than the 1rem used elsewhere. */
+:root:has(.booking-print) {
+  --booking-font-size: 12pt;
+  --booking-table-font-size: 10.5pt;
+
+  font-size: var(--booking-font-size) !important;
+}
+
+/* A document title set exactly as the fiscal documents set theirs: their
+   `text-3xl font-bold` over the fiscal root, i.e. 1.875x / 2.25x the fiscal body
+   size. For titles on the booking-print scale (the consent card), whose larger
+   root would make `text-3xl` bigger than the fiscal titles. */
+.fiscal-title {
+  font-size: calc(var(--fiscal-font-size) * 1.875);
+  line-height: calc(var(--fiscal-font-size) * 2.25);
+  font-weight: 700;
+}
+
+.booking-print table th,
+.booking-print table td,
+.booking-print table th *,
+.booking-print table td * {
+  font-size: var(--booking-table-font-size) !important;
 }
 
 /* Normalize body so screen and print render identically */
@@ -96,6 +125,13 @@ table td .print-subtle,
   page: fiscal;
 }
 
+/* The booking print takes a page box with real margins. At the larger type its
+   max-w-4xl container is wider than A4, so without this the content would run
+   to within a few points of the paper edge. */
+.booking-print {
+  page: booking;
+}
+
 /* ─── Overflow guards ─────────────────────────────────────────────────────────
    Nothing may widen the page: a long unbroken token (reference, email, URL) or
    an oversized logo would otherwise push content past the A4 content box. */
@@ -127,6 +163,12 @@ img {
      screen preview matches the PDF. */
   @page fiscal {
     margin: 36pt 0;
+    size: A4;
+  }
+
+  /* Booking print: margins on every side, repeated on continuation pages. */
+  @page booking {
+    margin: 36pt 24pt;
     size: A4;
   }
 

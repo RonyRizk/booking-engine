@@ -13,7 +13,7 @@ const BookingInfoSection = ({ children }) => {
 // Property Details Section
 const PropertyDetails = ({
   property,
-  locales,
+  i18n,
   showMapLink = true,
   children,
 }) => {
@@ -33,7 +33,7 @@ const PropertyDetails = ({
             href={`https://www.google.com/maps/preview?q=${property.location.latitude},${property.location.longitude}`}
 
           >
-            {locales?.Lcz_Map}
+            {i18n.t("Lcz_Map")}
           </EmailLink>
         </>}
       </EmailText>
@@ -43,29 +43,29 @@ const PropertyDetails = ({
 };
 
 // Contact Information
-const ContactInfo = ({ locales, phone, bookingEmail }) => {
+const ContactInfo = ({ i18n, phone, bookingEmail }) => {
   if (!phone || !bookingEmail) return null;
 
   return (
     <EmailText style={{ margin: "0" }}>
-      <b>{`${locales?.Lcz_Phone}:`}</b> {phone} <br /> <b>{locales.Lcz_Email}</b>:{" "}
+      <b>{`${i18n.t("Lcz_Phone")}:`}</b> <span dir="ltr">{phone}</span> <br /> <b>{i18n.t("Lcz_Email")}</b>:{" "}
       <EmailLink href={`mailto:${bookingEmail}`}>{bookingEmail}</EmailLink>{" "}
     </EmailText>
   );
 };
 
 // GPS Location
-const LocationInfo = ({ property, locales }) => {
+const LocationInfo = ({ property, i18n }) => {
   if (!property?.location) return null;
 
   return (
     <EmailText style={{ marginTop: "0" }}>
-      <b>{locales?.Lcz_GPS}:</b> {property.location.latitude},{" "}
-      {property.location.longitude}{" "}
+      <b>{i18n.t("Lcz_GPS")}:</b> <span dir="ltr">{property.location.latitude},{" "}
+        {property.location.longitude}</span>{" "}
       <EmailLink
         href={`https://www.google.com/maps/preview?q=${property.location.latitude},${property.location.longitude}`}
       >
-        {locales?.Lcz_Map}
+        {i18n.t("Lcz_Map")}
       </EmailLink>
     </EmailText>
   );
@@ -77,29 +77,29 @@ const BookingDetails = ({ children }) => {
 };
 
 // Guest Information
-const GuestInfo = ({ booking, locales }) => {
+const GuestInfo = ({ booking, i18n }) => {
   const printingService = new PrintingService("");
 
   return (
     <EmailText style={{ margin: 0 }}>
-      <b>{locales?.Lcz_BookedBy}:</b>{" "}
+      <b>{i18n.t("Lcz_BookedBy")}:</b>{" "}
       {printingService.formatGuestName(booking.guest)}
     </EmailText>
   );
 };
 
 // Booked On Date
-const BookedOnDate = ({ booking, locales, lang = "en" }) => {
+const BookedOnDate = ({ booking, i18n }) => {
   if (!booking.booked_on?.date) return null;
 
   const format = "ddd, DD MMM YYYY";
 
   return (
     <EmailText style={{ margin: 0 }}>
-      <b>{locales?.Lcz_BookedOn}:</b>{" "}
+      <b>{i18n.t("Lcz_BookedOn")}:</b>{" "}
       {formatDate({
         date: booking.booked_on.date,
-        locale: lang,
+        locale: i18n.lang,
         format,
       })}
     </EmailText>
@@ -107,77 +107,77 @@ const BookedOnDate = ({ booking, locales, lang = "en" }) => {
 };
 const printingService = new PrintingService()
 // Guest Phone
-const GuestPhone = ({ booking, locales }) => {
+const GuestPhone = ({ booking, i18n }) => {
   const phone = printingService.formatPhoneNumber(booking.guest, booking.is_direct)
   if (!phone) {
     return null
   }
   return (
     <EmailText style={{ margin: 0 }}>
-      <b>{`${locales?.Lcz_Phone}:`}</b> {phone}
+      <b>{`${i18n.t("Lcz_Phone")}:`}</b> <span dir="ltr">{phone}</span>
     </EmailText>
   );
 };
 
 // Check-in/Check-out Information
-const CheckInOutInfo = ({ booking, property, locales, lang = "en" }) => {
+const CheckInOutInfo = ({ booking, property, i18n }) => {
   if (!booking.from_date || !booking.to_date) return null;
 
   const format = "ddd, DD MMM YYYY";
 
   return (
     <EmailText style={{ margin: 0 }}>
-      <b>{`${locales?.Lcz_CheckIn}:`}</b>{" "}
+      <b>{`${i18n.t("Lcz_CheckIn")}:`}</b>{" "}
       {formatDate({
         date: booking.from_date,
-        locale: lang,
+        locale: i18n.lang,
         format,
       })}{" "}
-      {locales?.Lcz_From} {property?.time_constraints?.check_in_from}
+      {i18n.t("Lcz_From")} {property?.time_constraints?.check_in_from}
       <br />
-      <b>{locales?.Lcz_CheckOut}:</b>{" "}
+      <b>{i18n.t("Lcz_CheckOut")}:</b>{" "}
       {formatDate({
         date: booking.to_date,
-        locale: lang,
+        locale: i18n.lang,
         format,
       })}{" "}
-      {locales?.Lcz_Until} {property?.time_constraints?.check_out_till}
+      {i18n.t("Lcz_Until")} {property?.time_constraints?.check_out_till}
     </EmailText>
   );
 };
 
 // Duration Information
-const DurationInfo = ({ booking, locales, }) => {
+const DurationInfo = ({ booking, i18n }) => {
   const roomCount = booking.rooms?.length || 0;
   const totalPersons = booking?.occupancy?.adult_nbr + booking?.occupancy?.children_nbr + booking?.occupancy?.infant_nbr;
   const totalNights = calculateDaysBetweenDates(booking?.from_date, booking?.to_date);
   return (
     <EmailText style={{ margin: 0 }}>
-      <b>{locales?.Lcz_Duration}:</b> {totalNights}{" "}
-      {totalNights > 1 ? locales?.Lcz_Nights : locales?.Lcz_Night} -{" "}
+      <b>{i18n.t("Lcz_Duration")}:</b> {totalNights}{" "}
+      {i18n.t(totalNights > 1 ? "Lcz_Nights" : "Lcz_Night")} -{" "}
       {totalPersons}{" "}
-      {totalPersons > 1 ? locales?.Lcz_Persons : locales?.Lcz_Person},{" "}
-      {roomCount} {roomCount > 1 ? locales?.Lcz_Rooms : locales?.Lcz_Room}
+      {i18n.t(totalPersons > 1 ? "Lcz_Persons" : "Lcz_Person")},{" "}
+      {roomCount} {i18n.t(roomCount > 1 ? "Lcz_Rooms" : "Lcz_Room")}
     </EmailText>
   );
 };
 
 // Arrival Time
-const ArrivalTime = ({ booking, locales }) => {
+const ArrivalTime = ({ booking, i18n }) => {
   if (!booking.arrival?.description) return null;
 
   return (
     <EmailText style={{ margin: 0 }}>
-      <b>{locales?.Lcz_Arrival_Time}:</b> {booking.arrival.description}
+      <b>{i18n.t("Lcz_Arrival_Time")}:</b> {booking.arrival.description}
     </EmailText>
   );
 };
-const TotalPrice = ({ booking, locales, currency }) => {
-  if (!booking.arrival?.description) return null;
+const TotalPrice = ({ booking, i18n, currency }) => {
+  if (booking.financial?.gross_total == null) return null;
 
   return (
     <EmailText style={{ margin: 0 }}>
-      <b>{locales?.Lcz_Total_price}:</b> {formatAmount(booking.financial.gross_total, currency)}
+      <b>{i18n.t("Lcz_Total_price")}:</b> {formatAmount(booking.financial.gross_total, currency)}
     </EmailText>
   );
 };

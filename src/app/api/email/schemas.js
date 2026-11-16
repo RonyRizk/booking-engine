@@ -1,4 +1,4 @@
-const { z } = require("zod");
+import { z } from "zod";
 
 const LanguageSchema = z.optional(z.string().length(2)).default('en');
 const BaseSchema = z.object({
@@ -18,12 +18,18 @@ const BookingCHMSchema = z.object({
 })
 
 const AutoEmailSchema = BookingSchema.extend({
-    mode: z.enum(["pre", "post", "during"])
+    mode: z.enum(["pre", "post", "during", "due"]),
+    due_amount: z.optional(z.coerce.number().positive())
+}).superRefine(({ mode, due_amount }, ctx) => {
+    if (mode === "due" && due_amount === undefined) {
+        ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["due_amount"], message: "due_amount is required when mode is due" });
+    }
 });
 const OTPEmailSchema = z.object({
     otp: z.string().min(4),
     geo: z.optional(z.any()),
-    name: z.string().nonempty()
+    name: z.string().nonempty(),
+    lang: LanguageSchema
 })
 
 const VerifyEmailSchema = z.object({

@@ -37,6 +37,7 @@ export { default as PickupVehicleRow } from "./PickupVehicleRow";
 
 // ExtraService micro-components
 export { default as ServiceDateRange } from "./ServiceDateRange";
+export { default as DirectionalArrow } from "./DirectionalArrow";
 
 // PaymentInformation micro-components
 export { default as ReceiptPaymentSection } from "./ReceiptPaymentSection";

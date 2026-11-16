@@ -93,7 +93,7 @@ export function convertBookingToCL({ booking, agentId, clTxs, setupEntries }) {
       SERVICE_DATE: service.start_date,
       FROM_DATE: service.start_date,
       TO_DATE: service.end_date,
-      DESCRIPTION: `${service.category?.code ? svcCategory[service.category.code] + `${service.description ? ": " : ""}` : ""}${service.description ?? ""}`,
+      DESCRIPTION: [svcCategory?.[service.category?.code], service.description].filter(Boolean).join(": "),
       GUEST_FIRST_NAME: booking.guest?.first_name ?? '',
       GUEST_LAST_NAME: booking.guest?.last_name ?? '',
       ADULTS_NBR: 0,

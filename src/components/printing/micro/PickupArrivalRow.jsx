@@ -1,20 +1,20 @@
 import InfoDisplay from "@/components/InfoDisplay";
-import moment from "moment";
-import { formatTime } from "@/lib/utils";
+import { getI18n } from "@/lib/printing-i18n";
 
-export default function PickupArrivalRow({ pickup_info, locales }) {
+export default function PickupArrivalRow({ pickup_info }) {
+    const { t, formatDate, formatTime } = getI18n();
     return (
         <div className="flex items-center gap-1.5 sm:gap-4 flex-wrap">
             <InfoDisplay
-                label={`${locales?.Lcz_ArrivalDate}:`}
-                value={moment(pickup_info.date).locale("en").format("MMM DD, YYYY")}
+                label={`${t("Lcz_ArrivalDate")}:`}
+                value={formatDate(pickup_info.date)}
             />
             <InfoDisplay
-                label={`${locales?.Lcz_ArrivalTime}:`}
-                value={formatTime(pickup_info.hour.toString(), pickup_info.minute.toString())}
+                label={`${t("Lcz_ArrivalTime")}:`}
+                value={formatTime(pickup_info.hour, pickup_info.minute)}
             />
             <InfoDisplay
-                label={`${locales?.Lcz_FlightDetails}:`}
+                label={`${t("Lcz_FlightDetails")}:`}
                 value={pickup_info.details}
             />
         </div>

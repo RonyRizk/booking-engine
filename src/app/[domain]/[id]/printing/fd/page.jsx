@@ -20,12 +20,12 @@
  * @param {("invoice"|"receipt"|"creditnote"|"creditreceipt"|"refund"|"printing"|"proforma")} props.searchParams.mode - Document mode (required).
  * @param {string} props.searchParams.bookingNbr   - Booking number (required).
  * @param {string} [props.searchParams.docNo]      - Document number shown in the header.
- * @param {string} [props.searchParams.lang="en"]  - Language code for localised values.
  * @param {("alpha"|"production")} [props.searchParams.environment="production"] - Gateway to use: "alpha" → IRALPHA, otherwise IR.
  */
 
 import { redirect } from "next/navigation";
 import "../shared/fiscal-printing.css";
+import PrintFont from "@/components/printing/PrintFont";
 import { CreditNotePreview } from "./components/credit-note-preview";
 import { CreditReceiptPreview } from "./components/credit-receipt-preview";
 import { InvoicePreview, ProformaPreview } from "./components/invoice-preview";
@@ -35,18 +35,28 @@ import { CommonServices } from "@/lib/services/common.service";
 import { PrintingService } from "@/lib/services/printing.service";
 import BookingPreview from "./components/booking-preview";
 import { CityLedgerService } from "@/lib/services/city-ledger.service";
+import { getI18n, loadDocumentProperty, loadPrintingLabels } from "@/lib/printing-i18n";
 import { resolveEnvironmentBaseUrl } from "@/lib/middleware";
+import { invalidLinkReason, withPrintLog } from "@/lib/printing-log";
 
 const DEFAULT_BASE_URL = "https://gateway.igloorooms.com/IR";
 const VALID_MODES = new Set(["invoice", "receipt", "creditnote", "creditreceipt", "refund", "printing", "proforma"]);
 const FALLBACK_URL = "https://x.igloorooms.com/manage/acbookinglist.aspx";
 
-export default async function FiscalDocumentsPage({ params, searchParams }) {
+const printContext = ({ params, searchParams }) => ({
+    route: "fd",
+    mode: searchParams.mode,
+    property: params.id,
+    booking: searchParams.id,
+    document: searchParams.documentId ?? searchParams.pid,
+    environment: searchParams.environment,
+});
+
+async function FiscalDocumentsPage({ params, searchParams }, log) {
     const {
         mode,
         id: booking_nbr,
         documentId: documentNumber,
-        lang = "en",
         token,
         pid,
         ids,
@@ -57,14 +67,11 @@ export default async function FiscalDocumentsPage({ params, searchParams }) {
     const baseUrl = resolveEnvironmentBaseUrl(environment, DEFAULT_BASE_URL);
     const normalizedMode = mode?.toLowerCase()?.trim();
 
-    if (
-        !token ||
-        !normalizedMode ||
-        !booking_nbr ||
-        !VALID_MODES.has(normalizedMode)
-    ) {
+    const rejection = invalidLinkReason({ token, mode: normalizedMode, validModes: VALID_MODES, required: { booking: booking_nbr } });
+    if (rejection) {
+        log.rejected(rejection);
         // redirect(FALLBACK_URL);
-        return <span> something went wrong alo</span>;
+        return <span>{getI18n().t("Lcz_SomethingWentWrongTryAgain")}</span>;
     }
 
     const bookingService = new BookingService();
@@ -80,49 +87,61 @@ export default async function FiscalDocumentsPage({ params, searchParams }) {
     const printingService = new PrintingService(token);
     printingService.setBaseUrl(baseUrl);
 
-    let property, booking, bedPreferences, setupTables, invoiceInfo, countries, localesRaw, agent;
+    let property, booking, bedPreferences, setupTables, invoiceInfo, countries, agent;
     let clTransactions = [];
     try {
-        [property, booking, bedPreferences, setupTables, invoiceInfo, countries, localesRaw] = await Promise.all([
-            commonService.getExposedProperty(params.id, lang),
-            bookingService.getExposedBooking({
-                is_get_financial_snapshot: true,
-                is_calculate_totals: normalizedMode === 'printing',
-                booking_nbr, "extras": [
-                    {
-                        "key": "payment_code",
-                        "value": ""
-                    }
-                ], language: lang,
-            }),
-            bookingService.getBedPreference(),
-            commonService.getSetupEntriesByTBLNameMulti(['_PAY_TYPE', '_PAY_TYPE_GROUP', '_PAY_METHOD', "_SVC_CATEGORY"], 'en'),
-            (mode && ["invoice", "creditnote"].includes(mode?.toLowerCase()?.trim())) ? bookingService.getBookingInvoiceInfo({ booking_nbr }) : Promise.resolve(null),
-            commonService.getCountries(lang),
-            commonService.fetchLanguage(lang, ["_PRINT_FRONT", "_PMS_FRONT"]),
-        ]);
-        if (booking.agent?.id && normalizedMode === "printing") {
+        const { lang: langPromise, property: propertyPromise } = loadDocumentProperty(commonService, params.id);
+        const bookingPromise = langPromise.then((language) => bookingService.getExposedBooking({
+            is_get_financial_snapshot: true,
+            is_calculate_totals: normalizedMode === 'printing',
+            booking_nbr, "extras": [
+                {
+                    "key": "payment_code",
+                    "value": ""
+                }
+            ], language,
+        }));
+        // An agent's booking print also shows the agent's ledger; it only needs the booking.
+        const agentLedgerPromise = bookingPromise.then((loaded) => {
+            const agentId = loaded?.agent?.id;
+            if (!agentId || normalizedMode !== "printing") {
+                return null;
+            }
             const cl = new CityLedgerService();
             cl.setToken(token);
             cl.setBaseUrl(baseUrl);
-            const [agentData, clResult] = await Promise.all([
-                cl.getExposedAgent({ id: booking.agent.id }),
-                cl.fetchCL({ AGENCY_ID: booking.agent.id, SEARCH_QUERY: booking_nbr }),
+            return Promise.all([
+                cl.getExposedAgent({ id: agentId }),
+                cl.fetchCL({ AGENCY_ID: agentId, SEARCH_QUERY: booking_nbr }),
             ]);
+        });
+        let agentLedger;
+        [property, booking, bedPreferences, setupTables, invoiceInfo, countries, , agentLedger] = await Promise.all([
+            propertyPromise,
+            bookingPromise,
+            normalizedMode === "printing" ? bookingService.getBedPreference() : null,
+            langPromise.then((lang) => commonService.getSetupEntriesByTBLNameMulti(['_PAY_TYPE', '_PAY_METHOD', "_SVC_CATEGORY"], lang)),
+            (mode && ["invoice", "creditnote"].includes(mode?.toLowerCase()?.trim())) ? bookingService.getBookingInvoiceInfo({ booking_nbr }) : Promise.resolve(null),
+            langPromise.then((lang) => commonService.getCountries(lang)),
+            langPromise.then((lang) => loadPrintingLabels(lang, token)),
+            agentLedgerPromise,
+        ]);
+        if (agentLedger) {
+            const [agentData, clResult] = agentLedger;
             agent = agentData;
             clTransactions = clResult?.My_Result?.My_Cl_tx ?? [];
         }
     } catch (error) {
-        console.error("fd/page fetch error:", error);
-        return <span>Something went wrong. Please try again.</span>;
+        log.failed(error);
+        return <span>{getI18n().t("Lcz_SomethingWentWrongTryAgain")}</span>;
     }
     if (!booking) {
+        log.rejected("booking not found");
         redirect(FALLBACK_URL);
     }
     if (normalizedMode === "receipt") {
-        printingService.checkReceipt({ booking, receiptNumber: documentNumber, paymentId: pid })
+        await printingService.checkReceipt({ booking, receiptNumber: documentNumber, paymentId: pid });
     }
-    const locales = localesRaw?.entries;
     const totalPersons = printingService.calculateTotalPersons(booking);
     const guestCountryName = printingService.getUserCountry(countries, booking?.guest?.country_id);
     const privateNote = booking?.extras?.find((k) => k.key === "private_note");
@@ -130,13 +149,13 @@ export default async function FiscalDocumentsPage({ params, searchParams }) {
     const proformaIds = ids ? ids.split("-") : null;
 
     const sharedProps = {
-        booking: { ...booking, rooms: booking.rooms ?? [] }, property, documentNumber, invoiceInfo, setupTables,
-        locales, guestCountryName, totalPersons, printingService, privateNote,
+        booking: { ...booking, rooms: booking.rooms ?? [] }, property, documentNumber, invoiceInfo, setupTables, guestCountryName, totalPersons, printingService, privateNote,
         mode: normalizedMode, pid, agent, clTransactions, bedPreferences
     };
 
     return (
         <div className="min-h-screen bg-white">
+            <PrintFont />
             {normalizedMode === "invoice" && <InvoicePreview {...sharedProps} />}
             {normalizedMode === "printing" && <BookingPreview {...sharedProps} />}
             {normalizedMode === "receipt" && <ReceiptPreview {...sharedProps} />}
@@ -155,3 +174,5 @@ export default async function FiscalDocumentsPage({ params, searchParams }) {
         </div>
     );
 }
+
+export default withPrintLog(printContext, FiscalDocumentsPage);

@@ -21,7 +21,7 @@ export async function POST(req) {
         const mpo = await getConnectedMpo(req, { 'X-ClientId': 'EMAIL' })
 
         const data = await getBookingData({ bookingNumber, aName, language, baseUrl: getEnvironmentBaseUrl(req) }, token, { 'X-ClientId': 'EMAIL' });
-        const emailHTML = await render(<PMSFailover connectedMpo={mpo} {...data} reason={reason} lang={language} />);
+        const emailHTML = await render(<PMSFailover connectedMpo={mpo} {...data} reason={reason} />);
         return new Response(emailHTML);
     } catch (error) {
         logApiError(error, req, {

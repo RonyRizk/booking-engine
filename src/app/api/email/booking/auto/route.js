@@ -40,23 +40,26 @@ export async function GET(req) {
     try {
         const token = verifyToken(req);
         const searchParams = extractSearchParamsInsensitive(req)
-        const { id, aname, lang, mode } = AutoEmailSchema.parse(searchParams)
+        const { id, aname, lang, mode, due_amount } = AutoEmailSchema.parse(searchParams)
 
         const commonService = new CommonServices(getEnvironmentBaseUrl(req, "https://gateway.igloorooms.com/IRBE"))
         commonService.setToken(token)
         commonService.setDefaultHeaders({ 'X-ClientId': 'EMAIL' })
-        const [data, tables] = await Promise.all(
-            [getBookingData({ bookingNumber: id, aName: aname, language: lang, baseUrl: getEnvironmentBaseUrl(req) }, token, { 'X-ClientId': 'EMAIL' }),
-            commonService.getSetupEntriesByTBLNameMulti([
+        const dataPromise = getBookingData({ bookingNumber: id, aName: aname, language: lang, baseUrl: getEnvironmentBaseUrl(req) }, token, { 'X-ClientId': 'EMAIL' });
+        // Access codes only need the property id, so they don't wait for the setup texts.
+        const accessCodePromise = mode === 'pre'
+            ? dataPromise.then((data) => getAccessCodeSettings(commonService, data.property?.id))
+            : null;
+        const [data, tables, accessCode] = await Promise.all([
+            dataPromise,
+            // The payment reminder's texts all come from _EMAIL_LABELS.
+            mode === 'due' ? null : commonService.getSetupEntriesByTBLNameMulti([
                 '_PRE_ARRIVAL_EMAIL',
                 '_DURING_THE_STAY_EMAIL',
                 '_POST_DEPARTURE_EMAIL'
-            ], lang)
-            ]
-        );
-        const accessCode = mode === 'pre'
-            ? await getAccessCodeSettings(commonService, data.property?.id)
-            : null;
+            ], lang),
+            accessCodePromise,
+        ]);
 
         let Component;
         let emailHTML;
@@ -65,17 +68,22 @@ export async function GET(req) {
             switch (mode) {
                 case "pre":
                     Component = (await import('@/emails/booking/AutoEmailPreArrival')).default;
-                    emailHTML = await render(<Component {...data} setupTables={tables} lang={lang} accessCode={accessCode} />);
+                    emailHTML = await render(<Component {...data} setupTables={tables} accessCode={accessCode} />);
                     return new Response(emailHTML);
 
                 case "post":
                     Component = (await import('@/emails/booking/AutoEmailPostDeparture')).default;
-                    emailHTML = await render(<Component {...data} setupTables={tables} lang={lang} />);
+                    emailHTML = await render(<Component {...data} setupTables={tables} />);
                     return new Response(emailHTML);
 
                 case "during":
                     Component = (await import('@/emails/booking/AutoEmailDuringStay')).default;
-                    emailHTML = await render(<Component {...data} setupTables={tables} lang={lang} />);
+                    emailHTML = await render(<Component {...data} setupTables={tables} />);
+                    return new Response(emailHTML);
+
+                case "due":
+                    Component = (await import('@/emails/booking/PaymentReminder')).default;
+                    emailHTML = await render(<Component {...data} dueAmount={due_amount} />);
                     return new Response(emailHTML);
 
                 default:

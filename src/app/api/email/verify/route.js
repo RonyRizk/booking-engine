@@ -1,9 +1,10 @@
 import { render } from '@react-email/components';
 import VerifyEmail from '@/emails/system/VerifyEmail';
 import { ZodError } from 'zod';
-import { VerifyEmailSchema } from '../schemas';
+import { LanguageSchema, VerifyEmailSchema } from '../schemas';
 import { logApiError } from '@/logger';
-import { getConnectedMpo } from '@/lib/middleware';
+import { extractSearchParamsInsensitive, getConnectedMpo, getOptionalToken } from '@/lib/middleware';
+import { EMAIL_LABELS, fetchLabels } from '@/lib/labels';
 
 // Force dynamic rendering to prevent static generation errors
 export const dynamic = 'force-dynamic';
@@ -12,12 +13,16 @@ export async function POST(req) {
     let requestBody
     try {
         requestBody = await req.json()
-        const { url, name, lang } = VerifyEmailSchema.parse(requestBody)
-        const mpo = await getConnectedMpo(req, { 'X-ClientId': 'EMAIL' })
+        const { url, name } = VerifyEmailSchema.parse(requestBody);
+        const lang = LanguageSchema.parse(extractSearchParamsInsensitive(req)?.lang)
+        const [mpo, i18n] = await Promise.all([
+            getConnectedMpo(req, { 'X-ClientId': 'EMAIL' }),
+            fetchLabels(EMAIL_LABELS, lang, { token: getOptionalToken(req), headers: { 'X-ClientId': 'EMAIL' } }),
+        ])
         const emailHTML = await render(<VerifyEmail
             url={url}
             name={name}
-            lang={lang}
+            i18n={i18n}
             connectedMpo={mpo}
         />);
         return new Response(emailHTML);

@@ -1,9 +1,11 @@
+import { getI18n } from "@/lib/printing-i18n";
 import InfoDisplay from "@/components/InfoDisplay";
 
-export default function ArrivalTimeDisplay({ booking, locales }) {
+export default function ArrivalTimeDisplay({ booking }) {
+    const { t } = getI18n();
     return (
         <InfoDisplay
-            label={`${locales?.Lcz_ArrivalTime}:`}
+            label={`${t("Lcz_ArrivalTime")}:`}
             value={booking?.arrival?.description}
         />
     );

@@ -9,22 +9,22 @@ import EmailText from "../components/EmailText";
 import EmailFooter from '../components/EmailFooter';
 
 export default function BookingCancellationEmail({
-    locales,
+    i18n,
     totalPersons,
     booking,
     currency,
     totalNights,
     property,
-    lang,
     penaltyStatement,
+    phone,
 }) {
+    const { t, lang, dir } = i18n;
     const bookingEmail = property.contacts?.find(
         (c) => c.type === "booking"
     )?.email;
-    const phone = `+${property?.country?.phone_prefix?.replace("+", "") + "-" || ""}${property?.phone}`;
 
     return (
-        <EmailContainer lang={lang} connectedMpo={property.mpo}>
+        <EmailContainer lang={lang} dir={dir} connectedMpo={property.mpo}>
             <BookingHeader
                 bookingEmail={bookingEmail}
                 totalPersons={totalPersons}
@@ -32,17 +32,17 @@ export default function BookingCancellationEmail({
                 phone={phone}
                 booking={booking}
                 property={property}
-                locales={locales}
+                i18n={i18n}
                 mode={"printing"}
             />
             {penaltyStatement && <>
-                <EmailText variant="subtitle">{locales?.Lcz_CancelationPenalty}</EmailText>
+                <EmailText variant="subtitle">{t("Lcz_CancelationPenalty")}</EmailText>
                 <EmailText>{penaltyStatement}</EmailText>
             </>}
-            <EmailText variant="subtitle">{locales?.Lcz_CancellationDetails}</EmailText>
-            <BookingDetails booking={booking} lang={lang} property={property} locales={locales} currency={currency} />
+            <EmailText variant="subtitle">{t("Lcz_CancellationDetails")}</EmailText>
+            <BookingDetails booking={booking} property={property} i18n={i18n} currency={currency} />
             <EmailFooter>
-                <GuestServiceContactUs property={property} locales={locales} />
+                <GuestServiceContactUs property={property} i18n={i18n} />
             </EmailFooter>
         </EmailContainer>
     );

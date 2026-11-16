@@ -9,11 +9,13 @@ export default function InvoicePage({
   aName,
   locationShown,
   headerMessageShown,
+  mode
 }) {
   return (
     <ir-invoice
       header-message-shown={headerMessageShown}
       a-name={aName}
+      mode={mode}
       location-shown={locationShown}
       perma_link={perma_link}
       language={language}

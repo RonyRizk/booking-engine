@@ -1,7 +1,11 @@
 import { getExposedProperty } from '../../../lib/actions';
+import { isPrintingRequest } from '../../../lib/printing-route';
 import React from 'react'
 
 export async function generateMetadata({ params }, parent) {
+    if (isPrintingRequest()) {
+        return { title: "igloorooms" };
+    }
     const result = await getExposedProperty({ perma_link: "", aName: params.id });
     const previousImages = (await parent).openGraph?.images || [];
     const logo = result?.space_theme?.favicon;

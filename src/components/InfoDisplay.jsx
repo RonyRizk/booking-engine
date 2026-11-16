@@ -10,7 +10,7 @@ const InfoDisplay = ({ label, value, className, asHtml, inline }) => {
             "flex items-start": !inline,
         }, className)
         }>
-            {label && <p className={`font-bold text-gray-900 whitespace-nowrap   ${inline ? "inline mr-1" : ""}`}>{label}</p>}
+            {label && <p className={`font-semibold text-gray-900 whitespace-nowrap ${inline ? "inline me-1" : ""}`}>{label}</p>}
             {asHtml ? <p dangerouslySetInnerHTML={{ __html: value }} className={inline ? "inline font-normal break-words" : "font-normal min-w-0 break-words"}></p> : <p className={inline ? "inline font-normal break-words" : "font-normal min-w-0 break-words"}>{value}</p>}
         </div>
     );

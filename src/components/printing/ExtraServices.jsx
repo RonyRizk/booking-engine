@@ -1,7 +1,9 @@
+import { getI18n } from "@/lib/printing-i18n";
 import { cn } from "@/lib/utils";
 import ExtraService from "./ExtraService";
 
-export default function ExtraServices({ mode, isInvoicableMode, booking, locales, selectedDocumentsItemsKeys }) {
+export default function ExtraServices({ mode, isInvoicableMode, booking, selectedDocumentsItemsKeys }) {
+    const { t } = getI18n();
     if (!booking.extra_services) return null;
     const visibleServices = mode === "printing"
         ? booking.extra_services
@@ -11,7 +13,7 @@ export default function ExtraServices({ mode, isInvoicableMode, booking, locales
     return (
         <section className="py-4 border-gray-300 border-y border-b-0">
             <p className="text-lg font-semibold text-gray-900 mb-2.5">
-                {locales?.Lcz_ExtraServices}
+                {t("Lcz_ExtraServices")}
             </p>
             <ul>
                 {visibleServices.map((service, idx) => (

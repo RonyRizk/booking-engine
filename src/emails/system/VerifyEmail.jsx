@@ -5,16 +5,17 @@ import EmailText from '../components/EmailText'
 import EmailButton from '../components/EmailButton'
 import EmailLink from '../components/EmailLink'
 
-export default function VerifyEmail({ name, lang, url, connectedMpo }) {
+export default function VerifyEmail({ name, i18n, url, connectedMpo }) {
+    const { t, lang, dir } = i18n;
     return (
-        <EmailContainer lang={lang} connectedMpo={connectedMpo}>
+        <EmailContainer lang={lang} dir={dir} connectedMpo={connectedMpo}>
             <SystemHeader name={name} connectedMpo={connectedMpo} />
             <EmailText>
-                Please verify your email so you can login to igloorooms extranet. If you were not trying to login, we strongly advise you to change your Admin password immediately.
+                {t("Lcz_VerifyEmailIntro")}
             </EmailText>
-            <EmailButton href={url}>Verify email</EmailButton>
+            <EmailButton dir={dir} href={url}>{t("Lcz_VerifyEmail")}</EmailButton>
             <EmailText>
-                If you have any questions, concerns, or require assistance, please do not hesitate to contact igloorooms Support <EmailLink>https://help.igloorooms.com</EmailLink>
+                {t("Lcz_ContactSupport")} <EmailLink href="https://help.igloorooms.com">https://help.igloorooms.com</EmailLink>
             </EmailText>
         </EmailContainer>
     )

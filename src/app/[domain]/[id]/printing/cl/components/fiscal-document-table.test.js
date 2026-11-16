@@ -1,7 +1,9 @@
-import { describe, expect, test } from "bun:test";
+import { beforeEach, describe, expect, test } from "bun:test";
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { FiscalDocumentTable } from "./fiscal-document-table";
+import { installPrintingLabels } from "@/lib/printing-i18n";
+import { createLabels, FD_LABELS } from "@/lib/labels";
 
 const property = {
     roomtypes: [{ id: 11, name: "Deluxe", physicalrooms: [{ id: 101, name: "101" }], rateplans: [] }],
@@ -37,6 +39,8 @@ const dateCells = (html) => {
 };
 
 describe("FiscalDocumentTable collapsed units", () => {
+    beforeEach(() => installPrintingLabels(createLabels(FD_LABELS, "en", null)));
+
     test("collapsed row shows the agent's custom code for its room type instead of a date", () => {
         const html = render({
             collapseUnits: true,

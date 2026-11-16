@@ -1,7 +1,9 @@
 import InfoDisplay from "../InfoDisplay";
+import { getI18n } from "@/lib/printing-i18n";
 
 
 export default async function CreditCardInfo({ booking, printingService }) {
+    const { t } = getI18n();
     const isDirect = booking.is_direct;
     const guestCCI = booking.guest?.cci;
 
@@ -11,10 +13,10 @@ export default async function CreditCardInfo({ booking, printingService }) {
         }
         return (
             <section className="border-b pb-2.5">
-                <p className="text-lg font-semibold mb-4 text-gray-900">Card Details</p>
-                <InfoDisplay label="Name:" value={guestCCI.holder_name} />
-                <InfoDisplay label="Number:" value={guestCCI.nbr} />
-                <InfoDisplay label="Expiry:" value={`${guestCCI.expiry_month}/${guestCCI.expiry_year}`} />
+                <p className="text-lg font-semibold mb-4 text-gray-900">{t("Lcz_CardDetails")}</p>
+                <InfoDisplay label={`${t("Lcz_Name")}:`} value={guestCCI.holder_name} />
+                <InfoDisplay label={`${t("Lcz_Number")}:`} value={guestCCI.nbr} />
+                <InfoDisplay label={`${t("Lcz_Expiry")}:`} value={`${guestCCI.expiry_month}/${guestCCI.expiry_year}`} />
             </section>
         );
     }
@@ -38,10 +40,10 @@ export default async function CreditCardInfo({ booking, printingService }) {
 
     return (
         <section className="border-b pb-2.5">
-            <p className="text-lg font-semibold mb-4 text-gray-900">Card Details</p>
-            <InfoDisplay value={`${ota.card_type}${ota.is_virtual ? " (virtual)" : ""}`} label="Type:" />
-            <InfoDisplay value={ota.cardholder_name} label="Name:" />
-            <InfoDisplay value={ota.card_number} label="Number:" />
+            <p className="text-lg font-semibold mb-4 text-gray-900">{t("Lcz_CardDetails")}</p>
+            <InfoDisplay value={ota.is_virtual ? t("Lcz_X_Virtual", ota.card_type) : ota.card_type} label={`${t("Lcz_Type")}:`} />
+            <InfoDisplay value={ota.cardholder_name} label={`${t("Lcz_Name")}:`} />
+            <InfoDisplay value={ota.card_number} label={`${t("Lcz_Number")}:`} />
         </section>
     );
 }

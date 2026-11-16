@@ -15,7 +15,7 @@ export async function GET(req) {
         const token = verifyToken(req)
         const { id, aname, lang } = BookingSchema.parse(extractSearchParamsInsensitive(req))
         const data = await getBookingData({ bookingNumber: id, aName: aname, language: lang, baseUrl: getEnvironmentBaseUrl(req) }, token, { 'X-ClientId': 'EMAIL' });
-        const emailHTML = await render(<BookingEmail {...data} lang={lang} />);
+        const emailHTML = await render(<BookingEmail {...data} />);
         return new Response(emailHTML);
     } catch (error) {
         logApiError(error, req, {

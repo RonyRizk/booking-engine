@@ -1,7 +1,9 @@
+import { getI18n } from "@/lib/printing-i18n";
 import InfoDisplay from "@/components/InfoDisplay";
 import { formatAmount } from "@/lib/utils";
 
-export default function PickupVehicleRow({ pickup_info, locales }) {
+export default function PickupVehicleRow({ pickup_info }) {
+    const { t } = getI18n();
     return (
         <div className="flex items-center mt-1.5 sm:mt-0 gap-1.5 sm:gap-4 flex-wrap">
             <p className="car_name">
@@ -10,11 +12,11 @@ export default function PickupVehicleRow({ pickup_info, locales }) {
                 {formatAmount(pickup_info.selected_option.amount, pickup_info.selected_option.currency.symbol)}
             </p>
             <InfoDisplay
-                label={`${locales?.Lcz_NbrOfVehicles}:`}
+                label={`${t("Lcz_NbrOfVehicles")}:`}
                 value={pickup_info.nbr_of_units}
             />
             <InfoDisplay
-                label={`${locales?.Lcz_DueUponBooking}:`}
+                label={`${t("Lcz_DueUponBooking")}:`}
                 value={formatAmount(pickup_info.total, pickup_info.currency.symbol)}
             />
         </div>

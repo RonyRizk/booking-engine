@@ -1,27 +1,29 @@
 import PaymentTableRow from "./PaymentTableRow";
+import { getI18n } from "@/lib/printing-i18n";
 
-export default function GuestFolioTable({ payments, setupTables, locales, mode }) {
+export default function GuestFolioTable({ payments, setupTables, mode }) {
     if (payments.length === 0) return null;
+    const { t } = getI18n();
     return (
         <section className="space-y-2.5 py-4">
             <h1 className="font-medium uppercase">
-                {mode === "printing" ? "Guest Folio" : `${locales?.Lcz_Payments} History`}
+                {t(mode === "printing" ? "Lcz_GuestFolio" : "Lcz_PaymentsHistory")}
             </h1>
             <div className="overflow-x-auto w-full">
                 <table className="table-auto w-full divide-y-2 divide-gray-200 bg-white text-sm">
-                    <thead className="border-t-2 ltr:text-left rtl:text-right">
+                    <thead className="border-t-2 text-start">
                         <tr>
                             <th className="px-2 py-2 font-medium text-gray-900 text-center">
-                                {locales?.Lcz_Date}
+                                {t("Lcz_Date")}
                             </th>
                             <th className="px-2 py-2 font-medium text-gray-900 text-end">
-                                {locales?.Lcz_Amount}
+                                {t("Lcz_Amount")}
                             </th>
                             <th className="px-2 py-2 font-medium text-gray-900">
-                                {locales?.Lcz_Designation}
+                                {t("Lcz_Designation")}
                             </th>
                             <th className="px-2 w-full py-2 font-medium text-gray-900">
-                                {locales?.Lcz_Ref}
+                                {t("Lcz_Ref")}
                             </th>
                         </tr>
                     </thead>

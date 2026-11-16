@@ -1,3 +1,4 @@
+import { fiscalDocumentTypeLabel } from '../utils/fiscal-document-type';
 import { formatAmount } from '@/lib/utils';
 import { DocumentHeader } from './document-header';
 import { PrintDocument, PrintDocumentState } from '../../shared/print-document';
@@ -11,23 +12,13 @@ import {
 } from '../../shared/print-table';
 import { FiscalDocumentFooter } from '../../shared/fiscal-document-footer';
 import { FdTypes } from '@/lib/enums';
-import moment from 'moment';
-
-const DATE_DISPLAY = 'MMM DD, YYYY';
-
-function formatDocDate(dateStr) {
-  if (!dateStr) return '—';
-  try {
-    return moment(dateStr, 'YYYY-MM-DD').locale('en').format(DATE_DISPLAY);
-  } catch {
-    return dateStr;
-  }
-}
+import { getI18n } from '@/lib/printing-i18n';
 
 export function StatementPreview({ property, statement, fiscalDocuments, fromDate, toDate, agent }) {
+  const { t, formatDate } = getI18n();
   if (!statement) return (
     <PrintDocument wide>
-      <PrintDocumentState variant="error">No statement data found.</PrintDocumentState>
+      <PrintDocumentState variant="error">{t('Lcz_NoStatementDataFound')}</PrintDocumentState>
     </PrintDocument>
   );
 
@@ -89,18 +80,18 @@ export function StatementPreview({ property, statement, fiscalDocuments, fromDat
       <PrintTable>
         <PrintTableHead>
           <PrintTableRow>
-            <PrintTableHeaderCell>Date</PrintTableHeaderCell>
-            <PrintTableHeaderCell>Document #</PrintTableHeaderCell>
-            <PrintTableHeaderCell>Type</PrintTableHeaderCell>
-            <PrintTableHeaderCell numeric>Debit</PrintTableHeaderCell>
-            <PrintTableHeaderCell numeric>Credit</PrintTableHeaderCell>
-            <PrintTableHeaderCell numeric>Balance</PrintTableHeaderCell>
+            <PrintTableHeaderCell>{t('Lcz_Date')}</PrintTableHeaderCell>
+            <PrintTableHeaderCell>{t('Lcz_DocumentNbr')}</PrintTableHeaderCell>
+            <PrintTableHeaderCell>{t('Lcz_Type')}</PrintTableHeaderCell>
+            <PrintTableHeaderCell numeric>{t('Lcz_Debit')}</PrintTableHeaderCell>
+            <PrintTableHeaderCell numeric>{t('Lcz_Credit')}</PrintTableHeaderCell>
+            <PrintTableHeaderCell numeric>{t('Lcz_Balance')}</PrintTableHeaderCell>
           </PrintTableRow>
         </PrintTableHead>
         <PrintTableBody>
           <PrintTableRow variant="balance">
             <PrintTableCell colSpan={3}>
-              Opening Balance — {moment(fromDate, 'YYYY-MM-DD').locale('en').format(DATE_DISPLAY)}
+              {t('Lcz_OpeningBalanceOn_X', formatDate(fromDate))}
             </PrintTableCell>
             <PrintTableCell />
             <PrintTableCell />
@@ -114,10 +105,10 @@ export function StatementPreview({ property, statement, fiscalDocuments, fromDat
             return (
               <PrintTableRow key={doc.FD_ID ?? i}>
                 <PrintTableCell nowrap>
-                  {doc.ISSUE_DATE_DISPLAY || formatDocDate(doc.ISSUE_DATE)}
+                  {doc.ISSUE_DATE ? formatDate(doc.ISSUE_DATE) : doc.ISSUE_DATE_DISPLAY || '—'}
                 </PrintTableCell>
                 <PrintTableCell>{doc.DOC_NUMBER || '—'}</PrintTableCell>
-                <PrintTableCell fill>{doc.FD_TYPE_NAME || '—'}</PrintTableCell>
+                <PrintTableCell fill>{fiscalDocumentTypeLabel(doc, t) || '—'}</PrintTableCell>
                 <PrintTableCell numeric muted>
                   {debit ? fmt(debit) : '—'}
                 </PrintTableCell>
@@ -132,14 +123,14 @@ export function StatementPreview({ property, statement, fiscalDocuments, fromDat
           {fiscalDocuments.length === 0 && (
             <PrintTableRow>
               <PrintTableCell empty colSpan={6}>
-                No fiscal documents found for this period.
+                {t('Lcz_NoFiscalDocumentsFoundForPeriod')}
               </PrintTableCell>
             </PrintTableRow>
           )}
 
           <PrintTableRow variant="balance">
             <PrintTableCell colSpan={3}>
-              Closing Balance — {moment(toDate, 'YYYY-MM-DD').locale('en').format(DATE_DISPLAY)}
+              {t('Lcz_ClosingBalanceOn_X', formatDate(toDate))}
             </PrintTableCell>
             <PrintTableCell />
             <PrintTableCell />

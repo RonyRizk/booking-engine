@@ -464,4 +464,9 @@ const postDepartureReminder = {
     ..._baseData,
 }
 
-export { preArrivalReminder, duringTheStayReminder, postDepartureReminder }
+const paymentReminder = {
+    ..._baseData,
+    dueAmount: 250.5,
+}
+
+export { preArrivalReminder, duringTheStayReminder, postDepartureReminder, paymentReminder }

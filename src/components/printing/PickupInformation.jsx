@@ -1,30 +1,28 @@
+import { getI18n } from "@/lib/printing-i18n";
 import InfoDisplay from "@/components/InfoDisplay";
-import moment from "moment";
-import { formatAmount, formatTime } from "@/lib/utils";
+import { formatAmount } from "@/lib/utils";
 
-export default function PickupInformation({ booking, locales, mode, selectedDocument }) {
+export default function PickupInformation({ booking, mode, selectedDocument }) {
+    const { t, formatDate, formatTime } = getI18n();
     if (!booking.pickup_info) return null;
 
     return (
         <section className="py-4 border-gray-300 border-y border-b-0">
             <p className="text-lg font-semibold text-gray-900 mb-2.5">
-                {locales?.Lcz_PickupYes.replace("%1", booking.pickup_info.selected_option.location.description)}
+                {t("Lcz_PickupYes", booking.pickup_info.selected_option.location.description)}
             </p>
             <div>
                 <div className="flex items-center gap-1.5 sm:gap-4 flex-wrap ">
                     <InfoDisplay
-                        label={`${locales?.Lcz_ArrivalDate}:`}
-                        value={moment(booking?.pickup_info.date).locale("en").format("dddd, DD MMM YYYY")}
+                        label={`${t("Lcz_ArrivalDate")}:`}
+                        value={formatDate(booking?.pickup_info.date, "full")}
                     />
                     <InfoDisplay
-                        label={`${locales?.Lcz_ArrivalTime}:`}
-                        value={formatTime(
-                            booking.pickup_info.hour.toString(),
-                            booking.pickup_info.minute.toString()
-                        )}
+                        label={`${t("Lcz_ArrivalTime")}:`}
+                        value={formatTime(booking.pickup_info.hour, booking.pickup_info.minute)}
                     />
                     <InfoDisplay
-                        label={`${locales?.Lcz_FlightDetails}:`}
+                        label={`${t("Lcz_FlightDetails")}:`}
                         value={booking?.pickup_info.details}
                     />
                 </div>
@@ -38,11 +36,11 @@ export default function PickupInformation({ booking, locales, mode, selectedDocu
                         )}
                     </p>
                     <InfoDisplay
-                        label={`${locales?.Lcz_NbrOfVehicles}:`}
+                        label={`${t("Lcz_NbrOfVehicles")}:`}
                         value={booking?.pickup_info.nbr_of_units}
                     />
                     <InfoDisplay
-                        label={`${locales?.Lcz_DueUponBooking}:`}
+                        label={`${t("Lcz_DueUponBooking")}:`}
                         value={formatAmount(
                             booking?.pickup_info.total,
                             booking.pickup_info.currency.symbol

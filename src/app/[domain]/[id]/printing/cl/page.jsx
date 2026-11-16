@@ -8,10 +8,13 @@ import { DebitNotePreview } from "./components/debit-note-preview";
 import { StatementPreview } from "./components/statement-preview";
 import { ProformaPreview } from "./components/proforma-preview";
 import "../shared/fiscal-printing.css";
+import PrintFont from "@/components/printing/PrintFont";
 import { CommonServices } from "@/lib/services/common.service";
 import { ClTxTypeCode, FdTypes } from "@/lib/enums";
 import { convertBookingToCL } from "./utils/booking-to-cl";
+import { getI18n, loadDocumentProperty, loadPrintingLabels } from "@/lib/printing-i18n";
 import { resolveEnvironmentBaseUrl } from "@/lib/middleware";
+import { invalidLinkReason, withPrintLog } from "@/lib/printing-log";
 
 const DEFAULT_BASE_URL = "https://gateway.igloorooms.com/IR";
 const VALID_MODES = new Set([
@@ -27,6 +30,18 @@ const VALID_MODES = new Set([
 const FD_TYPES = [FdTypes.CreditNote, FdTypes.DebitNote, FdTypes.Invoice, FdTypes.CreditReceipt, FdTypes.Receipt];
 const FALLBACK_URL = "https://x.igloorooms.com/manage/acbookinglist.aspx";
 
+const printContext = ({ params, searchParams }) => ({
+    route: "cl",
+    mode: searchParams.mode,
+    property: params.id,
+    agent: searchParams.aid,
+    document: searchParams.docNo,
+    booking: searchParams.id,
+    from: searchParams.from,
+    to: searchParams.to,
+    environment: searchParams.environment,
+});
+
 /**
  * Loads the _SVC_CATEGORY setup table used to turn the raw category codes that
  * booking-service CL rows carry in DESCRIPTION into readable labels.
@@ -36,18 +51,19 @@ const FALLBACK_URL = "https://x.igloorooms.com/manage/acbookinglist.aspx";
 const fetchSvcCategory = ({ token, lang, baseUrl }) => {
     const commonService = new CommonServices(baseUrl);
     commonService.setToken(token);
-    return commonService
-        .getSetupEntriesByTBLNameMulti(["_SVC_CATEGORY"], lang)
+    return lang
+        .then((language) => commonService.getSetupEntriesByTBLNameMulti(["_SVC_CATEGORY"], language))
         .then((setupEntries) => setupEntries?._SVC_CATEGORY ?? {})
         .catch(() => ({}));
 };
 
 /**
- * Per-mode secondary fetchers. Called after property is resolved so they have
- * access to `property.id`, `property.currency.id`, etc.
+ * Per-mode fetchers. They start together with the property request and get it,
+ * and the document's language, as promises: only a fetcher that needs one awaits
+ * it (statement: the currency; services: the language), so the others don't wait.
  * Add a new entry here when introducing a new mode.
  *
- * @type {Record<string, (cl: CityLedgerService, property: object, params: object) => Promise<object>>}
+ * @type {Record<string, (cl: CityLedgerService, propertyPromise: Promise<object>, params: object) => Promise<object>>}
  */
 const FETCHERS = {
     invoice: (cl, _property, { agentId, documentNumber, token, lang, baseUrl }) =>
@@ -104,7 +120,7 @@ const FETCHERS = {
     proforma: async (
         cl,
         _property,
-        { agentId, fromDate, toDate, bookingId, token, lang, baseUrl },
+        { agentId, fromDate, toDate, bookingId, token, lang: langPromise, baseUrl },
     ) => {
         const commonService = new CommonServices(baseUrl);
         commonService.setToken(token);
@@ -122,9 +138,9 @@ const FETCHERS = {
                     IS_LOCKED: false,
                     IS_HOLD: false
                 }),
-                bookingService.getExposedBooking({
+                langPromise.then((language) => bookingService.getExposedBooking({
                     booking_nbr: bookingId,
-                    language: lang,
+                    language,
                     is_get_financial_snapshot: true,
                     extras: [
                         {
@@ -132,8 +148,8 @@ const FETCHERS = {
                             value: "",
                         },
                     ],
-                }),
-                commonService.getSetupEntriesByTBLNameMulti(["_SVC_CATEGORY"], "en"),
+                })),
+                langPromise.then((language) => commonService.getSetupEntriesByTBLNameMulti(["_SVC_CATEGORY"], language)),
             ]);
             const clTxs = (clResult?.My_Result?.My_Cl_tx ?? []).filter(tx => invoicedClTxTypeCode.has(tx.CL_TX_TYPE_CODE));
             return {
@@ -151,15 +167,14 @@ const FETCHERS = {
         return { transactions: (clResult?.My_Result?.My_Cl_tx ?? []).filter(tx => invoicedClTxTypeCode.has(tx.CL_TX_TYPE_CODE)) };
     },
 
-    statement: (cl, property, { agentId, fromDate, toDate }) => {
-        const currencyId = property?.currency?.id;
-        return Promise.all([
-            cl.getCLStatement({
+    statement: (cl, propertyPromise, { agentId, fromDate, toDate }) =>
+        Promise.all([
+            propertyPromise.then((property) => cl.getCLStatement({
                 AGENCY_ID: agentId,
-                CURRENCY_ID: currencyId,
+                CURRENCY_ID: property?.currency?.id,
                 START_DATE: fromDate,
                 END_DATE: toDate,
-            }),
+            })),
             cl.getFiscalDocuments({
                 AGENCY_ID: agentId,
                 START_DATE: fromDate,
@@ -169,8 +184,7 @@ const FETCHERS = {
         ]).then(([statement, fiscalDocuments]) => ({
             statement,
             fiscalDocuments: fiscalDocuments?.My_Rows ?? [],
-        }));
-    },
+        })),
 };
 
 /**
@@ -191,10 +205,10 @@ const FETCHERS = {
  * @param {string}  [props.searchParams.collapse_units] - "true" to print one summed row per unit instead of one per night (invoice / draft / proforma).
  * @param {("alpha"|"production")} [props.searchParams.environment="production"] - Gateway to use: "alpha" → IRALPHA, otherwise IR.
  */
-export default async function CityLedgerPrintingPages({
+async function CityLedgerPrintingPages({
     searchParams,
     params,
-}) {
+}, log) {
     const {
         token,
         mode,
@@ -204,7 +218,6 @@ export default async function CityLedgerPrintingPages({
         to: toDate,
         ref: externalRef,
         id: bookingId,
-        lang = "en",
         collapse_units,
         environment,
     } = searchParams;
@@ -213,12 +226,9 @@ export default async function CityLedgerPrintingPages({
 
     const normalizedMode = mode?.toLowerCase()?.trim();
 
-    if (
-        !token ||
-        !normalizedMode ||
-        !agentId ||
-        !VALID_MODES.has(normalizedMode)
-    ) {
+    const rejection = invalidLinkReason({ token, mode: normalizedMode, validModes: VALID_MODES, required: { agent: agentId } });
+    if (rejection) {
+        log.rejected(rejection);
         redirect(FALLBACK_URL);
     }
 
@@ -229,49 +239,43 @@ export default async function CityLedgerPrintingPages({
     commonService.setToken(token);
     commonService.setBaseUrl(baseUrl);
 
-    // Phase 1 — resolve property, agent, and countries in parallel
+    // Everything starts at once; the mode's fetcher only waits for the property if it needs it.
+    const { lang: langPromise, property: propertyPromise } = loadDocumentProperty(commonService, params.id);
     let property;
     let agent;
     let countries;
+    let modeData;
     try {
-        [property, agent, countries] = await Promise.all([
-            commonService.getExposedProperty(params.id, lang),
+        [property, agent, countries, , modeData] = await Promise.all([
+            propertyPromise,
             cl.getExposedAgent({ id: agentId }),
-            commonService.getCountries(lang),
+            langPromise.then((lang) => commonService.getCountries(lang)),
+            langPromise.then((lang) => loadPrintingLabels(lang, token)),
+            FETCHERS[normalizedMode](cl, propertyPromise, {
+                agentId,
+                documentNumber,
+                fromDate,
+                toDate,
+                externalRef,
+                bookingId,
+                token,
+                lang: langPromise,
+                baseUrl,
+            }),
         ]);
         if (agent && agent.country_id) {
             const countryEntry = countries?.find((c) => c.id === agent.country_id);
             agent = { ...agent, countryName: countryEntry?.name ?? null };
         }
     } catch (error) {
-        // redirect(FALLBACK_URL);
-        console.log(error);
-        return <span>something went wrong! {JSON.stringify(error)}</span>;
-    }
-    // Phase 2 — fetch mode-specific data in parallel
-
-    let modeData;
-    try {
-        modeData = await FETCHERS[normalizedMode](cl, property, {
-            agentId,
-            documentNumber,
-            fromDate,
-            toDate,
-            externalRef,
-            bookingId,
-            token,
-            lang,
-            baseUrl,
-        });
-    } catch (error) {
-        console.log(error);
-        return <span>something went wrong! {JSON.stringify(error)}</span>;
-        //redirect(FALLBACK_URL);
+        log.failed(error);
+        return <span>{getI18n().t("Lcz_SomethingWentWrongTryAgain")}</span>;
     }
     // const agent = property?.agents?.find(a => Number(a.id) === Number(agentId)) ?? null;
     const sharedProps = { property, agent, ...modeData };
     return (
         <div className="min-h-screen bg-white">
+            <PrintFont />
             {["invoice", "draft"].includes(normalizedMode) && (
                 <InvoicePreview
                     isDraft={normalizedMode === "draft"}
@@ -313,3 +317,5 @@ export default async function CityLedgerPrintingPages({
         </div>
     );
 }
+
+export default withPrintLog(printContext, CityLedgerPrintingPages);

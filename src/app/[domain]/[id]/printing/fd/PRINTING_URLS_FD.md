@@ -10,7 +10,6 @@ Modes: `invoice` · `receipt` · `creditnote` · `creditreceipt` · `refund` · 
 | `id`         | yes      | Booking number                                                      |
 | `token`      | yes      | Auth token                                                          |
 | `documentId` | no       | Document number shown in header                                     |
-| `lang`       | no       | Language code (default: `en`)                                       |
 | `pid`        | no       | Payment `system_id` — used for `receipt`, `creditreceipt`, `refund` |
 | `ids`        | no       | List of `system_id` separated by `-` — used for `proforma`          |
 | `bill_to`    | no       | `company` or `empty` or `custom name` - used for `proforma`         |

@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { calculateDaysBetweenDates } from "../../../../lib/utils";
 import { PrintingService } from "../../../../lib/services/printing.service";
 import "./printing.css";
+import PrintFont from "@/components/printing/PrintFont";
 import PrintingHeader from "../../../../components/printing/PrintingHeader";
 import GuestInformation from "../../../../components/printing/GuestInformation";
 import AccommodationHeader from "../../../../components/printing/AccommodationHeader";
@@ -11,8 +12,20 @@ import PickupInformation from "../../../../components/printing/PickupInformation
 import PaymentInformation from "../../../../components/printing/PaymentInformation";
 // import ChannelServices from "../../../../components/printing/ChannelServices";
 import ExtraServices from "../../../../components/printing/ExtraServices";
-import { errorLogger } from "@/logger";
+import { withPrintLog } from "@/lib/printing-log";
 import { FiscalDocumentFooter } from "./shared/fiscal-document-footer";
+import { loadPrintingLabels } from "@/lib/printing-i18n";
+import { resolveLang } from "@/lib/labels";
+
+const printContext = ({ params, searchParams }) => ({
+  route: "booking",
+  mode: searchParams.mode ?? "printing",
+  property: params.id,
+  booking: searchParams.id,
+  document: searchParams.documentId ?? searchParams.rnb ?? searchParams.pid,
+  lang: searchParams.lang,
+});
+
 /**
  * Printing page for booking confirmation/invoice documents.
  *
@@ -33,31 +46,35 @@ import { FiscalDocumentFooter } from "./shared/fiscal-document-footer";
  * @param {Object} props.params - Route parameters from Next.js dynamic segments.
  * @param {string} props.params.id - Property identifier from the URL.
  */
-export default async function Printing({ searchParams, params }) {
-  const { mode = "printing", id, lang = "en", token, pid, rnb, documentId } = searchParams;
+async function Printing({ searchParams, params }, log) {
+  const { mode = "printing", id, lang: rawLang, token, pid, rnb, documentId } = searchParams;
+  const lang = resolveLang(rawLang);
   const printingService = new PrintingService(token);
   let data = {}
+  let i18n
   try {
-    data =
-      await printingService.getPrintingData({
+    [data, i18n] = await Promise.all([
+      printingService.getPrintingData({
         bookingNumber: id,
         aName: params.id,
         language: lang,
         mode,
         is_calculate_totals: mode === 'printing',
-      });
+      }),
+      loadPrintingLabels(lang, token),
+    ]);
   } catch (error) {
-    errorLogger.log(error)
+    log.failed(error)
     return redirect("https://x.igloorooms.com/manage/acbookinglist.aspx")
   }
-  const { booking, property, setupTables, countries, locales: defaultLocales, invoiceInfo, beddingPreference } = data
-  const { entries: locales } = defaultLocales;
+  const { booking, property, setupTables, countries, invoiceInfo, beddingPreference } = data
 
   if (!booking) {
+    log.rejected("booking not found");
     return null;
   }
   if (mode === "receipt") {
-    printingService.checkReceipt({ booking, receiptNumber: rnb, paymentId: pid })
+    await printingService.checkReceipt({ booking, receiptNumber: rnb, paymentId: pid });
   }
 
   const totalPersons = printingService.calculateTotalPersons(booking);
@@ -77,6 +94,7 @@ export default async function Printing({ searchParams, params }) {
 
   return (
     <>
+      <PrintFont />
       <PrintingHeader
         selectedDocument={selectedDocument}
         documentId={documentId}
@@ -86,24 +104,22 @@ export default async function Printing({ searchParams, params }) {
         totalPersons={totalPersons}
         printingService={printingService}
         privateNote={privateNote}
-        booking={booking} property={property} locales={locales} mode={mode} />
-      <main className="p-4 sm:px-6 lg:px-8 text-gray-800 py-0 text-sm max-w-4xl mx-auto" dir="ltr">
+        booking={booking} property={property} mode={mode} />
+      <main className="p-4 sm:px-6 lg:px-8 text-gray-800 py-0 text-sm max-w-4xl mx-auto" dir={i18n.dir}>
         <section>
           {mode === "printing" && <GuestInformation
             booking={booking}
             guestCountryName={guestCountryName}
             totalPersons={totalPersons}
-            locales={locales}
             printingService={printingService}
             mode={mode}
             privateNote={privateNote}
           />}
 
-          {mode === "creditnote" && <p className="text-lg font-semibold text-gray-900">CREDITED ITEMS</p>}
+          {mode === "creditnote" && <p className="text-lg font-semibold text-gray-900 uppercase">{i18n.t("Lcz_CreditedItems")}</p>}
           {mode !== "receipt" && <section className="pt-4">
             {!hasRoomsInDocument && isInvoicableMode ? null : <AccommodationHeader
               mode={mode}
-              locales={locales}
               booking={booking}
               totalNights={totalNights}
               property={property}
@@ -122,7 +138,6 @@ export default async function Printing({ searchParams, params }) {
                     room={room}
                     booking={booking}
                     property={property}
-                    locales={locales}
                     currency={currency}
                     mode={mode}
                     selectedDocument={selectedDocument}
@@ -137,16 +152,18 @@ export default async function Printing({ searchParams, params }) {
         </section>
 
 
-        {/* {!booking?.is_direct && <ChannelServices booking={booking} locales={locales} />} */}
+        {/* {!booking?.is_direct && <ChannelServices booking={booking} />} */}
         {mode !== "receipt" && <>
           {
             isInvoicableMode && !selectedDocumentsItemsKeys.has(booking?.pickup_info?.['system_id']) ? null :
-              <PickupInformation mode={mode} selectedDocument={selectedDocument} booking={booking} locales={locales} />}
-          <ExtraServices isInvoicableMode={isInvoicableMode} mode={mode} selectedDocumentsItemsKeys={selectedDocumentsItemsKeys} booking={booking} locales={locales} />
+              <PickupInformation mode={mode} selectedDocument={selectedDocument} booking={booking} />}
+          <ExtraServices isInvoicableMode={isInvoicableMode} mode={mode} selectedDocumentsItemsKeys={selectedDocumentsItemsKeys} booking={booking} />
         </>}
-        <PaymentInformation printingService={printingService} selectedDocument={selectedDocument} selectedDocumentsItemsKeys={selectedDocumentsItemsKeys} paymentId={pid} setupTables={setupTables} mode={mode} booking={booking} locales={locales} />
+        <PaymentInformation printingService={printingService} selectedDocument={selectedDocument} selectedDocumentsItemsKeys={selectedDocumentsItemsKeys} paymentId={pid} setupTables={setupTables} mode={mode} booking={booking} />
         {mode !== "printing" && <div className="pb-4"><FiscalDocumentFooter property={property} /></div>}
       </main>
     </>
   );
 }
+
+export default withPrintLog(printContext, Printing);
