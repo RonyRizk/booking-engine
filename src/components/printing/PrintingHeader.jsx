@@ -44,7 +44,7 @@ export default function PrintingHeader({ booking, property, documentId, receiptN
                         />
                     </div>
                     <div className="min-w-0 shrink-0 space-y-[7pt]">
-                        {property.company && <CompanyInfo company={property.company} />}
+                        {property.company && <CompanyInfo company={property.company} hotelName={property.name} />}
 
                         <PropertyInfo property={property} />
 

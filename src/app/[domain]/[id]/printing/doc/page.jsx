@@ -18,6 +18,7 @@
 
 import "../shared/fiscal-printing.css";
 import PrintFont from "@/components/printing/PrintFont";
+import PrintButton from "@/components/printing/PrintButton";
 import ConsentPreview from "./components/consent-preview";
 import { BookingService } from "@/lib/services/booking.service";
 import { CommonServices } from "@/lib/services/common.service";
@@ -111,6 +112,7 @@ async function DocumentPage({ params, searchParams }, log) {
                 privateNote={booking?.extras?.find((k) => k.key === "private_note")}
                 bedPreferences={bedPreferences}
             />
+            <PrintButton />
         </div>
     );
 }

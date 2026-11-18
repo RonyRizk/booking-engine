@@ -9,6 +9,8 @@ const row = (TBL_NAME, CODE_NAME, CODE_VALUE_EN, CODE_VALUE_FR) => ({ TBL_NAME, 
 export const paymentSetupRows = [
     row("_PAY_TYPE", "001", "Payment", "Paiement"),
     row("_PAY_TYPE", "010", "Refund", "Remboursement"),
+    row("_PAY_TYPE", "009", "Discount", "Remise"),
+    row("_PAY_TYPE", "012", "Cancellation adjustment", "Ajustement d'annulation"),
     row("_PAY_METHOD", "001", "Cash", "Espèces"),
     row("_PAY_METHOD", "002", "Credit card", "Carte de crédit"),
     row("_SVC_CATEGORY", "001", "Transfer", "Transfert"),
@@ -20,7 +22,8 @@ const charges = (net, vatPercent = 0) => {
     const vat = Math.round(net * vatPercent) / 100;
     return { net_amount: net, vat_percent: vatPercent || null, vat_amount: vatPercent ? vat : null, city_tax_percent: null, city_tax_amount: 0, total_amount: net + vat };
 };
-const payment = (system_id, payment_type, amount, extra = {}) => ({
+/** A booking payment, as Get_Exposed_Booking's financial snapshot returns it. */
+export const payment = (system_id, payment_type, amount, extra = {}) => ({
     id: system_id, system_id, amount, currency: usd, date: "2025-09-20",
     payment_type: { code: payment_type }, payment_method: { code: "002" },
     designation: "Card payment", reference: `REF-${system_id}`, is_receipt_issued: true, ...extra,

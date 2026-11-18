@@ -63,6 +63,10 @@ describe("consent document", () => {
         expect([visibleText(html).startsWith("Registration Card "), /<h3[^>]*>Registration Card<\/h3>/.test(html)]).toEqual([true, true]);
     });
 
+    test("offers a button to print it", async () => {
+        expect(visibleText((await consentHtml()).match(/<button[\s\S]*?<\/button>/)?.[0] ?? "")).toBe("Print");
+    });
+
     test("shows only the room named by room_identifier", async () => {
         const text = await consentText();
 
@@ -128,8 +132,8 @@ describe("consent document", () => {
         beforeEach(() => setSystemTime(new Date(2026, 10, 12, 9, 30)));
         afterEach(() => setSystemTime());
 
-        test("ends with today's date and a line for the guest's signature", async () => {
-            expect(await consentText()).toEndWith("Date: November 12, 2026 Signature:");
+        test("ends with today's date and a line for the guest's signature, followed only by the on-screen print button", async () => {
+            expect(await consentText()).toEndWith("Date: November 12, 2026 Signature: Print");
         });
     });
 

@@ -30,14 +30,18 @@ import { getI18n } from '@/lib/printing-i18n';
  * @property {string} invoice_footer_notes - Text added to the footer of invoices.
  */
 
+const normalizeName = (name) => (name ?? "").trim().toLowerCase();
+const sameName = (a, b) => normalizeName(a) !== "" && normalizeName(a) === normalizeName(b);
+
 /**
  * Renders information about a company for printing (invoice/receipt/credit note/etc.).
  *
  * @param {Object} props
  * @param {Company} props.company - The company data used for invoice/receipt headers and metadata.
+ * @param {string} [props.hotelName] - The property's name; the company name is left out when it is the same.
  * @returns {JSX.Element}
  */
-export default function CompanyInfo({ company }) {
+export default function CompanyInfo({ company, hotelName }) {
     const { t } = getI18n();
     const renderLocation = () => {
         const { postal, city, country } = company;
@@ -66,9 +70,11 @@ export default function CompanyInfo({ company }) {
         );
     };
 
+    const showName = company.name && !sameName(company.name, hotelName);
+
     return (
         <div className='flex flex-col items-end min-w-0 max-w-full text-end break-words'>
-            {company.name && <p className='font-bold'>{company.name}</p>}
+            {showName && <p className='font-bold'>{company.name}</p>}
             {company.address && <p className='font-regular'>{company.address}</p>}
             {renderLocation()}
             {company.phone &&

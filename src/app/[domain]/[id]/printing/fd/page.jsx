@@ -26,6 +26,7 @@
 import { redirect } from "next/navigation";
 import "../shared/fiscal-printing.css";
 import PrintFont from "@/components/printing/PrintFont";
+import PrintButton from "@/components/printing/PrintButton";
 import { CreditNotePreview } from "./components/credit-note-preview";
 import { CreditReceiptPreview } from "./components/credit-receipt-preview";
 import { InvoicePreview, ProformaPreview } from "./components/invoice-preview";
@@ -158,6 +159,7 @@ async function FiscalDocumentsPage({ params, searchParams }, log) {
             <PrintFont />
             {normalizedMode === "invoice" && <InvoicePreview {...sharedProps} />}
             {normalizedMode === "printing" && <BookingPreview {...sharedProps} />}
+            {normalizedMode === "printing" && <PrintButton />}
             {normalizedMode === "receipt" && <ReceiptPreview {...sharedProps} />}
             {normalizedMode === "creditnote" && (
                 <CreditNotePreview {...sharedProps} />

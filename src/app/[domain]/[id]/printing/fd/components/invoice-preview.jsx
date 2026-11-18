@@ -16,6 +16,16 @@ import { splitServicesByRoom } from "../utils/split-services-by-room";
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
+// Payment types that charge the guest and are invoiced as their own line.
+const CHARGE_PAYMENT_CODES = new Set(["009", "012", "013"]);
+// Discount (009) and cancellation adjustment (012) are always deducted, whatever sign the gateway sends.
+const DEDUCTED_PAYMENT_CODES = new Set(["009", "012"]);
+
+function chargePaymentAmount(payment) {
+  const amount = payment?.amount ?? 0;
+  return DEDUCTED_PAYMENT_CODES.has(payment?.payment_type?.code) ? Math.abs(amount) * -1 : amount;
+}
+
 function fmtDate(dateStr) {
   return getI18n().formatDate(dateStr);
 }
@@ -91,12 +101,11 @@ function BookingFiscalTable({ booking, currencySymbol, invertAmounts = false, it
     extras.some((s) => (s.charges?.city_tax_amount ?? 0) > 0);
   const colSpan = withCityTax ? 8 : 6;
 
-  // Cancellation penalty
-  const cancellationPenalty = booking?.financial?.payments?.find(
-    (p) => p?.payment_type?.code === "013",
+  // Payments that charge the guest (e.g. cancellation penalty) are invoiced as lines.
+  const chargePayments = (booking?.financial?.payments ?? []).filter(
+    (p) => CHARGE_PAYMENT_CODES.has(p?.payment_type?.code) && inScope(p.system_id),
   );
-  const showCancellationPenalty = !!cancellationPenalty && inScope(cancellationPenalty.system_id);
-  const cancellationAmount = showCancellationPenalty ? (cancellationPenalty.amount ?? 0) : 0;
+  const chargePaymentsAmount = chargePayments.reduce((s, p) => s + chargePaymentAmount(p), 0);
 
   // Grand totals summed from charges objects
   const allCharges = [
@@ -104,14 +113,14 @@ function BookingFiscalTable({ booking, currencySymbol, invertAmounts = false, it
     ...(pickup?.charges ? [pickup.charges] : []),
     ...extras.map((s) => s.charges).filter(Boolean),
   ];
-  const grandNet = allCharges.reduce((s, c) => s + (c?.net_amount ?? 0), 0) + cancellationAmount;
+  const grandNet = allCharges.reduce((s, c) => s + (c?.net_amount ?? 0), 0) + chargePaymentsAmount;
   const grandVat = allCharges.reduce((s, c) => s + (c?.vat_amount ?? 0), 0);
   const grandCityTax = allCharges.reduce((s, c) => s + (c?.city_tax_amount ?? 0), 0);
   const grandTotal =
-    allCharges.reduce((s, c) => s + (c?.total_amount ?? 0), 0) + cancellationAmount;
+    allCharges.reduce((s, c) => s + (c?.total_amount ?? 0), 0) + chargePaymentsAmount;
 
   const hasContent =
-    rooms.length > 0 || pickup != null || extras.length > 0 || showCancellationPenalty;
+    rooms.length > 0 || pickup != null || extras.length > 0 || chargePayments.length > 0;
 
   // ── Sub-components ────────────────────────────────────────────────────────
 
@@ -224,17 +233,18 @@ function BookingFiscalTable({ booking, currencySymbol, invertAmounts = false, it
     );
   }
 
-  function CancellationPenaltyRow() {
+  function ChargePaymentRow({ payment }) {
+    const label = setupTables?._PAY_TYPE?.[payment.payment_type?.code] ?? t("Lcz_CancelationPenalty");
     return (
       <PrintTableRow>
         <PrintTableCell muted nowrap indent={0} className="border-e">
-          {fmtDate(cancellationPenalty.date)}
+          {fmtDate(payment.date)}
         </PrintTableCell>
         <PrintTableCell fill className="border-e">
-          {t("Lcz_CancelationPenalty")}
+          {label}
         </PrintTableCell>
         <PrintTableCell numeric bold className="border-e">
-          {money(cancellationAmount)}
+          {money(chargePaymentAmount(payment))}
         </PrintTableCell>
         <PrintTableCell numeric muted>—</PrintTableCell>
         <PrintTableCell numeric muted className="border-e"></PrintTableCell>
@@ -245,7 +255,7 @@ function BookingFiscalTable({ booking, currencySymbol, invertAmounts = false, it
           </>
         )}
         <PrintTableCell numeric bold>
-          {money(cancellationAmount)}
+          {money(chargePaymentAmount(payment))}
         </PrintTableCell>
       </PrintTableRow>
     );
@@ -328,7 +338,9 @@ function BookingFiscalTable({ booking, currencySymbol, invertAmounts = false, it
                 />
               ))}
 
-              {showCancellationPenalty && <CancellationPenaltyRow />}
+              {chargePayments.map((payment) => (
+                <ChargePaymentRow key={payment.system_id} payment={payment} />
+              ))}
 
               <GrandTotals />
             </>

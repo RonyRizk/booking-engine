@@ -135,6 +135,25 @@ describe("city ledger page", () => {
         expect(await textOf("invoice")).toContain("Bill to Acme Travel AC-55 Paris, France");
     });
 
+    describe("header", () => {
+        test("names the invoicing company when it isn't the hotel's name", async () => {
+            const editProperty = (property) => { property.name = "Demo Hotel"; };
+
+            expect(await textOf("invoice", {}, { editProperty })).toContain("Demo Hotel SAL Ice Venue 11");
+        });
+
+        test("leaves out the company name when it is the hotel's name", async () => {
+            const editProperty = (property) => {
+                property.name = "Demo Hotel";
+                property.company.name = " demo HOTEL ";
+            };
+
+            const text = await textOf("invoice", {}, { editProperty });
+
+            expect([text.match(/demo hotel/gi)?.length, text.includes("Ice Venue 11")]).toEqual([1, true]);
+        });
+    });
+
     describe("invoice", () => {
         test("lists every night and service of the invoice with its VAT", async () => {
             const text = await textOf("invoice");

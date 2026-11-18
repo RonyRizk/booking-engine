@@ -3430,5 +3430,29 @@
         "NOTES": "",
         "OWNER_ID": 1,
         "TBL_NAME": "_FD_LABELS"
+    },
+    {
+        "CODE_NAME": "Lcz_Print",
+        "CODE_VALUE_AR": "طباعة",
+        "CODE_VALUE_DE": "Drucken",
+        "CODE_VALUE_EL": "Εκτύπωση",
+        "CODE_VALUE_EN": "Print",
+        "CODE_VALUE_FR": "Imprimer",
+        "CODE_VALUE_HE": "הדפסה",
+        "CODE_VALUE_PL": "Drukuj",
+        "CODE_VALUE_RU": "Печать",
+        "CODE_VALUE_UA": "Друк",
+        "DISPLAY_ORDER": 0,
+        "ENTRY_DATE": "2026-11-16",
+        "ENTRY_USER_ID": 189,
+        "INVARIANT_VALUE": null,
+        "ISDELETEABLE": true,
+        "ISDELETED": false,
+        "ISSYSTEM": false,
+        "ISUPDATEABLE": true,
+        "ISVISIBLE": true,
+        "NOTES": "",
+        "OWNER_ID": 1,
+        "TBL_NAME": "_FD_LABELS"
     }
 ]

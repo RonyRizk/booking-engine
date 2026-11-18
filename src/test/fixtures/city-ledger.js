@@ -53,9 +53,10 @@ export const paymentMethods = [
 ];
 
 /** Answers every gateway call the city ledger page makes. */
-export const installCityLedgerGateway = ({ labels, transactions = invoiceTransactions(), documents = fiscalDocuments(), statement = { STARTING_BALANCE: 100, ENDING_BALANCE: 325.3 }, editBooking = () => {}, lang = "en", results = {} } = {}) => {
+export const installCityLedgerGateway = ({ labels, transactions = invoiceTransactions(), documents = fiscalDocuments(), statement = { STARTING_BALANCE: 100, ENDING_BALANCE: 325.3 }, editBooking = () => {}, editProperty = () => {}, lang = "en", results = {} } = {}) => {
     const { property: baseProperty, booking } = printableBooking();
     editBooking(booking);
+    editProperty(baseProperty);
     const property = withFdLanguage({ ...baseProperty, currency: { id: 4, code: "USD", symbol: "US$" } }, lang);
     return {
         property,

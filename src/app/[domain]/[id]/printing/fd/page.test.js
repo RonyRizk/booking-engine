@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 import FiscalDocumentsPage from "./page";
-import { installPrintingGateway, invoiceFor, paymentSetupRows, printableBooking, renderPage, withFdLanguage } from "@/test/fixtures/printing";
+import { installPrintingGateway, invoiceFor, payment, paymentSetupRows, printableBooking, renderPage, withFdLanguage } from "@/test/fixtures/printing";
 import { endpointsHit, gatewaysHit, heldAnswer, installFakeGateway, IR, IRALPHA, labelRequests, settle } from "@/test/helpers/fake-gateway";
 import { visibleText } from "@/test/helpers/render";
 import { labelsResult, markedLabels, NON_LATIN_LANGS, rawLabelKeys, untranslatedWords } from "@/test/helpers/localization";
@@ -105,6 +105,25 @@ describe("fiscal document page", () => {
         });
     });
 
+    describe("header", () => {
+        test("names the invoicing company when it isn't the hotel's name", async () => {
+            const data = printableBooking();
+            data.property.name = "Demo Hotel";
+
+            expect(await textOf(data, "invoice")).toContain("Demo Hotel SAL Ice Venue 11");
+        });
+
+        test("leaves out the company name when it is the hotel's name", async () => {
+            const data = printableBooking();
+            data.property.name = "Demo Hotel";
+            data.property.company.name = " demo HOTEL ";
+
+            const text = await textOf(data, "invoice");
+
+            expect([text.match(/demo hotel/gi)?.length, text.includes("Ice Venue 11")]).toEqual([1, true]);
+        });
+    });
+
     describe("invoice", () => {
         test("is numbered and dated the day it was issued", async () => {
             expect(await textOf(printableBooking(), "invoice")).toStartWith("Invoice Invoice no.: INV-19 Date of issue: September 30, 2025 Booking #80347800505 Bill to Name: Test Test");
@@ -117,6 +136,44 @@ describe("fiscal document page", () => {
         test("totals the net price, VAT and amount due of everything invoiced", async () => {
             // Nights 60+60+140+140, pickup 35, spa 25, penalty 40 — VAT 11% on nights and spa.
             expect(await textOf(printableBooking(), "invoice")).toContain("US$ 500.00 Net price US$ 46.75 VAT US$ 546.75 Total due");
+        });
+
+        test("deducts a 009 discount it covers, even when the gateway sends it positive", async () => {
+            const data = printableBooking();
+            data.booking.financial.payments.push(payment(8, "009", 30));
+            const invoice = invoiceFor(data.booking);
+            invoice.invoices[0].items.push({ key: 8, type: "PAYMENT" });
+
+            const text = await textOf(data, "invoice", {}, { invoice });
+
+            expect([
+                text.includes("Sep 20, 2025 Discount - US$ 30.00 — - US$ 30.00"),
+                text.includes("US$ 470.00 Net price US$ 46.75 VAT US$ 516.75 Total due"),
+            ]).toEqual([true, true]);
+        });
+
+        test("deducts a 012 cancellation adjustment while the 013 cancellation penalty stays a charge", async () => {
+            const data = printableBooking();
+            data.booking.financial.payments.push(payment(9, "012", 20));
+            const invoice = invoiceFor(data.booking);
+            invoice.invoices[0].items.push({ key: 9, type: "PAYMENT" });
+
+            const text = await textOf(data, "invoice", {}, { invoice });
+
+            expect([
+                text.includes("Sep 20, 2025 Cancellation penalty US$ 40.00 — US$ 40.00"),
+                text.includes("Sep 20, 2025 Cancellation adjustment - US$ 20.00 — - US$ 20.00"),
+                text.includes("US$ 480.00 Net price US$ 46.75 VAT US$ 526.75 Total due"),
+            ]).toEqual([true, true, true]);
+        });
+
+        test("leaves out a charge the invoice doesn't cover", async () => {
+            const data = printableBooking();
+            data.booking.financial.payments.push(payment(8, "009", 30));
+
+            const text = await textOf(data, "invoice");
+
+            expect([text.includes("Discount"), text.includes("US$ 546.75 Total due")]).toEqual([false, true]);
         });
 
         test("only lists what the invoice covers", async () => {
@@ -266,6 +323,29 @@ describe("fiscal document page", () => {
             expect([text.includes("Standard Rooms"), text.includes("Premium Suites"), text.includes("Beirut airport"), text.includes("Spa access")]).toEqual([true, false, false, true]);
         });
 
+        test("deducts discounts and cancellation adjustments and charges the cancellation penalty, whatever sign the gateway sends", async () => {
+            const data = printableBooking();
+            data.booking.financial.payments.push(payment(8, "009", -30), payment(9, "012", 20));
+
+            const text = await textOf(data, "proforma");
+
+            expect([
+                text.includes("Discount - US$ 30.00"),
+                text.includes("Cancellation adjustment - US$ 20.00"),
+                text.includes("Cancellation penalty US$ 40.00"),
+                text.includes("US$ 450.00 Net price US$ 46.75 VAT US$ 496.75 Total due"),
+            ]).toEqual([true, true, true, true]);
+        });
+
+        test("lists only the picked charges", async () => {
+            const data = printableBooking();
+            data.booking.financial.payments.push(payment(8, "009", 30), payment(9, "012", 20));
+
+            const text = await textOf(data, "proforma", { ids: "101-8" });
+
+            expect([text.includes("Discount"), text.includes("Cancellation adjustment"), text.includes("Cancellation penalty")]).toEqual([true, false, false]);
+        });
+
         test("is billed to the company when asked", async () => {
             const data = printableBooking();
             data.booking.company_name = "Acme Travel";
@@ -276,6 +356,10 @@ describe("fiscal document page", () => {
         test("is billed to a named person on behalf of the guest", async () => {
             expect(await textOf(printableBooking(), "proforma", { bill_to: "John Doe" })).toContain("Bill to John Doe for Test Test");
         });
+    });
+
+    test.each(Object.keys(MODES).filter((mode) => mode !== "printing"))("the %s document has no print button", async (mode) => {
+        expect(await html(printableBooking(), mode)).not.toContain("<button");
     });
 
     describe("booking print", () => {
@@ -309,6 +393,10 @@ describe("fiscal document page", () => {
 
         test("shows the pickup with its arrival time", async () => {
             expect(await textOf(printableBooking(), "printing")).toContain("PICKUP Yes, from Beirut airport Arrival date: Sep 27, 2025 Arrival Time: 04:03 PM Flight details: ME 211");
+        });
+
+        test("offers a button to print it", async () => {
+            expect(visibleText((await html(printableBooking(), "printing")).match(/<button[\s\S]*?<\/button>/)?.[0] ?? "")).toBe("Print");
         });
 
         test("lists the guest's payments in the guest folio", async () => {

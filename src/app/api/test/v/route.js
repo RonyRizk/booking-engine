@@ -6,7 +6,7 @@ export async function GET(req) {
     // logger.info(`GET /api/gethome ${req}`);
 
     return NextResponse.json({
-        message: "alpha-1.7",
+        message: "1.9",
         status: 200,
     });
 }
