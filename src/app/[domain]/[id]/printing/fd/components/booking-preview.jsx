@@ -35,8 +35,11 @@ const MODE = "printing";
 /**
  * One room of the booking print. Given `guests`, the room lists them under its
  * name in place of its guest and occupancy line, and its details start with the dates.
+ * `withoutTerms` leaves out what the rate plan or the channel states for the room: a direct
+ * booking's cancellation, guarantee and guarantee amount, an OTA booking's smoking options,
+ * meal plan and policies. A direct booking's smoking option, the guest's choice, stays.
  */
-export function RoomCard({ room, booking, property, bedPreferences, currency, idx, totalRooms, printingService, guests }) {
+export function RoomCard({ room, booking, property, bedPreferences, currency, idx, totalRooms, printingService, guests, withoutTerms = false }) {
   const { t } = getI18n();
   const haveMultipleRooms =
     property?.roomtypes?.find(rt => rt.id === room?.roomtype?.id)?.physicalrooms?.length > 1 ?? false;
@@ -58,10 +61,10 @@ export function RoomCard({ room, booking, property, bedPreferences, currency, id
               />
             )}
             <RoomDateRange room={room} mode={MODE} />
-            <SmokingPreference room={room} booking={booking} property={property} />
-            {!booking.is_direct && <OtaRoomMeta room={room} />}
-            {booking.is_direct && <DirectBookingPolicies room={room} />}
-            {booking.is_direct && (
+            {(booking.is_direct || !withoutTerms) && <SmokingPreference room={room} booking={booking} property={property} />}
+            {!booking.is_direct && !withoutTerms && <OtaRoomMeta room={room} />}
+            {booking.is_direct && !withoutTerms && <DirectBookingPolicies room={room} />}
+            {booking.is_direct && !withoutTerms && (
               <InfoDisplay
                 label={`${t("Lcz_GuaranteeAmount")}:`}
                 value={formatAmount(Number(room.gross_guarantee), currency)}
@@ -367,7 +370,8 @@ function FinancialSection({ booking, agentMode, currency, isAllServicesAgentOwne
 
 // ─── Guest ────────────────────────────────────────────────────────────────────
 
-export function GuestSection({ booking, guestCountryName, printingService, privateNote }) {
+/** The guest's name, contact details and the booking's status; `contactOnly` leaves out the arrival time and every note and remark. */
+export function GuestSection({ booking, guestCountryName, printingService, privateNote, contactOnly = false }) {
   return (
     <section className="py-4 border-y border-gray-600 justify-start flex">
       <div className="flex-1">
@@ -382,8 +386,8 @@ export function GuestSection({ booking, guestCountryName, printingService, priva
           guestCountryName={guestCountryName}
           printingService={printingService}
         />
-        <ArrivalTimeDisplay booking={booking} />
-        <BookingRemarks booking={booking} privateNote={privateNote} />
+        {!contactOnly && <ArrivalTimeDisplay booking={booking} />}
+        {!contactOnly && <BookingRemarks booking={booking} privateNote={privateNote} />}
       </div>
       <BookingStatusBadge booking={booking} />
     </section>

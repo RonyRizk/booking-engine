@@ -109,7 +109,6 @@ async function DocumentPage({ params, searchParams }, log) {
                 setupTables={setupTables}
                 guestCountryName={printingService.getUserCountry(countries, booking?.guest?.country_id)}
                 printingService={printingService}
-                privateNote={booking?.extras?.find((k) => k.key === "private_note")}
                 bedPreferences={bedPreferences}
             />
             <PrintButton />

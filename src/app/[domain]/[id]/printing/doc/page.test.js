@@ -3,6 +3,7 @@ import DocumentPage from "./page";
 import { installPrintingGateway, paymentSetupRows, printableBooking, renderPage, withFdLanguage } from "@/test/fixtures/printing";
 import { markedLabels, NON_LATIN_LANGS, rawLabelKeys, untranslatedWords } from "@/test/helpers/localization";
 import { visibleText } from "@/test/helpers/render";
+import { otaBooking } from "@/test/fixtures/bookings";
 import { capturePrintLog } from "@/test/helpers/print-log";
 
 const lebanon = { cities: null, code: "LB", currency: null, flag: null, gmt_offset: 0, id: 2, market_places: null, name: "Lebanon", phone_prefix: null };
@@ -21,13 +22,13 @@ describe("consent document", () => {
     let gateway;
     afterEach(() => gateway?.restore());
 
-    /** The consent document for the booking's second room ("Premium Suites"), as HTML. */
+    /** The consent document for the booking's last room (printableBooking's "Premium Suites"), as HTML. */
     const consentHtml = (data = printableBooking(), extra = {}) => {
         gateway = installPrintingGateway(data);
         return renderPage(DocumentPage, {
             mode: "consent",
             id: data.booking.booking_nbr,
-            room_identifier: data.booking.rooms[1].identifier,
+            room_identifier: data.booking.rooms.at(-1).identifier,
             ...extra,
         });
     };
@@ -83,7 +84,38 @@ describe("consent document", () => {
     test("has no accommodation header: the room starts right after the guest's details", async () => {
         const text = await consentText();
 
-        expect([text.includes("ACCOMMODATION"), text.includes("Guest notes: Late check-in Confirmed Premium Suites")]).toEqual([false, true]);
+        expect([text.includes("ACCOMMODATION"), text.includes("Country: Lebanon Confirmed Premium Suites")]).toEqual([false, true]);
+    });
+
+    describe("leaves out the arrival time and every note and remark", () => {
+        const hidden = ["Arrival Time", "Not sure yet", "Guest notes", "Late check-in", "Channel notes", "Guest remark", "OTA collect", "Booked by phone", "Keep the minibar locked"];
+        const withEveryNote = (data) => {
+            data.booking.guest.notes = "Late check-in";
+            data.booking.remark = "Booked by phone";
+            data.booking.extras = [...(data.booking.extras ?? []), { key: "private_note", value: "Keep the minibar locked" }];
+            return data;
+        };
+
+        test.each([
+            ["a direct booking", printableBooking],
+            ["a booking from an OTA", otaBooking],
+        ])("of %s", async (_case, booking) => {
+            const text = await consentText(withEveryNote(booking()));
+
+            expect(hidden.filter((part) => text.includes(part))).toEqual([]);
+        });
+    });
+
+    test("of a direct booking leaves out the room's cancellation, guarantee and guarantee amount", async () => {
+        const text = await consentText();
+
+        expect([["Cancellation", "Guarantee", "if cancelled later", "First night"].filter((part) => text.includes(part)), text.includes("Sep 29, 2025 Subtotal:")]).toEqual([[], true]);
+    });
+
+    test("of a booking from an OTA leaves out the room's smoking options, meal plan and policies", async () => {
+        const text = await consentText(otaBooking());
+
+        expect([["Smoking options", "Non-Smoking", "Meal plan", "Policies", "Πολιτική ακύρωσης"].filter((part) => text.includes(part)), text.includes("Jul 25, 2025 Jul 26, 2025 Subtotal:")]).toEqual([[], true]);
     });
 
     test("keeps the extras booked for the room under it", async () => {
@@ -101,7 +133,7 @@ describe("consent document", () => {
             "Premium Suites Half board Guests 1 adult " +
             "Name: clara xxx Lebanon Passport: 121212 Date of birth: Dec 12, 1980 " +
             "Name: asdas asdas Lebanon ID: 1asd12 Date of birth: Dec 12, 1975 " +
-            "Sep 27, 2025 Sep 29, 2025 Cancellation:",
+            "Sep 27, 2025 Sep 29, 2025 Subtotal:",
         );
     });
 

@@ -38,9 +38,10 @@ function RoomGuests({ guests, occupancy }) {
 
 /**
  * The registration card of one room: the booking print limited to `room`, with
- * none of the booking's totals, pickup, booking-wide extras or payments.
+ * none of the booking's totals, pickup, booking-wide extras or payments, and no
+ * arrival time, notes or remarks.
  */
-export default function ConsentPreview({ booking, room, property, guestCountryName, printingService, privateNote, setupTables, bedPreferences }) {
+export default function ConsentPreview({ booking, room, property, guestCountryName, printingService, setupTables, bedPreferences }) {
   const { t, dir, formatDate } = getI18n();
   const currency = booking?.currency?.symbol;
   const svcCategory = setupTables._SVC_CATEGORY;
@@ -57,7 +58,7 @@ export default function ConsentPreview({ booking, room, property, guestCountryNa
       <PrintingModeHeader booking={booking} property={property} mode="printing" />
 
       <main className="p-4 sm:px-6 lg:px-8 text-gray-800 py-0 text-sm max-w-4xl mx-auto" dir={dir}>
-        <GuestSection booking={booking} guestCountryName={guestCountryName} printingService={printingService} privateNote={privateNote} />
+        <GuestSection booking={booking} guestCountryName={guestCountryName} printingService={printingService} contactOnly />
 
         <section className="pt-4 pb-4">
           <RoomCard
@@ -69,6 +70,7 @@ export default function ConsentPreview({ booking, room, property, guestCountryNa
             printingService={printingService}
             idx={0}
             totalRooms={1}
+            withoutTerms
             guests={guests.length > 0 ? (
               <RoomGuests
                 guests={guests}
