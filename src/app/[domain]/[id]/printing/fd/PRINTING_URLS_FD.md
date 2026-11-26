@@ -14,6 +14,7 @@ Modes: `invoice` · `receipt` · `creditnote` · `creditreceipt` · `refund` · 
 | `ids`        | no       | List of `system_id` separated by `-` — used for `proforma`          |
 | `bill_to`    | no       | `company` or `empty` or `custom name` - used for `proforma`         |
 | `environment` | no      | `alpha` (IRALPHA gateway) or `production` (IR gateway, default)     |
+| `strip_prices` | no     | `true` prints `printing` without prices; an agent's booking keeps those of what is billed to the guest |
 
 **Invoice**
 
@@ -67,4 +68,10 @@ http://localhost:5863/a35/printing/fd?id={bookingNbr}&pid={pid}&documentId={rece
 
 ```
 http://localhost:5863/A35/printing/fd?id=76541885387&mode=printing&token={token}
+```
+
+**Printing without prices**
+
+```
+http://localhost:5863/A35/printing/fd?id=76541885387&mode=printing&strip_prices=true&token={token}
 ```

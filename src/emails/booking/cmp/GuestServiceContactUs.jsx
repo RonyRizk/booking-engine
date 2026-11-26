@@ -6,7 +6,7 @@ import { formatPropertyPhone } from '@/lib/utils';
 import { siteUrl } from '@/lib/app-env';
 // import parse from 'html-react-parser';
 
-export default function GuestServiceContactUs({ property, i18n }) {
+export default function GuestServiceContactUs({ property, i18n, manageBookingShown = true }) {
     const { t, dir } = i18n;
     const bookingEmail = property.contacts?.find(
         (c) => c.type === "booking"
@@ -96,9 +96,11 @@ export default function GuestServiceContactUs({ property, i18n }) {
                     {t("Lcz_OrCallOn")} <span dir="ltr">{phone}</span>.
                 </>}
             </EmailText>
-            <EmailButton dir={dir} href={siteUrl(property.perma_link, "/signin")}>
-                {t("Lcz_ClickHereToManageBooking").replace(" ?", "").replace(".", "")}
-            </EmailButton>
+            {manageBookingShown && (
+                <EmailButton dir={dir} href={siteUrl(property.perma_link, "/signin")}>
+                    {t("Lcz_ClickHereToManageBooking").replace(" ?", "").replace(".", "")}
+                </EmailButton>
+            )}
         </Section>
     )
 }

@@ -8,7 +8,7 @@ import React from "react";
 
 export default async function page({ params, searchParams }) {
   const domain = decodeURIComponent(params.domain).split('.');
-  const { e, s, lang, b, mode } = searchParams ?? {};
+  const { e, s, lang, b, mode, due_amount } = searchParams ?? {};
   // logger.info(`domain: ${domain}`)
   // logger.info("Invoice Page called");
   let property;
@@ -37,6 +37,7 @@ export default async function page({ params, searchParams }) {
   return (
     <InvoicePage
       mode={mode}
+      dueAmount={due_amount}
       perma_link={domain[0]}
       language={lang}
       email={e}

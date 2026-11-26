@@ -402,6 +402,13 @@ describe("fiscal document page", () => {
         test("lists the guest's payments in the guest folio", async () => {
             expect(await textOf(printableBooking(), "printing")).toContain("Guest folio Date Amount Designation Ref Sep 20, 2025 US$ 150.00 Payment: Credit card REF-5");
         });
+
+        test("with strip_prices=true a booking with no agent shows no amount, but still lists what was booked", async () => {
+            const text = await textOf(printableBooking(), "printing", { strip_prices: "true" });
+
+            expect([text.includes("US$"), text.includes("Standard Rooms"), text.includes("Premium Suites"), text.includes("Sedan"), text.includes("Spa access")])
+                .toEqual([false, true, true, true, true]);
+        });
     });
 
     test.each([

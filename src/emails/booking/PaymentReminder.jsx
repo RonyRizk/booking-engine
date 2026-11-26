@@ -11,7 +11,7 @@ import { siteUrl } from '@/lib/app-env'
 
 export default function PaymentReminderEmail({ booking, property, i18n, dueAmount }) {
     const { t, lang, dir } = i18n;
-    const paymentUrl = `${siteUrl(property.perma_link, '/booked')}?b=${booking.booking_nbr}&e=${encodeURIComponent(booking.guest?.email ?? '')}&lang=${lang}&mode=payment`
+    const paymentUrl = `${siteUrl(property.perma_link, '/booked')}?b=${booking.booking_nbr}&e=${encodeURIComponent(booking.guest?.email ?? '')}&lang=${lang}&mode=payment&due_amount=${dueAmount}`
     return (
         <EmailContainer lang={lang} dir={dir} connectedMpo={property.mpo}>
             <PropertyHeader property={property} />
@@ -26,7 +26,7 @@ export default function PaymentReminderEmail({ booking, property, i18n, dueAmoun
             </EmailButton>
             <EmailFooter>
                 <EmailText style={styles.contactText} dangerouslySetInnerHTML={{ __html: property.description?.important_info }} />
-                <GuestServiceContactUs property={property} i18n={i18n} />
+                <GuestServiceContactUs property={property} i18n={i18n} manageBookingShown={false} />
                 <EmailText>
                     {t("Lcz_Look_forward")} {property.name}
                 </EmailText>

@@ -9,13 +9,15 @@ export default function InvoicePage({
   aName,
   locationShown,
   headerMessageShown,
-  mode
+  mode,
+  dueAmount
 }) {
   return (
     <ir-invoice
       header-message-shown={headerMessageShown}
       a-name={aName}
       mode={mode}
+      due-amount={dueAmount}
       location-shown={locationShown}
       perma_link={perma_link}
       language={language}

@@ -38,8 +38,10 @@ const MODE = "printing";
  * `withoutTerms` leaves out what the rate plan or the channel states for the room: a direct
  * booking's cancellation, guarantee and guarantee amount, an OTA booking's smoking options,
  * meal plan and policies. A direct booking's smoking option, the guest's choice, stays.
+ * `withoutPrices` leaves out every amount: the totals, the nightly rates, the guarantee amount
+ * and the cancellation policy, which states what cancelling costs.
  */
-export function RoomCard({ room, booking, property, bedPreferences, currency, idx, totalRooms, printingService, guests, withoutTerms = false }) {
+export function RoomCard({ room, booking, property, bedPreferences, currency, idx, totalRooms, printingService, guests, withoutTerms = false, withoutPrices = false }) {
   const { t } = getI18n();
   const haveMultipleRooms =
     property?.roomtypes?.find(rt => rt.id === room?.roomtype?.id)?.physicalrooms?.length > 1 ?? false;
@@ -63,28 +65,32 @@ export function RoomCard({ room, booking, property, bedPreferences, currency, id
             <RoomDateRange room={room} mode={MODE} />
             {(booking.is_direct || !withoutTerms) && <SmokingPreference room={room} booking={booking} property={property} />}
             {!booking.is_direct && !withoutTerms && <OtaRoomMeta room={room} />}
-            {booking.is_direct && !withoutTerms && <DirectBookingPolicies room={room} />}
-            {booking.is_direct && !withoutTerms && (
+            {booking.is_direct && !withoutTerms && <DirectBookingPolicies room={room} withoutCancellation={withoutPrices} />}
+            {booking.is_direct && !withoutTerms && !withoutPrices && (
               <InfoDisplay
                 label={`${t("Lcz_GuaranteeAmount")}:`}
                 value={formatAmount(Number(room.gross_guarantee), currency)}
               />
             )}
           </div>
-          <RoomPriceSummary
-            room={room}
-            booking={booking}
-            property={property}
-            currency={currency}
-          />
+          {!withoutPrices && (
+            <RoomPriceSummary
+              room={room}
+              booking={booking}
+              property={property}
+              currency={currency}
+            />
+          )}
         </div>
-        <DailyRateGrid
-          room={room}
-          currency={currency}
-          printingService={printingService}
-          idx={idx}
-          totalRooms={totalRooms}
-        />
+        {!withoutPrices && (
+          <DailyRateGrid
+            room={room}
+            currency={currency}
+            printingService={printingService}
+            idx={idx}
+            totalRooms={totalRooms}
+          />
+        )}
       </div>
     </section>
   );
@@ -92,7 +98,7 @@ export function RoomCard({ room, booking, property, bedPreferences, currency, id
 
 // ─── Extra service item ───────────────────────────────────────────────────────
 
-export function ExtraServiceItem({ service, currency, svcCategory, property }) {
+export function ExtraServiceItem({ service, currency, svcCategory, property, withoutPrice = false }) {
   const { t } = getI18n();
   const vatPercent = service?.charges?.vat_percent;
   const formatDayUseTime = (time) => {
@@ -126,12 +132,14 @@ export function ExtraServiceItem({ service, currency, svcCategory, property }) {
         />
         <ServiceDateRange service={service} />
       </div>
-      <div className="flex flex-col sm:items-end">
-        <span className="font-bold">{formatAmount(service?.price || 0, currency)}</span>
-        {vatPercent != null && (
-          <span className="text-xs text-gray-500">{t("Lcz_VAT_X", vatPercent)}</span>
-        )}
-      </div>
+      {!withoutPrice && (
+        <div className="flex flex-col sm:items-end">
+          <span className="font-bold">{formatAmount(service?.price || 0, currency)}</span>
+          {vatPercent != null && (
+            <span className="text-xs text-gray-500">{t("Lcz_VAT_X", vatPercent)}</span>
+          )}
+        </div>
+      )}
     </>
   );
 }
@@ -140,7 +148,7 @@ export function ExtraServiceItem({ service, currency, svcCategory, property }) {
 // A self-contained block: accommodation → pickup (optional) → extra services.
 // Dividers are only inserted between subsections that actually render.
 
-function Folio({ title, rooms, bedPreferences, services, pickupInfo, svcCategory, booking, property, currency, printingService, noBorderTop = false }) {
+function Folio({ title, rooms, bedPreferences, services, pickupInfo, svcCategory, booking, property, currency, printingService, noBorderTop = false, withoutPrices = false }) {
   const { t } = getI18n();
   const hasRooms = rooms.length > 0;
   const hasPickup = !!pickupInfo;
@@ -181,6 +189,7 @@ function Folio({ title, rooms, bedPreferences, services, pickupInfo, svcCategory
                   printingService={printingService}
                   idx={idx}
                   totalRooms={rooms.length}
+                  withoutPrices={withoutPrices}
                 />
                 {roomServices.length > 0 && (
                   <div className="mt-2 ps-4">
@@ -194,7 +203,7 @@ function Folio({ title, rooms, bedPreferences, services, pickupInfo, svcCategory
                             { "pb-1": idx < roomServices.length - 1 },
                           )}
                         >
-                          <ExtraServiceItem property={property} svcCategory={svcCategory} service={service} currency={currency} />
+                          <ExtraServiceItem property={property} svcCategory={svcCategory} service={service} currency={currency} withoutPrice={withoutPrices} />
                         </li>
                       ))}
                     </ul>
@@ -214,7 +223,7 @@ function Folio({ title, rooms, bedPreferences, services, pickupInfo, svcCategory
             {t("Lcz_PickupYes", pickupInfo.selected_option.location.description)}
           </p>
           <PickupArrivalRow pickup_info={pickupInfo} />
-          <PickupVehicleRow pickup_info={pickupInfo} />
+          <PickupVehicleRow pickup_info={pickupInfo} withoutPrice={withoutPrices} />
         </>
       )}
 
@@ -232,7 +241,7 @@ function Folio({ title, rooms, bedPreferences, services, pickupInfo, svcCategory
                   { "pb-4": idx < generalServices.length - 1 },
                 )}
               >
-                <ExtraServiceItem property={property} svcCategory={svcCategory} service={service} currency={currency} />
+                <ExtraServiceItem property={property} svcCategory={svcCategory} service={service} currency={currency} withoutPrice={withoutPrices} />
               </li>
             ))}
           </ul>
@@ -321,7 +330,8 @@ function CityLedgerTable({ transactions, currency }) {
 // booking balance/collected plus an optional cost line and the grand total.
 
 
-function FinancialSection({ booking, agentMode, currency, isAllServicesAgentOwned }) {
+/** `guestOnly` (agent-mode) leaves out the booking's and the agent's totals. */
+function FinancialSection({ booking, agentMode, currency, isAllServicesAgentOwned, guestOnly = false }) {
   const { t } = getI18n();
   const agentTotal = booking.financial.agent_total;
   const bookingTotal = booking.financial.booking_total;
@@ -336,10 +346,12 @@ function FinancialSection({ booking, agentMode, currency, isAllServicesAgentOwne
               <InfoDisplay label={`${t("Lcz_GuestCollected")}:`} value={formatAmount((booking?.financial?.collected ?? 0) + (booking?.financial?.refunds ?? 0), currency)} />
             </div>
           )}
-          <div className="flex flex-col items-end gap-1.5">
-            <InfoDisplay label={`${t("Lcz_BookingTotal")}:`} value={formatAmount(bookingTotal ?? 0, currency)} />
-            <InfoDisplay label={`${t("Lcz_AgentTotal")}:`} value={formatAmount(agentTotal, currency)} />
-          </div>
+          {!guestOnly && (
+            <div className="flex flex-col items-end gap-1.5">
+              <InfoDisplay label={`${t("Lcz_BookingTotal")}:`} value={formatAmount(bookingTotal ?? 0, currency)} />
+              <InfoDisplay label={`${t("Lcz_AgentTotal")}:`} value={formatAmount(agentTotal, currency)} />
+            </div>
+          )}
         </div>
       </section>
     );
@@ -421,6 +433,7 @@ export default function BookingPreview({
   setupTables,
   clTransactions = [],
   bedPreferences,
+  stripPrices = false,
 }) {
   const { t, dir } = getI18n();
   const currency = booking?.currency?.symbol;
@@ -445,7 +458,12 @@ export default function BookingPreview({
 
   const hasAgentFolioData = agentRooms.length > 0 || agentServices.length > 0 || !!booking.pickup_info;
   const hasGuestFolioData = guestRooms.length > 0 || guestServices.length > 0;
-  const hasAnythingBeforeGuestFolio = hasAgentFolioData || clTransactions.length > 0;
+  // The agent folio is the agent's ledger: all of it is prices.
+  const agentFolio = stripPrices ? [] : clTransactions;
+  const hasAnythingBeforeGuestFolio = hasAgentFolioData || agentFolio.length > 0;
+  // Stripped of its prices, the print keeps only what the guest is billed for on an
+  // agent's booking, and nothing at all on any other.
+  const showsGuestPrices = !stripPrices || (agentMode && hasGuestFolioData);
 
   return (
     <div className="booking-print">
@@ -456,13 +474,16 @@ export default function BookingPreview({
         <GuestSection booking={booking} guestCountryName={guestCountryName} printingService={printingService} privateNote={privateNote} />
 
         {/* Financial */}
-        <FinancialSection
-          booking={booking}
-          agentMode={agentMode}
-          currency={currency}
-          clTransactions={clTransactions}
-          isAllServicesAgentOwned={!hasGuestFolioData}
-        />
+        {showsGuestPrices && (
+          <FinancialSection
+            booking={booking}
+            agentMode={agentMode}
+            currency={currency}
+            clTransactions={clTransactions}
+            isAllServicesAgentOwned={!hasGuestFolioData}
+            guestOnly={stripPrices}
+          />
+        )}
 
         {/* Accommodation header — dates, nights, tax statement */}
         <section className="pt-4">
@@ -482,9 +503,10 @@ export default function BookingPreview({
                 property={property}
                 currency={currency}
                 printingService={printingService}
+                withoutPrices={stripPrices}
               />
               {/* City Ledger — agent mode only */}
-              <CityLedgerTable transactions={clTransactions} currency={currency} />
+              <CityLedgerTable transactions={agentFolio} currency={currency} />
               {hasGuestFolioData && hasAnythingBeforeGuestFolio && <hr className="border-black my-4" />}
               {/* Guest folio: rooms → services */}
               <Folio
@@ -524,6 +546,7 @@ export default function BookingPreview({
                         printingService={printingService}
                         idx={idx}
                         totalRooms={booking.rooms.length}
+                        withoutPrices={stripPrices}
                       />
                       {roomServices.length > 0 && (
                         <div className="mt-2 ps-4">
@@ -537,7 +560,7 @@ export default function BookingPreview({
                                   { "pb-1": idx < roomServices.length - 1 },
                                 )}
                               >
-                                <ExtraServiceItem property={property} svcCategory={svcCategory} service={service} currency={currency} />
+                                <ExtraServiceItem property={property} svcCategory={svcCategory} service={service} currency={currency} withoutPrice={stripPrices} />
                               </li>
                             ))}
                           </ul>
@@ -554,7 +577,7 @@ export default function BookingPreview({
                     {t("Lcz_PickupYes", booking.pickup_info.selected_option.location.description)}
                   </p>
                   <PickupArrivalRow pickup_info={booking.pickup_info} />
-                  <PickupVehicleRow pickup_info={booking.pickup_info} />
+                  <PickupVehicleRow pickup_info={booking.pickup_info} withoutPrice={stripPrices} />
                 </section>
               )}
 
@@ -572,7 +595,7 @@ export default function BookingPreview({
                           { "pb-4": idx < generalGuestServices.length - 1 },
                         )}
                       >
-                        <ExtraServiceItem property={property} svcCategory={svcCategory} service={service} currency={currency} />
+                        <ExtraServiceItem property={property} svcCategory={svcCategory} service={service} currency={currency} withoutPrice={stripPrices} />
                       </li>
                     ))}
                   </ul>
@@ -585,7 +608,7 @@ export default function BookingPreview({
         {/* Payment */}
         <section className="py-4 space-y-2.5 empty:border-0 border-gray-600 border-y border-b-0">
           <CreditCardInfo booking={booking} printingService={printingService} />
-          <GuestFolioTable payments={payments} setupTables={setupTables} mode={MODE} />
+          {showsGuestPrices && <GuestFolioTable payments={payments} setupTables={setupTables} mode={MODE} />}
         </section>
 
       </main>

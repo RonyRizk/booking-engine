@@ -21,6 +21,8 @@
  * @param {string} props.searchParams.bookingNbr   - Booking number (required).
  * @param {string} [props.searchParams.docNo]      - Document number shown in the header.
  * @param {("alpha"|"production")} [props.searchParams.environment="production"] - Gateway to use: "alpha" → IRALPHA, otherwise IR.
+ * @param {string} [props.searchParams.strip_prices] - "true" prints `mode=printing` without the prices; an agent's
+ *   booking keeps those of what is billed to the guest (see BookingPreview).
  */
 
 import { redirect } from "next/navigation";
@@ -63,6 +65,7 @@ async function FiscalDocumentsPage({ params, searchParams }, log) {
         ids,
         bill_to,
         environment,
+        strip_prices,
     } = searchParams;
 
     const baseUrl = resolveEnvironmentBaseUrl(environment, DEFAULT_BASE_URL);
@@ -158,7 +161,7 @@ async function FiscalDocumentsPage({ params, searchParams }, log) {
         <div className="min-h-screen bg-white">
             <PrintFont />
             {normalizedMode === "invoice" && <InvoicePreview {...sharedProps} />}
-            {normalizedMode === "printing" && <BookingPreview {...sharedProps} />}
+            {normalizedMode === "printing" && <BookingPreview {...sharedProps} stripPrices={strip_prices === "true"} />}
             {normalizedMode === "printing" && <PrintButton />}
             {normalizedMode === "receipt" && <ReceiptPreview {...sharedProps} />}
             {normalizedMode === "creditnote" && (
